@@ -9,7 +9,7 @@
      DMT 0x09:   800x600    60.316541 Hz   4:3     37.879 kHz     40.000000 MHz
      DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
      DMT 0x23:  1280x1024   60.019740 Hz   5:4     63.981 kHz    108.000000 MHz
-@@ -61,33 +61,21 @@
+@@ -61,33 +61,25 @@
    Supports YCbCr 4:2:2
    Native detailed modes: 0
    Video Data Block:
@@ -40,10 +40,10 @@
 +    VIC  33
 +    VIC  34
    Audio Data Block:
--    Linear PCM:
--      Max channels: 2
--      Supported sample rates (kHz): 48 44.1 32
--      Supported sample sizes (bits): 24 20 16
+     Linear PCM:
+       Max channels: 2
+       Supported sample rates (kHz): 48 44.1 32
+       Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:
 -    FL/FR - Front Left/Right
 -  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
@@ -56,7 +56,7 @@
    Detailed Timing Descriptors:
      DTD 3:  1280x720    59.654270 Hz  16:9     44.621 kHz     74.250000 MHz (700 mm x 392 mm)
                   Hfront   64 Hsync 128 Hback  192 Hpol P
-@@ -98,34 +86,14 @@
+@@ -98,34 +90,14 @@
      DTD 5:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (518 mm x 324 mm)
                   Hfront   88 Hsync  44 Hback  148 Hpol P
                   Vfront    4 Vsync   5 Vback   36 Vpol P

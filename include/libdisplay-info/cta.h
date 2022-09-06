@@ -119,6 +119,186 @@ enum di_cta_data_block_tag
 di_cta_data_block_get_tag(const struct di_cta_data_block *block);
 
 /**
+ * Audio formats, defined in tables 37 and 39.
+ *
+ * Note, the enum values don't match the specification.
+ */
+enum di_cta_audio_format {
+	/* L-PCM */
+	DI_CTA_AUDIO_FORMAT_LPCM = 1,
+	/* AC-3 */
+	DI_CTA_AUDIO_FORMAT_AC3,
+	/* MPEG-1 (layers 1 & 2) */
+	DI_CTA_AUDIO_FORMAT_MPEG1,
+	/* MP3 */
+	DI_CTA_AUDIO_FORMAT_MP3,
+	/* MPEG-2 */
+	DI_CTA_AUDIO_FORMAT_MPEG2,
+	/* AAC LC */
+	DI_CTA_AUDIO_FORMAT_AAC_LC,
+	/* DTS */
+	DI_CTA_AUDIO_FORMAT_DTS,
+	/* ATRAC */
+	DI_CTA_AUDIO_FORMAT_ATRAC,
+	/* One Bit Audio */
+	DI_CTA_AUDIO_FORMAT_ONE_BIT_AUDIO,
+	/* Enhanced AC-3 */
+	DI_CTA_AUDIO_FORMAT_ENHANCED_AC3,
+	/* DTS-HD and DTS-UHD */
+	DI_CTA_AUDIO_FORMAT_DTS_HD,
+	/* MAT */
+	DI_CTA_AUDIO_FORMAT_MAT,
+	/* DST */
+	DI_CTA_AUDIO_FORMAT_DST,
+	/* WMA Pro */
+	DI_CTA_AUDIO_FORMAT_WMA_PRO,
+
+	/* MPEG-4 HE AAC */
+	DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC,
+	/* MPEG-4 HE AAC v2 */
+	DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_V2,
+	/* MPEG-4 AAC LC */
+	DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC,
+	/* DRA */
+	DI_CTA_AUDIO_FORMAT_DRA,
+	/* MPEG-4 HE AAC + MPEG Surround */
+	DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_MPEG_SURROUND,
+	/* MPEG-4 AAC LC + MPEG Surround */
+	DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC_MPEG_SURROUND,
+	/* MPEG-H 3D Audio */
+	DI_CTA_AUDIO_FORMAT_MPEGH_3D,
+	/* AC-4 */
+	DI_CTA_AUDIO_FORMAT_AC4,
+	/* L-PCM 3D Audio */
+	DI_CTA_AUDIO_FORMAT_LPCM_3D,
+};
+
+struct di_cta_sad_sample_rates {
+	bool has_192_khz; /* 192 kHz */
+	bool has_176_4_khz; /* 176.4 kHz */
+	bool has_96_khz; /* 96 kHz */
+	bool has_88_2_khz; /* 88.2 kHz */
+	bool has_48_khz; /* 48 kHz */
+	bool has_44_1_khz; /* 44.1 kHz */
+	bool has_32_khz; /* 32 kHz */
+};
+
+enum di_cta_sad_mpegh_3d_level {
+	DI_CTA_SAD_MPEGH_3D_LEVEL_UNSPECIFIED = 0,
+	DI_CTA_SAD_MPEGH_3D_LEVEL_1 = 1,
+	DI_CTA_SAD_MPEGH_3D_LEVEL_2 = 2,
+	DI_CTA_SAD_MPEGH_3D_LEVEL_3 = 3,
+	DI_CTA_SAD_MPEGH_3D_LEVEL_4 = 4,
+	DI_CTA_SAD_MPEGH_3D_LEVEL_5 = 5,
+};
+
+struct di_cta_sad_mpegh_3d {
+	/* Maximum supported MPEG-H 3D level, zero if unspecified */
+	enum di_cta_sad_mpegh_3d_level level;
+	/* True if MPEG-H 3D Audio Low Complexity Profile is supported */
+	bool low_complexity_profile;
+	/* True if MPEG-H 3D Audio Baseline Profile is supported */
+	bool baseline_profile;
+};
+
+struct di_cta_sad_mpeg_aac {
+	/* True if AAC audio frame lengths of 960 samples is supported */
+	bool has_frame_length_960;
+	/* True if AAC audio frame lengths of 1024 samples is supported */
+	bool has_frame_length_1024;
+};
+
+enum di_cta_sad_mpeg_surround_signaling {
+	/* Only implicitly signaled MPEG Surround data supported */
+	DI_CTA_SAD_MPEG_SURROUND_SIGNALING_IMPLICIT = 0,
+	/* Implicitly and explicitly signaled MPEG Surround data supported */
+	DI_CTA_SAD_MPEG_SURROUND_SIGNALING_IMPLICIT_AND_EXPLICIT = 1,
+};
+
+struct di_cta_sad_mpeg_surround {
+	/* MPEG Surround signaling */
+	enum di_cta_sad_mpeg_surround_signaling signaling;
+};
+
+struct di_cta_sad_mpeg_aac_le {
+	/* True if Rec. ITU-R BS.2051 System H 22.2 multichannel sound is supported */
+	bool supports_multichannel_sound;
+};
+
+struct di_cta_sad_lpcm {
+	bool has_sample_size_24_bits; /* 24 bits */
+	bool has_sample_size_20_bits; /* 20 bits */
+	bool has_sample_size_16_bits; /* 16 bits */
+};
+
+struct di_cta_sad_enhanced_ac3 {
+	bool supports_joint_object_coding;
+	bool supports_joint_object_coding_ACMOD28;
+};
+
+struct di_cta_sad_mat {
+	bool supports_object_audio_and_channel_based;
+	bool requires_hash_calculation;
+};
+
+struct di_cta_sad_wma_pro {
+	int profile;
+};
+
+/**
+ * A CTA short audio descriptor (SAD), defined in section 7.5.2.
+ */
+struct di_cta_sad {
+	/* Format */
+	enum di_cta_audio_format format;
+	/* Maximum number of channels, zero if unset */
+	int32_t max_channels;
+	/* Supported sample rates */
+	const struct di_cta_sad_sample_rates *supported_sample_rates;
+	/* Maximum bitrate (kb/s), zero if unset */
+	int32_t max_bitrate_kbs;
+	/* Additional metadata for LPCM, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_LPCM or DI_CTA_AUDIO_FORMAT_LPCM_3D */
+	const struct di_cta_sad_lpcm *lpcm;
+	/* Additional metadata for MPEG-H 3D Audio, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_MPEGH_3D */
+	const struct di_cta_sad_mpegh_3d *mpegh_3d;
+	/* Additional metadata for MPEG4 AAC, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC or
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_V2 or
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC or
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_MPEG_SURROUND or
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC_MPEG_SURROUND */
+	const struct di_cta_sad_mpeg_aac *mpeg_aac;
+	/* Additional metadata for MPEG4 Surround, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_MPEG_SURROUND or
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC_MPEG_SURROUND */
+	const struct di_cta_sad_mpeg_surround *mpeg_surround;
+	/* Additional metadata for MPEG4 AAC LC, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC */
+	const struct di_cta_sad_mpeg_aac_le *mpeg_aac_le;
+	/* Additional metadata for Enhanced AC-3, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_ENHANCED_AC3 */
+	const struct di_cta_sad_enhanced_ac3 *enhanced_ac3;
+	/* Additional metadata for Dolby MAT, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_MAT */
+	const struct di_cta_sad_mat *mat;
+	/* Additional metadata for WMA Pro, NULL unless format is
+	 * DI_CTA_AUDIO_FORMAT_WMA_PRO */
+	const struct di_cta_sad_wma_pro *wma_pro;
+};
+
+/**
+ * Get an array of short audio descriptors from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_AUDIO.
+ *
+ * The returned array is NULL-terminated.
+ */
+const struct di_cta_sad *const *
+di_cta_data_block_get_sads(const struct di_cta_data_block *data_block);
+
+/**
  * Over- and underscan capability.
  */
 enum di_cta_video_cap_over_underscan {

@@ -1,6 +1,6 @@
 --- ref
 +++ di
-@@ -79,35 +79,29 @@
+@@ -79,35 +79,33 @@
    Supports YCbCr 4:2:2
    Native detailed modes: 1
    Video Data Block:
@@ -33,10 +33,10 @@
 +    VIC  34
 +    VIC   1
    Audio Data Block:
--    Linear PCM:
--      Max channels: 2
--      Supported sample rates (kHz): 192 176.4 96 88.2 48 44.1 32
--      Supported sample sizes (bits): 24 20 16
+     Linear PCM:
+       Max channels: 2
+       Supported sample rates (kHz): 192 176.4 96 88.2 48 44.1 32
+       Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:
 -    FL/FR - Front Left/Right
    Detailed Timing Descriptors:
@@ -52,7 +52,7 @@
      DTD 4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz (597 mm x 336 mm)
                   Hfront  110 Hsync  40 Hback  220 Hpol P
                   Vfront    5 Vsync   5 Vback   20 Vpol P
-@@ -117,28 +111,14 @@
+@@ -117,28 +115,14 @@
      DTD 6:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz (597 mm x 336 mm)
                   Hfront  528 Hsync  44 Hback  148 Hpol P
                   Vfront    4 Vsync   5 Vback   36 Vpol P

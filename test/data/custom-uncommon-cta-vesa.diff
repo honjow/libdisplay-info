@@ -1,20 +1,15 @@
 --- ref
 +++ di
-@@ -58,12 +58,8 @@
+@@ -58,7 +58,7 @@
    Supports YCbCr 4:2:2
    Native detailed modes: 0
    Video Data Block:
 -    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
 +    VIC  97
    Audio Data Block:
--    Linear PCM:
--      Max channels: 2
--      Supported sample rates (kHz): 48 44.1 32
--      Supported sample sizes (bits): 24 20 16
-   Video Capability Data Block:
-     YCbCr quantization: Selectable (via AVI YQ)
-     RGB quantization: Selectable (via AVI Q)
-@@ -73,54 +69,12 @@
+     Linear PCM:
+       Max channels: 2
+@@ -73,54 +73,12 @@
    VESA Display Transfer Characteristics Data Block:
      White transfer characteristics: 6 33 77 129 192 252 348 415 490 598 666 796 873 932 998 1023
    VESA Video Display Device Data Block:

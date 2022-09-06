@@ -103,6 +103,169 @@ print_cta_vesa_transfer_characteristics(const struct di_cta_vesa_transfer_charac
 }
 
 static const char *
+cta_audio_format_name(enum di_cta_audio_format format)
+{
+	switch (format) {
+	case DI_CTA_AUDIO_FORMAT_LPCM:
+		return "Linear PCM";
+	case DI_CTA_AUDIO_FORMAT_AC3:
+		return "AC-3";
+	case DI_CTA_AUDIO_FORMAT_MPEG1:
+		return "MPEG 1 (Layers 1 & 2)";
+	case DI_CTA_AUDIO_FORMAT_MP3:
+		return "MPEG 1 Layer 3 (MP3)";
+	case DI_CTA_AUDIO_FORMAT_MPEG2:
+		return "MPEG2 (multichannel)";
+	case DI_CTA_AUDIO_FORMAT_AAC_LC:
+		return "AAC LC";
+	case DI_CTA_AUDIO_FORMAT_DTS:
+		return "DTS";
+	case DI_CTA_AUDIO_FORMAT_ATRAC:
+		return "ATRAC";
+	case DI_CTA_AUDIO_FORMAT_ONE_BIT_AUDIO:
+		return "One Bit Audio";
+	case DI_CTA_AUDIO_FORMAT_ENHANCED_AC3:
+		return "Enhanced AC-3 (DD+)";
+	case DI_CTA_AUDIO_FORMAT_DTS_HD:
+		return "DTS-HD";
+	case DI_CTA_AUDIO_FORMAT_MAT:
+		return "MAT (MLP)";
+	case DI_CTA_AUDIO_FORMAT_DST:
+		return "DST";
+	case DI_CTA_AUDIO_FORMAT_WMA_PRO:
+		return "WMA Pro";
+	case DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC:
+		return "MPEG-4 HE AAC";
+	case DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_V2:
+		return "MPEG-4 HE AAC v2";
+	case DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC:
+		return "MPEG-4 AAC LC";
+	case DI_CTA_AUDIO_FORMAT_DRA:
+		return "DRA";
+	case DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC_MPEG_SURROUND:
+		return "MPEG-4 HE AAC + MPEG Surround";
+	case DI_CTA_AUDIO_FORMAT_MPEG4_AAC_LC_MPEG_SURROUND:
+		return "MPEG-4 AAC LC + MPEG Surround";
+	case DI_CTA_AUDIO_FORMAT_MPEGH_3D:
+		return "MPEG-H 3D Audio";
+	case DI_CTA_AUDIO_FORMAT_AC4:
+		return "AC-4";
+	case DI_CTA_AUDIO_FORMAT_LPCM_3D:
+		return "L-PCM 3D Audio";
+	}
+	abort();
+}
+
+static const char *
+cta_sad_mpegh_3d_level_name(enum di_cta_sad_mpegh_3d_level level)
+{
+	switch (level) {
+	case DI_CTA_SAD_MPEGH_3D_LEVEL_UNSPECIFIED:
+		return "Unspecified";
+	case DI_CTA_SAD_MPEGH_3D_LEVEL_1:
+		return "Level 1";
+	case DI_CTA_SAD_MPEGH_3D_LEVEL_2:
+		return "Level 2";
+	case DI_CTA_SAD_MPEGH_3D_LEVEL_3:
+		return "Level 3";
+	case DI_CTA_SAD_MPEGH_3D_LEVEL_4:
+		return "Level 4";
+	case DI_CTA_SAD_MPEGH_3D_LEVEL_5:
+		return "Level 5";
+	}
+	abort();
+}
+
+static void
+print_cta_sads(const struct di_cta_sad *const *sads)
+{
+	size_t i;
+	const struct di_cta_sad *sad;
+
+	for (i = 0; sads[i] != NULL; i++) {
+		sad = sads[i];
+
+		printf("    %s:\n", cta_audio_format_name(sad->format));
+		if (sad->max_channels != 0)
+			printf("      Max channels: %d\n", sad->max_channels);
+
+		if (sad->mpegh_3d)
+			printf("      MPEG-H 3D Audio Level: %s\n",
+			       cta_sad_mpegh_3d_level_name(sad->mpegh_3d->level));
+
+		printf("      Supported sample rates (kHz):");
+		if (sad->supported_sample_rates->has_192_khz)
+			printf(" 192");
+		if (sad->supported_sample_rates->has_176_4_khz)
+			printf(" 176.4");
+		if (sad->supported_sample_rates->has_96_khz)
+			printf(" 96");
+		if (sad->supported_sample_rates->has_88_2_khz)
+			printf(" 88.2");
+		if (sad->supported_sample_rates->has_48_khz)
+			printf(" 48");
+		if (sad->supported_sample_rates->has_44_1_khz)
+			printf(" 44.1");
+		if (sad->supported_sample_rates->has_32_khz)
+			printf(" 32");
+		printf("\n");
+
+		if (sad->lpcm) {
+			printf("      Supported sample sizes (bits):");
+			if (sad->lpcm->has_sample_size_24_bits)
+				printf(" 24");
+			if (sad->lpcm->has_sample_size_20_bits)
+				printf(" 20");
+			if (sad->lpcm->has_sample_size_16_bits)
+				printf(" 16");
+			printf("\n");
+		}
+
+		if (sad->max_bitrate_kbs != 0)
+			printf("      Maximum bit rate: %d kb/s\n", sad->max_bitrate_kbs);
+
+		if (sad->enhanced_ac3 && sad->enhanced_ac3->supports_joint_object_coding)
+			printf("      Supports Joint Object Coding\n");
+		if (sad->enhanced_ac3 && sad->enhanced_ac3->supports_joint_object_coding_ACMOD28)
+			printf("      Supports Joint Object Coding with ACMOD28\n");
+
+		if (sad->mat) {
+			if (sad->mat->supports_object_audio_and_channel_based) {
+				printf("      Supports Dolby TrueHD, object audio PCM and channel-based PCM\n");
+				printf("      Hash calculation %srequired for object audio PCM or channel-based PCM\n",
+				       sad->mat->requires_hash_calculation ? "" : "not ");
+			} else {
+				printf("      Supports only Dolby TrueHD\n");
+			}
+		}
+
+		if (sad->wma_pro) {
+			printf("      Profile: %u\n",sad->wma_pro->profile);
+		}
+
+		if (sad->mpegh_3d && sad->mpegh_3d->low_complexity_profile)
+			printf("      Supports MPEG-H 3D Audio Low Complexity Profile\n");
+		if (sad->mpegh_3d && sad->mpegh_3d->baseline_profile)
+			printf("      Supports MPEG-H 3D Audio Baseline Profile\n");
+
+		if (sad->mpeg_aac) {
+			printf("      AAC audio frame lengths:%s%s\n",
+			       sad->mpeg_aac->has_frame_length_1024 ? " 1024_TL" : "",
+			       sad->mpeg_aac->has_frame_length_960 ? " 960_TL" : "");
+		}
+
+		if (sad->mpeg_surround) {
+			printf("      Supports %s signaled MPEG Surround data\n",
+			       sad->mpeg_surround->signaling == DI_CTA_SAD_MPEG_SURROUND_SIGNALING_IMPLICIT ?
+			       "only implicitly" : "implicitly and explicitly");
+		}
+
+		if (sad->mpeg_aac_le && sad->mpeg_aac_le->supports_multichannel_sound)
+			printf("      Supports 22.2ch System H\n");
+	}
+}
+
+static const char *
 cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 {
 	switch (tag) {
@@ -181,6 +344,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_colorimetry_block *colorimetry;
 	const struct di_cta_hdr_static_metadata_block *hdr_static_metadata;
 	const struct di_cta_vesa_transfer_characteristics *transfer_characteristics;
+	const struct di_cta_sad *const *sads;
 	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
 
@@ -261,6 +425,10 @@ print_cta(const struct di_edid_cta *cta)
 		case DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC:
 			transfer_characteristics = di_cta_data_block_get_vesa_transfer_characteristics(data_block);
 			print_cta_vesa_transfer_characteristics(transfer_characteristics);
+			break;
+		case DI_CTA_DATA_BLOCK_AUDIO:
+			sads = di_cta_data_block_get_sads(data_block);
+			print_cta_sads(sads);
 			break;
 		default:
 			break; /* Ignore */

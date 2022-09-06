@@ -9,14 +9,9 @@
      Display Product Name: 'S27A950D'
    Extension blocks: 1
  Checksum: 0x1b
-@@ -41,29 +39,13 @@
-   Basic audio support
-   Native detailed modes: 0
-   Audio Data Block:
--    Linear PCM:
--      Max channels: 2
--      Supported sample rates (kHz): 48 44.1 32
--      Supported sample sizes (bits): 24 20 16
+@@ -46,24 +44,12 @@
+       Supported sample rates (kHz): 48 44.1 32
+       Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:
 -    FL/FR - Front Left/Right
 -Checksum: 0x71  Unused space in Extension Block: 115 bytes

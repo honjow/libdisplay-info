@@ -33,6 +33,13 @@
  * is 63 bytes, and each SVD uses 1 byte.
  */
 #define EDID_CTA_MAX_VIDEO_BLOCK_ENTRIES 63
+/**
+ * The maximum number of SAD entries in an audio data block.
+ *
+ * Each data block has its size described in a 5-bit field, so its maximum size
+ * is 63 bytes, and each SAD uses 3 bytes.
+ */
+#define EDID_CTA_MAX_AUDIO_BLOCK_ENTRIES 21
 
 struct di_edid_cta {
 	int revision;
@@ -61,11 +68,32 @@ struct di_cta_video_block {
 	size_t svds_len;
 };
 
+struct di_cta_sad_priv {
+	struct di_cta_sad base;
+	struct di_cta_sad_sample_rates supported_sample_rates;
+	struct di_cta_sad_lpcm lpcm;
+	struct di_cta_sad_mpegh_3d mpegh_3d;
+	struct di_cta_sad_mpeg_aac mpeg_aac;
+	struct di_cta_sad_mpeg_surround mpeg_surround;
+	struct di_cta_sad_mpeg_aac_le mpeg_aac_le;
+	struct di_cta_sad_enhanced_ac3 enhanced_ac3;
+	struct di_cta_sad_mat mat;
+	struct di_cta_sad_wma_pro wma_pro;
+};
+
+struct di_cta_audio_block {
+	/* NULL-terminated */
+	struct di_cta_sad_priv *sads[EDID_CTA_MAX_AUDIO_BLOCK_ENTRIES + 1];
+	size_t sads_len;
+};
+
 struct di_cta_data_block {
 	enum di_cta_data_block_tag tag;
 
 	/* Used for DI_CTA_DATA_BLOCK_VIDEO */
 	struct di_cta_video_block video;
+	/* used for DI_CTA_DATA_BLOCK_AUDIO */
+	struct di_cta_audio_block audio;
 	/* Used for DI_CTA_DATA_BLOCK_VIDEO_CAP */
 	struct di_cta_video_cap_block video_cap;
 	/* Used for DI_CTA_DATA_BLOCK_COLORIMETRY */
