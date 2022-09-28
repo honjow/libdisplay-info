@@ -17,6 +17,10 @@
  * The size of an EDID standard timing, defined in section 3.9.
  */
 #define EDID_STANDARD_TIMING_SIZE 2
+/**
+ * The size of an EDID CVT timing code, defined in section 3.10.3.8.
+ */
+#define EDID_CVT_TIMING_CODE_SIZE 3
 
 /**
  * Fixed EDID header, defined in section 3.1.
@@ -916,6 +920,108 @@ parse_color_management_data_descriptor(struct di_edid *edid,
 }
 
 static bool
+is_cvt_timing_code_preferred_vrate_supported(const struct di_edid_cvt_timing_code *t)
+{
+	switch (t->preferred_vertical_rate) {
+	case DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_50HZ:
+		return t->supports_50hz_sb;
+	case DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_60HZ:
+		return t->supports_60hz_sb || t->supports_60hz_rb;
+	case DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_75HZ:
+		return t->supports_75hz_sb;
+	case DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_85HZ:
+		return t->supports_85hz_sb;
+	}
+	abort(); /* unreachable */
+}
+
+static bool
+parse_cvt_timing_code(struct di_edid *edid,
+		      const uint8_t data[static EDID_CVT_TIMING_CODE_SIZE],
+		      struct di_edid_cvt_timing_code **out,
+		      bool first)
+{
+	struct di_edid_cvt_timing_code *t;
+	int32_t raw;
+
+	*out = NULL;
+
+	if (!first && data[0] == 0 && data[1] == 0 && data[2] == 0) {
+		/* Unused */
+		return true;
+	}
+	if (data[0] == 0) {
+		add_failure(edid,
+			    "CVT byte 0 is 0, which is a reserved value.");
+	}
+
+	t = calloc(1, sizeof(*t));
+	if (!t) {
+		return false;
+	}
+
+	raw = (int32_t)(data[0] | (get_bit_range(data[1], 7, 4) << 8));
+	t->addressable_lines_per_field = (raw + 1) * 2;
+	t->aspect_ratio = get_bit_range(data[1], 3, 2);
+
+	if (get_bit_range(data[1], 1, 0) != 0) {
+		add_failure(edid,
+			    "Reserved bits of CVT byte 1 are non-zero.");
+	}
+
+	t->supports_50hz_sb = has_bit(data[2], 4);
+	t->supports_60hz_sb = has_bit(data[2], 3);
+	t->supports_75hz_sb = has_bit(data[2], 2);
+	t->supports_85hz_sb = has_bit(data[2], 1);
+	t->supports_60hz_rb = has_bit(data[2], 0);
+
+	if (get_bit_range(data[2], 4, 0) == 0) {
+		add_failure(edid,
+			    "CVT byte 2 does not support any vertical rates.");
+	}
+
+	t->preferred_vertical_rate = get_bit_range(data[2], 6, 5);
+
+	if (has_bit(data[2], 7) != 0) {
+		add_failure(edid,
+			    "Reserved bit of CVT byte 2 is non-zero.");
+	}
+
+	if (!is_cvt_timing_code_preferred_vrate_supported(t))
+		add_failure(edid, "The preferred CVT Vertical Rate is not supported.");
+
+	*out = t;
+	return true;
+}
+
+static bool
+parse_cvt_timing_codes_descriptor(struct di_edid *edid,
+				  const uint8_t data[static EDID_BYTE_DESCRIPTOR_SIZE],
+				  struct di_edid_display_descriptor *desc)
+{
+	struct di_edid_cvt_timing_code *t;
+	size_t i;
+	const uint8_t *timing_data;
+
+	if (data[5] != 1) {
+		add_failure_until(edid, 4, "Invalid version number %u.",
+				  data[5]);
+	}
+
+	for (i = 0; i < EDID_MAX_DESCRIPTOR_CVT_TIMING_CODES_COUNT; i++) {
+		timing_data = &data[6 + i * EDID_CVT_TIMING_CODE_SIZE];
+		if (!parse_cvt_timing_code(edid, timing_data, &t, !i))
+			return false;
+		if (t) {
+			assert(desc->cvt_timing_codes_len < EDID_MAX_DESCRIPTOR_CVT_TIMING_CODES_COUNT);
+			desc->cvt_timing_codes[desc->cvt_timing_codes_len++] = t;
+		}
+	}
+
+	return true;
+}
+
+static bool
 parse_byte_descriptor(struct di_edid *edid,
 		      const uint8_t data[static EDID_BYTE_DESCRIPTOR_SIZE])
 {
@@ -991,6 +1097,11 @@ parse_byte_descriptor(struct di_edid *edid,
 		parse_color_management_data_descriptor(edid, data, desc);
 		break;
 	case DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES:
+		if (!parse_cvt_timing_codes_descriptor(edid, data, desc)) {
+			free(desc);
+			return false;
+		}
+		break;
 	case DI_EDID_DISPLAY_DESCRIPTOR_DUMMY:
 		break; /* Ignore */
 	default:
@@ -1186,6 +1297,12 @@ destroy_display_descriptor(struct di_edid_display_descriptor *desc)
 			free(desc->standard_timings[i]);
 		}
 		break;
+	case DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES:
+		for (i = 0; i < desc->cvt_timing_codes_len; i++) {
+			free(desc->cvt_timing_codes[i]);
+		}
+		break;
+
 	default:
 		break; /* Nothing to do */
 	}
@@ -1427,6 +1544,15 @@ di_edid_display_descriptor_get_color_management_data(const struct di_edid_displa
 		return NULL;
 	}
 	return &desc->dcm_data;
+}
+
+const struct di_edid_cvt_timing_code *const *
+di_edid_display_descriptor_get_cvt_timing_codes(const struct di_edid_display_descriptor *desc)
+{
+	if (desc->tag != DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES) {
+		return NULL;
+	}
+	return (const struct di_edid_cvt_timing_code *const *) desc->cvt_timing_codes;
 }
 
 const struct di_edid_ext *const *

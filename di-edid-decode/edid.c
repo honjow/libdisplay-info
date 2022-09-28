@@ -7,6 +7,7 @@
 #include <libdisplay-info/dmt.h>
 #include <libdisplay-info/edid.h>
 #include <libdisplay-info/gtf.h>
+#include <libdisplay-info/cvt.h>
 
 #include "di-edid-decode.h"
 
@@ -442,6 +443,111 @@ print_dmt_timing(const struct di_dmt_timing *t)
 }
 
 static void
+print_cvt_timing(struct di_cvt_timing *t, struct di_cvt_options *options,
+		 int hratio, int vratio, bool preferred, bool rb)
+{
+	double hbl, htotal;
+
+	hbl = t->h_front_porch + t->h_sync + t->h_back_porch;
+	htotal = t->total_active_pixels + hbl;
+
+	printf("      CVT: %5dx%-5d", (int)options->h_pixels, (int)options->v_lines);
+	printf(" %10.6f Hz", t->act_frame_rate);
+	printf(" %3u:%-3u", hratio, vratio);
+	printf(" %8.3f kHz %13.6f MHz", t->act_pixel_freq * 1000 / htotal,
+	       (double) t->act_pixel_freq);
+
+	if (preferred || rb) {
+		printf(" (%s%s%s)", rb ? "RB" : "",
+				    (preferred && rb) ? ", " : "",
+				    preferred ? "preferred vertical rate" : "");
+	}
+
+	printf("\n");
+}
+
+static void
+print_cvt_timing_code(const struct di_edid_cvt_timing_code *t)
+{
+	struct di_cvt_timing timing;
+	struct di_cvt_options options;
+	enum di_edid_cvt_timing_code_preferred_vrate pref = t->preferred_vertical_rate;
+	int hratio, vratio;
+
+	options.int_rqd = false;
+	options.margins_rqd = false;
+	options.v_lines = t->addressable_lines_per_field;
+
+	switch (t->aspect_ratio) {
+	case DI_EDID_CVT_TIMING_CODE_4_3:
+		hratio = 4;
+		vratio = 3;
+		break;
+	case DI_EDID_CVT_TIMING_CODE_16_9:
+		hratio = 16;
+		vratio = 9;
+		break;
+	case DI_EDID_CVT_TIMING_CODE_16_10:
+		hratio = 16;
+		vratio = 10;
+		break;
+	case DI_EDID_CVT_TIMING_CODE_15_9:
+		hratio = 15;
+		vratio = 9;
+		break;
+	}
+
+	options.h_pixels = 8 * (((options.v_lines * hratio) / vratio) / 8);
+
+	if (t->supports_50hz_sb) {
+		options.ip_freq_rqd = 50;
+		options.red_blank_ver = DI_CVT_REDUCED_BLANKING_NONE;
+
+		di_cvt_compute(&timing, &options);
+		print_cvt_timing(&timing, &options, hratio, vratio,
+				 pref == DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_50HZ,
+				 false);
+	}
+	if (t->supports_60hz_sb) {
+		options.ip_freq_rqd = 60;
+		options.red_blank_ver = DI_CVT_REDUCED_BLANKING_NONE;
+
+		di_cvt_compute(&timing, &options);
+		print_cvt_timing(&timing, &options, hratio, vratio,
+				 pref == DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_60HZ &&
+				 !t->supports_60hz_rb,
+				 false);
+	}
+	if (t->supports_75hz_sb) {
+		options.ip_freq_rqd = 75;
+		options.red_blank_ver = DI_CVT_REDUCED_BLANKING_NONE;
+
+		di_cvt_compute(&timing, &options);
+		print_cvt_timing(&timing, &options, hratio, vratio,
+				 pref == DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_75HZ,
+				 false);
+	}
+	if (t->supports_85hz_sb) {
+		options.ip_freq_rqd = 85;
+		options.red_blank_ver = DI_CVT_REDUCED_BLANKING_NONE;
+
+		di_cvt_compute(&timing, &options);
+		print_cvt_timing(&timing, &options, hratio, vratio,
+				 pref == DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_85HZ,
+				 false);
+	}
+	if (t->supports_60hz_rb) {
+		options.ip_freq_rqd = 60;
+		options.red_blank_ver = DI_CVT_REDUCED_BLANKING_V1;
+
+		di_cvt_compute(&timing, &options);
+		print_cvt_timing(&timing, &options, hratio, vratio,
+				 pref == DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_60HZ,
+				 true);
+	}
+}
+
+static void
 print_display_desc(const struct di_edid *edid,
 		   const struct di_edid_display_descriptor *desc)
 {
@@ -453,6 +559,7 @@ print_display_desc(const struct di_edid *edid,
 	const struct di_edid_color_point *const *color_points;
 	const struct di_dmt_timing *const *established_timings_iii;
 	const struct di_edid_color_management_data *color_management_data;
+	const struct di_edid_cvt_timing_code *const *cvt_timings;
 	size_t i;
 
 	tag = di_edid_display_descriptor_get_tag(desc);
@@ -588,6 +695,13 @@ print_display_desc(const struct di_edid *edid,
 		printf("      Blue a2 : %.2f\n", color_management_data->blue_a2);
 
 		uncommon_features.color_management_data = true;
+		break;
+	case DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES:
+		cvt_timings = di_edid_display_descriptor_get_cvt_timing_codes(desc);
+
+		printf("\n");
+		for (i = 0; cvt_timings[i] != NULL; i++)
+			print_cvt_timing_code(cvt_timings[i]);
 		break;
 	default:
 		printf("\n");

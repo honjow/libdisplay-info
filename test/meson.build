@@ -27,6 +27,7 @@ test_cases = [
 	'samsung-s27a950d-dp',
 	'sun-gh19ps-dvi',
 	'viewsonic-vp2768-dp',
+	'cvt',
 ]
 
 test_env = [

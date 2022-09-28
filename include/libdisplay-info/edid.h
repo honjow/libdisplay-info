@@ -711,6 +711,54 @@ const struct di_edid_color_management_data *
 di_edid_display_descriptor_get_color_management_data(const struct di_edid_display_descriptor *desc);
 
 /**
+ * Aspect ratio for an EDID CVT Timing Code.
+ */
+enum di_edid_cvt_timing_code_aspect_ratio {
+	DI_EDID_CVT_TIMING_CODE_4_3 = 0, /* 4:3 */
+	DI_EDID_CVT_TIMING_CODE_16_9 = 1, /* 16:9 */
+	DI_EDID_CVT_TIMING_CODE_16_10 = 2, /* 16:10 */
+	DI_EDID_CVT_TIMING_CODE_15_9 = 3, /* 15:9 */
+};
+
+/**
+ * Preferred Vertical Rate for an EDID CVT Timing Code.
+ */
+enum di_edid_cvt_timing_code_preferred_vrate {
+	DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_50HZ = 0, /* 50 Hz */
+	DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_60HZ = 1, /* 60 Hz */
+	DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_75HZ = 2, /* 75 Hz */
+	DI_EDID_CVT_TIMING_CODE_PREFERRED_VRATE_85HZ = 3, /* 85 Hz */
+};
+
+/**
+ * EDID CVT Timing Code, defined in section 3.10.3.8
+ *
+ * For more information see VESA Coordinated Video Timings (CVT) Standard.
+ */
+struct di_edid_cvt_timing_code {
+	int32_t addressable_lines_per_field;
+	enum di_edid_cvt_timing_code_aspect_ratio aspect_ratio;
+	bool supports_50hz_sb;
+	bool supports_60hz_sb;
+	bool supports_75hz_sb;
+	bool supports_85hz_sb;
+	bool supports_60hz_rb;
+	enum di_edid_cvt_timing_code_preferred_vrate preferred_vertical_rate;
+};
+
+/**
+ * Get a list of CVT timing codes from an EDID display descriptor.
+ * The highest priority code comes first, the lowest priority code last.
+ *
+ * The returned array is NULL-terminated.
+ *
+ * Returns NULL if the display descriptor tag isn't
+ * DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES.
+ */
+const struct di_edid_cvt_timing_code *const *
+di_edid_display_descriptor_get_cvt_timing_codes(const struct di_edid_display_descriptor *desc);
+
+/**
  * Get a list of EDID extensions.
  *
  * The returned array is NULL-terminated.

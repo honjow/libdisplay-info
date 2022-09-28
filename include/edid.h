@@ -46,6 +46,11 @@
  * defined in section 3.10.3.9.
  */
 #define EDID_MAX_DESCRIPTOR_ESTABLISHED_TIMING_III_COUNT 44
+/**
+ * The maximum number of CVT timing codes in an EDID display descriptor,
+ * defined in section 3.10.3.8.
+ */
+#define EDID_MAX_DESCRIPTOR_CVT_TIMING_CODES_COUNT 4
 
 struct di_edid_detailed_timing_def_priv {
 	struct di_edid_detailed_timing_def base;
@@ -115,6 +120,9 @@ struct di_edid_display_descriptor {
 	size_t established_timings_iii_len;
 	/* Used for DCM_DATA */
 	struct di_edid_color_management_data dcm_data;
+	/* Used for DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES, NULL-terminated */
+	struct di_edid_cvt_timing_code *cvt_timing_codes[EDID_MAX_DESCRIPTOR_CVT_TIMING_CODES_COUNT + 1];
+	size_t cvt_timing_codes_len;
 };
 
 struct di_edid_ext {
