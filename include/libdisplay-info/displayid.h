@@ -218,6 +218,86 @@ const struct di_displayid_type_i_timing *const *
 di_displayid_data_block_get_type_i_timings(const struct di_displayid_data_block *data_block);
 
 /**
+ * Behavior when more than 1 tile and less than total number of tiles are driven
+ * by the source.
+ */
+enum di_displayid_tiled_topo_missing_recv_behavior {
+	/* Undefined */
+	DI_DISPLAYID_TILED_TOPO_MISSING_RECV_UNDEF = 0,
+	/* The image is displayed on the tile only */
+	DI_DISPLAYID_TILED_TOPO_MISSING_RECV_TILE_ONLY = 1,
+};
+
+/**
+ * Behavior of this tile when it is the only tile receiving an image from the
+ * source.
+ */
+enum di_displayid_tiled_topo_single_recv_behavior {
+	/* Undefined */
+	DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_UNDEF = 0,
+	/* Image is displayed on the tile only */
+	DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_TILE_ONLY = 1,
+	/* Image is scaled to fit the entire tiled display */
+	DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_SCALED = 2,
+	/* Image is cloned to all other tiles of the entire tiled display */
+	DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_CLONED = 3,
+};
+
+/**
+ * Tiled display capabilities.
+ */
+struct di_displayid_tiled_topo_caps {
+	/* The tiled display is within a single physical display enclosure */
+	bool single_enclosure;
+
+	/* Behavior when subsets of the tiles of the entire tiled display are
+	 * receiving images from source */
+	enum di_displayid_tiled_topo_missing_recv_behavior missing_recv_behavior;
+	enum di_displayid_tiled_topo_single_recv_behavior single_recv_behavior;
+};
+
+/**
+ * Tiled display bezel information.
+ *
+ * The lengths are measured in pixels, accurate to the tenths place.
+ */
+struct di_displayid_tiled_topo_bezel {
+	float top_px, bottom_px, right_px, left_px;
+};
+
+/**
+ * Tiled display topology, defined in section 4.14.
+ */
+struct di_displayid_tiled_topo {
+	/* Capabilities */
+	const struct di_displayid_tiled_topo_caps *caps;
+
+	/* Total number of horizontal/vertical tiles */
+	int32_t total_horiz_tiles, total_vert_tiles;
+	/* Horizontal/vertical tile location */
+	int32_t horiz_tile_location, vert_tile_location;
+	/* Horizontal/vertical size in pixels */
+	int32_t horiz_tile_pixels, vert_tile_lines;
+
+	/* Bezel information, NULL if unset */
+	const struct di_displayid_tiled_topo_bezel *bezel;
+
+	/* Vendor PnP ID, product code and serial number */
+	char vendor_id[3];
+	uint16_t product_code;
+	uint32_t serial_number;
+};
+
+/**
+ * Get tiled display topology from a DisplayID data block.
+ *
+ * Returns NULL if the data block tag isn't
+ * DI_DISPLAYID_DATA_BLOCK_TILED_DISPLAY_TOPO.
+ */
+const struct di_displayid_tiled_topo *
+di_displayid_data_block_get_tiled_topo(const struct di_displayid_data_block *data_block);
+
+/**
  * Get DisplayID data blocks.
  *
  * The returned array is NULL-terminated.

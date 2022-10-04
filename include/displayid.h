@@ -43,6 +43,12 @@ struct di_displayid_display_params_priv {
 	struct di_displayid_display_params_features features;
 };
 
+struct di_displayid_tiled_topo_priv {
+	struct di_displayid_tiled_topo base;
+	struct di_displayid_tiled_topo_caps caps;
+	struct di_displayid_tiled_topo_bezel bezel;
+};
+
 struct di_displayid_data_block {
 	enum di_displayid_data_block_tag tag;
 
@@ -52,6 +58,9 @@ struct di_displayid_data_block {
 
 	/* Used for DISPLAY_PARAMS */
 	struct di_displayid_display_params_priv display_params;
+
+	/* Used for TILED_DISPLAY_TOPO */
+	struct di_displayid_tiled_topo_priv tiled_topo;
 };
 
 bool

@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "bits.h"
 #include "displayid.h"
@@ -22,6 +23,19 @@
  * The size of a DisplayID type I timing.
  */
 #define DISPLAYID_TYPE_I_TIMING_SIZE 20
+
+static bool
+is_all_zeroes(const uint8_t *data, size_t size)
+{
+	size_t i;
+
+	for (i = 0; i < size; i++) {
+		if (data[i] != 0)
+			return false;
+	}
+
+	return true;
+}
 
 static void
 add_failure(struct di_displayid *displayid, const char fmt[], ...)
@@ -193,6 +207,103 @@ parse_type_i_timing_block(struct di_displayid *displayid,
 	return true;
 }
 
+static bool
+parse_tiled_topo_block(struct di_displayid *displayid,
+		       struct di_displayid_tiled_topo_priv *priv,
+		       const uint8_t *data, size_t size)
+{
+	struct di_displayid_tiled_topo *tiled_topo = &priv->base;
+	uint8_t raw_caps, raw_missing_recv_behavior, raw_single_recv_behavior;
+	bool has_bezel;
+	float px_mult;
+
+	check_data_block_revision(displayid, data,
+				  "Tiled Display Topology Data Block",
+				  0);
+
+	if (size - DISPLAYID_DATA_BLOCK_HEADER_SIZE != 22) {
+		add_failure(displayid,
+			    "Tiled Display Topology Data Block: DisplayID payload length is different than expected (%zu != %zu)",
+			    size - DISPLAYID_DATA_BLOCK_HEADER_SIZE, 22);
+		return false;
+	}
+
+	raw_caps = data[0x03];
+	tiled_topo->caps = &priv->caps;
+	priv->caps.single_enclosure = has_bit(raw_caps, 7);
+	has_bezel = has_bit(raw_caps, 6);
+	raw_missing_recv_behavior = get_bit_range(raw_caps, 4, 3);
+	raw_single_recv_behavior = get_bit_range(raw_caps, 2, 0);
+	if (has_bit(raw_caps, 5)) {
+		add_failure(displayid, "Tiled Display Topology Data Block: Capability bit 5 is reserved.");
+	}
+
+	switch (raw_missing_recv_behavior) {
+	case DI_DISPLAYID_TILED_TOPO_MISSING_RECV_UNDEF:
+	case DI_DISPLAYID_TILED_TOPO_MISSING_RECV_TILE_ONLY:
+		priv->caps.missing_recv_behavior = raw_missing_recv_behavior;
+		break;
+	default:
+		add_failure(displayid,
+			    "Tiled Display Topology Data Block: Behavior if more than one tile and fewer than total number of tiles set to reserved value 0x%02x.",
+			    raw_missing_recv_behavior);
+		break;
+	}
+
+	switch (raw_single_recv_behavior) {
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_UNDEF:
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_TILE_ONLY:
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_SCALED:
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_CLONED:
+		priv->caps.single_recv_behavior = raw_single_recv_behavior;
+		break;
+	default:
+		add_failure(displayid,
+			    "Tiled Display Topology Data Block: Behavior if it is the only tile set to reserved value 0x%02x.",
+			    raw_single_recv_behavior);
+		break;
+	}
+
+	tiled_topo->total_horiz_tiles = 1 + (get_bit_range(data[0x04], 7, 4) |
+					     (get_bit_range(data[0x06], 7, 6) << 4));
+	tiled_topo->total_vert_tiles = 1 + (get_bit_range(data[0x04], 3, 0) |
+					    (get_bit_range(data[0x06], 5, 4) << 4));
+	tiled_topo->horiz_tile_location = 1 + (get_bit_range(data[0x05], 7, 4) |
+					       (get_bit_range(data[0x06], 3, 2) << 4));
+	tiled_topo->vert_tile_location = 1 + (get_bit_range(data[0x05], 3, 0) |
+					      (get_bit_range(data[0x06], 1, 0) << 4));
+
+	tiled_topo->horiz_tile_pixels = 1 + (data[0x07] | (data[0x08] << 8));
+	tiled_topo->vert_tile_lines = 1 + (data[0x09] | (data[0x0A] << 8));
+
+	px_mult = data[0x0B];
+	if (has_bezel && px_mult == 0) {
+		add_failure(displayid, "Tiled Display Topology Data Block: Bezel information bit is set, but the pixel multiplier is zero.");
+		has_bezel = false;
+	}
+	if (has_bezel) {
+		tiled_topo->bezel = &priv->bezel;
+		priv->bezel.top_px = px_mult * data[0x0C] * 0.1f;
+		priv->bezel.bottom_px = px_mult * data[0x0D] * 0.1f;
+		priv->bezel.right_px = px_mult * data[0x0E] * 0.1f;
+		priv->bezel.left_px = px_mult * data[0x0F] * 0.1f;
+	} else {
+		if (px_mult != 0)
+			add_failure(displayid, "Tiled Display Topology Data Block: No bezel information, but the pixel multiplier is non-zero.");
+		if (!is_all_zeroes(&data[0x0C], 4))
+			add_failure(displayid, "Tiled Display Topology Data Block: No bezel information, but the bezel size is non-zero.");
+	}
+
+	memcpy(tiled_topo->vendor_id, &data[0x10], 3);
+	tiled_topo->product_code = data[0x13] | (uint16_t)(data[0x14] << 8);
+	tiled_topo->serial_number = data[0x15] |
+				    (uint32_t)(data[0x16] << 8) |
+				    (uint32_t)(data[0x17] << 16) |
+				    (uint32_t)(data[0x18] << 24);
+
+	return true;
+}
+
 static ssize_t
 parse_data_block(struct di_displayid *displayid, const uint8_t *data,
 		 size_t size)
@@ -227,6 +338,11 @@ parse_data_block(struct di_displayid *displayid, const uint8_t *data,
 		if (!parse_type_i_timing_block(displayid, data_block, data, data_block_size))
 			goto error;
 		break;
+	case DI_DISPLAYID_DATA_BLOCK_TILED_DISPLAY_TOPO:
+		if (!parse_tiled_topo_block(displayid, &data_block->tiled_topo, data,
+					    data_block_size))
+			goto skip;
+		break;
 	case DI_DISPLAYID_DATA_BLOCK_PRODUCT_ID:
 	case DI_DISPLAYID_DATA_BLOCK_COLOR_CHARACT:
 	case DI_DISPLAYID_DATA_BLOCK_TYPE_II_TIMING:
@@ -243,7 +359,6 @@ parse_data_block(struct di_displayid *displayid, const uint8_t *data,
 	case DI_DISPLAYID_DATA_BLOCK_DISPLAY_INTERFACE:
 	case DI_DISPLAYID_DATA_BLOCK_STEREO_DISPLAY_INTERFACE:
 	case DI_DISPLAYID_DATA_BLOCK_TYPE_V_TIMING:
-	case DI_DISPLAYID_DATA_BLOCK_TILED_DISPLAY_TOPO:
 	case DI_DISPLAYID_DATA_BLOCK_TYPE_VI_TIMING:
 		break; /* Supported */
 	case 0x7F:
@@ -268,19 +383,6 @@ skip:
 error:
 	free(data_block);
 	return -1;
-}
-
-static bool
-is_all_zeroes(const uint8_t *data, size_t size)
-{
-	size_t i;
-
-	for (i = 0; i < size; i++) {
-		if (data[i] != 0)
-			return false;
-	}
-
-	return true;
 }
 
 static bool
@@ -445,6 +547,15 @@ di_displayid_data_block_get_type_i_timings(const struct di_displayid_data_block 
 		return NULL;
 	}
 	return (const struct di_displayid_type_i_timing *const *) data_block->type_i_timings;
+}
+
+const struct di_displayid_tiled_topo *
+di_displayid_data_block_get_tiled_topo(const struct di_displayid_data_block *data_block)
+{
+	if (data_block->tag != DI_DISPLAYID_DATA_BLOCK_TILED_DISPLAY_TOPO) {
+		return NULL;
+	}
+	return &data_block->tiled_topo.base;
 }
 
 const struct di_displayid_data_block *const *

@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -170,6 +171,76 @@ print_displayid_type_i_timing_block(const struct di_displayid_data_block *data_b
 }
 
 static const char *
+displayid_tiled_topo_missing_recv_behavior_name(enum di_displayid_tiled_topo_missing_recv_behavior behavior)
+{
+	switch (behavior) {
+	case DI_DISPLAYID_TILED_TOPO_MISSING_RECV_UNDEF:
+		return "Undefined";
+	case DI_DISPLAYID_TILED_TOPO_MISSING_RECV_TILE_ONLY:
+		return "Image is displayed at the Tile Location";
+	}
+	abort(); /* unreachable */
+}
+
+static const char *
+displayid_tiled_topo_single_recv_behavior_name(enum di_displayid_tiled_topo_single_recv_behavior behavior)
+{
+	switch (behavior) {
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_UNDEF:
+		return "Undefined";
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_TILE_ONLY:
+		return "Image is displayed at the Tile Location";
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_SCALED:
+		return "Image is scaled to fit the entire tiled display";
+	case DI_DISPLAYID_TILED_TOPO_SINGLE_RECV_CLONED:
+		return "Image is cloned to all other tiles";
+	}
+	abort(); /* unreachable */
+}
+
+static void
+print_displayid_tiled_topo(const struct di_displayid_tiled_topo *tiled_topo)
+{
+	printf("    Capabilities:\n");
+	printf("      Behavior if it is the only tile: %s\n",
+	       displayid_tiled_topo_single_recv_behavior_name(tiled_topo->caps->single_recv_behavior));
+	printf("      Behavior if more than one tile and fewer than total number of tiles: %s\n",
+	       displayid_tiled_topo_missing_recv_behavior_name(tiled_topo->caps->missing_recv_behavior));
+
+	if (tiled_topo->caps->single_enclosure)
+		printf("    Tiled display consists of a single physical display enclosure\n");
+	else
+		printf("    Tiled display consists of multiple physical display enclosures\n");
+
+
+	printf("    Num horizontal tiles: %d Num vertical tiles: %d\n",
+	       tiled_topo->total_horiz_tiles, tiled_topo->total_vert_tiles);
+	printf("    Tile location: %d, %d\n",
+	       tiled_topo->horiz_tile_location - 1,
+	       tiled_topo->vert_tile_location - 1);
+	printf("    Tile resolution: %dx%d\n",
+	       tiled_topo->horiz_tile_pixels, tiled_topo->vert_tile_lines);
+
+	if (tiled_topo->bezel != NULL) {
+		printf("    Top bevel size: %.1f pixels\n",
+		       tiled_topo->bezel->top_px);
+		printf("    Bottom bevel size: %.1f pixels\n",
+		       tiled_topo->bezel->bottom_px);
+		printf("    Right bevel size: %.1f pixels\n",
+		       tiled_topo->bezel->right_px);
+		printf("    Left bevel size: %.1f pixels\n",
+		       tiled_topo->bezel->left_px);
+	}
+
+	printf("    Tiled Display Manufacturer/Vendor ID: %.3s\n",
+	       tiled_topo->vendor_id);
+	printf("    Tiled Display Product ID Code: %" PRIu16 "\n",
+	       tiled_topo->product_code);
+	printf("    Tiled Display Serial Number: %" PRIu32 "\n",
+	       tiled_topo->serial_number);
+}
+
+static const char *
 displayid_product_type_name(enum di_displayid_product_type type)
 {
 	switch (type) {
@@ -247,6 +318,7 @@ print_displayid(const struct di_displayid *displayid)
 	enum di_displayid_data_block_tag tag;
 	size_t i;
 	const struct di_displayid_display_params *display_params;
+	const struct di_displayid_tiled_topo *tiled_topo;
 
 	printf("  Version: %d.%d\n", di_displayid_get_version(displayid),
 	       di_displayid_get_revision(displayid));
@@ -268,6 +340,10 @@ print_displayid(const struct di_displayid *displayid)
 			break;
 		case DI_DISPLAYID_DATA_BLOCK_TYPE_I_TIMING:
 			print_displayid_type_i_timing_block(data_block);
+			break;
+		case DI_DISPLAYID_DATA_BLOCK_TILED_DISPLAY_TOPO:
+			tiled_topo = di_displayid_data_block_get_tiled_topo(data_block);
+			print_displayid_tiled_topo(tiled_topo);
 			break;
 		default:
 			break; /* Ignore */
