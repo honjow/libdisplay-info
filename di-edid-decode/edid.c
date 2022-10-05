@@ -85,6 +85,8 @@ print_standard_timing(const struct di_edid_standard_timing *t)
 	printf(" %10.6f Hz", refresh);
 	printf("  %s ", standard_timing_aspect_ratio_name(t->aspect_ratio));
 	printf(" %8.3f kHz %13.6f MHz", horiz_freq_hz / 1000, pixel_clock_mhz);
+	if (dmt != NULL && dmt->reduced_blanking)
+		printf(" (RB)");
 	printf("\n");
 }
 
@@ -434,6 +436,8 @@ print_dmt_timing(const struct di_dmt_timing *t)
 	printf(" %10.6f Hz", refresh);
 	printf(" %3u:%-3u", horiz_ratio, vert_ratio);
 	printf(" %8.3f kHz %13.6f MHz", horiz_freq_hz / 1000, pixel_clock_mhz);
+	if (t->reduced_blanking)
+		printf(" (RB)");
 	printf("\n");
 }
 
