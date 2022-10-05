@@ -68,6 +68,7 @@ def parse_timing(page):
     size, rest = res.split(" at ", 1)
     horiz_video, vert_video = size.split("x", 1)
     refresh_rate_hz, rest = rest.split(" Hz ", 1)
+    reduced_blanking = "reduced blanking" in rest.lower()
 
     horiz_video = int(horiz_video.strip())
     vert_video = int(vert_video.strip())
@@ -111,6 +112,7 @@ def parse_timing(page):
         "vert_front_porch": vert_front_porch,
         "vert_sync_pulse": vert_sync_pulse,
         "vert_border": vert_border,
+        "reduced_blanking": "true" if reduced_blanking else "false",
     }
 
 if len(sys.argv) != 2:

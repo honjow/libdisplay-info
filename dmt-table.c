@@ -19,6 +19,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 32,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x02,
@@ -36,6 +37,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x03,
@@ -53,6 +55,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x04,
@@ -70,6 +73,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 2,
 		.vert_sync_pulse = 2,
 		.vert_border = 8,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x05,
@@ -87,6 +91,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 8,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x06,
@@ -104,6 +109,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x07,
@@ -121,6 +127,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x08,
@@ -138,6 +145,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 2,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x09,
@@ -155,6 +163,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x0A,
@@ -172,6 +181,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 37,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x0B,
@@ -189,6 +199,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x0C,
@@ -206,6 +217,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x0D,
@@ -223,6 +235,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x0E,
@@ -240,6 +253,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 6,
 		.vert_sync_pulse = 8,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x0F,
@@ -257,6 +271,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 0,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x10,
@@ -274,6 +289,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x11,
@@ -291,6 +307,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x12,
@@ -308,6 +325,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x13,
@@ -325,6 +343,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x14,
@@ -342,6 +361,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x15,
@@ -359,6 +379,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x55,
@@ -376,6 +397,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 5,
 		.vert_sync_pulse = 5,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x16,
@@ -393,6 +415,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 7,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x17,
@@ -410,6 +433,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 7,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x18,
@@ -427,6 +451,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 7,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x19,
@@ -444,6 +469,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 7,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x1A,
@@ -461,6 +487,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 7,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x1B,
@@ -478,6 +505,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x1C,
@@ -495,6 +523,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x1D,
@@ -512,6 +541,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x1E,
@@ -529,6 +559,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x1F,
@@ -546,6 +577,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x20,
@@ -563,6 +595,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x21,
@@ -580,6 +613,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x22,
@@ -597,6 +631,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x23,
@@ -614,6 +649,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x24,
@@ -631,6 +667,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x25,
@@ -648,6 +685,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x26,
@@ -665,6 +703,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 7,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x27,
@@ -682,6 +721,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x28,
@@ -699,6 +739,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 5,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x51,
@@ -716,6 +757,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x56,
@@ -733,6 +775,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x29,
@@ -750,6 +793,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x2A,
@@ -767,6 +811,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x2B,
@@ -784,6 +829,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x2C,
@@ -801,6 +847,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x2D,
@@ -818,6 +865,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x2E,
@@ -835,6 +883,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x2F,
@@ -852,6 +901,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x30,
@@ -869,6 +919,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x31,
@@ -886,6 +937,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x32,
@@ -903,6 +955,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x53,
@@ -920,6 +973,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x33,
@@ -937,6 +991,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x34,
@@ -954,6 +1009,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x35,
@@ -971,6 +1027,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x36,
@@ -988,6 +1045,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x37,
@@ -1005,6 +1063,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x38,
@@ -1022,6 +1081,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x39,
@@ -1039,6 +1099,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x3A,
@@ -1056,6 +1117,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x3B,
@@ -1073,6 +1135,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x3C,
@@ -1090,6 +1153,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x3D,
@@ -1107,6 +1171,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x3E,
@@ -1124,6 +1189,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x3F,
@@ -1141,6 +1207,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x40,
@@ -1158,6 +1225,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x41,
@@ -1175,6 +1243,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x42,
@@ -1192,6 +1261,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x43,
@@ -1209,6 +1279,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x52,
@@ -1226,6 +1297,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 4,
 		.vert_sync_pulse = 5,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x44,
@@ -1243,6 +1315,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x45,
@@ -1260,6 +1333,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x46,
@@ -1277,6 +1351,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x47,
@@ -1294,6 +1369,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x48,
@@ -1311,6 +1387,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x49,
@@ -1328,6 +1405,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x4A,
@@ -1345,6 +1423,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x4B,
@@ -1362,6 +1441,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 4,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x54,
@@ -1379,6 +1459,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 1,
 		.vert_sync_pulse = 3,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x4C,
@@ -1396,6 +1477,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 	{
 		.dmt_id = 0x4D,
@@ -1413,6 +1495,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x4E,
@@ -1430,6 +1513,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x4F,
@@ -1447,6 +1531,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = false,
 	},
 	{
 		.dmt_id = 0x50,
@@ -1464,6 +1549,7 @@ const struct di_dmt_timing _di_dmt_timings[] = {
 		.vert_front_porch = 3,
 		.vert_sync_pulse = 6,
 		.vert_border = 0,
+		.reduced_blanking = true,
 	},
 };
 

@@ -7,6 +7,7 @@
  * The library implements VESA DMT version 1.0 revision 13.
  */
 
+#include <stdbool.h>
 #include <stdint.h>
 
 /**
@@ -33,6 +34,8 @@ struct di_dmt_timing {
 	int32_t horiz_sync_pulse, vert_sync_pulse;
 	/* Horizontal/Vertical Border in pixels/lines */
 	int32_t horiz_border, vert_border;
+	/* Whether the timing has reduced blanking */
+	bool reduced_blanking;
 };
 
 #endif
