@@ -413,6 +413,31 @@ print_color_point(const struct di_edid_color_point *c)
 }
 
 static void
+print_dmt_timing(const struct di_dmt_timing *t)
+{
+	int hbl, vbl, horiz_total, vert_total, horiz_ratio, vert_ratio;
+	double refresh, horiz_freq_hz, pixel_clock_mhz;
+
+	compute_aspect_ratio(t->horiz_video, t->vert_video,
+			     &horiz_ratio, &vert_ratio);
+
+	hbl = t->horiz_blank - 2 * t->horiz_border;
+	vbl = t->vert_blank - 2 * t->vert_border;
+	horiz_total = t->horiz_video + hbl;
+	vert_total = t->vert_video + vbl;
+	refresh = (double) t->pixel_clock_hz / (horiz_total * vert_total);
+	horiz_freq_hz = (double) t->pixel_clock_hz / horiz_total;
+	pixel_clock_mhz = (double) t->pixel_clock_hz / (1000 * 1000);
+
+	printf("      DMT 0x%02x:", t->dmt_id);
+	printf(" %5dx%-5d", t->horiz_video, t->vert_video);
+	printf(" %10.6f Hz", refresh);
+	printf(" %3u:%-3u", horiz_ratio, vert_ratio);
+	printf(" %8.3f kHz %13.6f MHz", horiz_freq_hz / 1000, pixel_clock_mhz);
+	printf("\n");
+}
+
+static void
 print_display_desc(const struct di_edid *edid,
 		   const struct di_edid_display_descriptor *desc)
 {
@@ -544,8 +569,7 @@ print_display_desc(const struct di_edid *edid,
 
 		printf("\n");
 		for (i = 0; established_timings_iii[i] != NULL; i++) {
-			printf("      DMT 0x%02x\n",
-			       established_timings_iii[i]->dmt_id);
+			print_dmt_timing(established_timings_iii[i]);
 		}
 		break;
 	case DI_EDID_DISPLAY_DESCRIPTOR_DCM_DATA:
