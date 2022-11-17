@@ -28,3 +28,9 @@ memory_stream_close(struct memory_stream *m)
 
 	return str;
 }
+
+void
+memory_stream_cleanup(struct memory_stream *m)
+{
+	free(memory_stream_close(m));
+}
