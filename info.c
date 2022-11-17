@@ -34,9 +34,6 @@ di_info_parse_edid(const void *data, size_t size)
 
 	info->edid = edid;
 
-	if (fflush(failure_msg.fp) != 0)
-		goto err_info;
-
 	failure_msg_str = memory_stream_close(&failure_msg);
 	if (failure_msg_str && failure_msg_str[0] != '\0')
 		info->failure_msg = failure_msg_str;
@@ -45,8 +42,6 @@ di_info_parse_edid(const void *data, size_t size)
 
 	return info;
 
-err_info:
-	free(info);
 err_edid:
 	_di_edid_destroy(edid);
 err_failure_msg_file:
@@ -186,6 +181,6 @@ di_info_get_serial(const struct di_info *info)
 		return memory_stream_close(&m);
 	}
 
-	free(memory_stream_close(&m));
+	memory_stream_cleanup(&m);
 	return NULL;
 }
