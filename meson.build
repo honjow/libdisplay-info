@@ -82,6 +82,8 @@ di_dep = declare_dependency(
 	include_directories: include_directories('include'),
 )
 
+meson.override_dependency('libdisplay-info', di_dep)
+
 di_edid_decode = executable(
 	'di-edid-decode',
 	[
