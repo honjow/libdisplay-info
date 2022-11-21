@@ -84,16 +84,5 @@ di_dep = declare_dependency(
 
 meson.override_dependency('libdisplay-info', di_dep)
 
-di_edid_decode = executable(
-	'di-edid-decode',
-	[
-		'di-edid-decode/cta.c',
-		'di-edid-decode/displayid.c',
-		'di-edid-decode/edid.c',
-		'di-edid-decode/main.c',
-	],
-	dependencies: [di_dep, math],
-	install: true,
-)
-
+subdir('di-edid-decode')
 subdir('test')
