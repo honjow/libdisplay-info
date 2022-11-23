@@ -3,7 +3,7 @@
 REF_EDID_DECODE="${REF_EDID_DECODE:-edid-decode}"
 
 BUILDDIR="${BUILDDIR:-./build}"
-DI_EDID_DECODE="${DI_EDID_DECODE:-${BUILDDIR}/di-edid-decode}"
+DI_EDID_DECODE="${DI_EDID_DECODE:-${BUILDDIR}/di-edid-decode/di-edid-decode}"
 DI_EDID_PRINT="${DI_EDID_PRINT:-${BUILDDIR}/test/di-edid-print}"
 
 workdir="$(mktemp -d)"
