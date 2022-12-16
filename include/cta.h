@@ -105,8 +105,10 @@ struct di_cta_data_block {
 
 	/* Used for DI_CTA_DATA_BLOCK_VIDEO */
 	struct di_cta_video_block video;
-	/* used for DI_CTA_DATA_BLOCK_AUDIO */
+	/* Used for DI_CTA_DATA_BLOCK_AUDIO */
 	struct di_cta_audio_block audio;
+	/* Used for DI_CTA_DATA_BLOCK_SPEAKER_ALLOC */
+	struct di_cta_speaker_alloc_block speaker_alloc;
 	/* Used for DI_CTA_DATA_BLOCK_VIDEO_CAP */
 	struct di_cta_video_cap_block video_cap;
 	/* Used for DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE */

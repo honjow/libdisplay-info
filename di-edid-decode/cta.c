@@ -658,6 +658,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_data_block *data_block;
 	enum di_cta_data_block_tag data_block_tag;
 	const struct di_cta_svd *const *svds;
+	const struct di_cta_speaker_alloc_block *speaker_alloc;
 	const struct di_cta_video_cap_block *video_cap;
 	const struct di_cta_vesa_dddb *vesa_dddb;
 	const struct di_cta_colorimetry_block *colorimetry;
@@ -696,6 +697,45 @@ print_cta(const struct di_edid_cta *cta)
 		case DI_CTA_DATA_BLOCK_VIDEO:
 			svds = di_cta_data_block_get_svds(data_block);
 			printf_cta_svds(svds);
+			break;
+		case DI_CTA_DATA_BLOCK_SPEAKER_ALLOC:
+			speaker_alloc = di_cta_data_block_get_speaker_alloc(data_block);
+			if (speaker_alloc->flw_frw)
+				printf("    FLw/FRw - Front Left/Right Wide\n");
+			if (speaker_alloc->flc_frc)
+				printf("    FLc/FRc - Front Left/Right of Center\n");
+			if (speaker_alloc->bc)
+				printf("    BC - Back Center\n");
+			if (speaker_alloc->bl_br)
+				printf("    BL/BR - Back Left/Right\n");
+			if (speaker_alloc->fc)
+				printf("    FC - Front Center\n");
+			if (speaker_alloc->lfe1)
+				printf("    LFE1 - Low Frequency Effects 1\n");
+			if (speaker_alloc->fl_fr)
+				printf("    FL/FR - Front Left/Right\n");
+			if (speaker_alloc->tpsil_tpsir)
+				printf("    TpSiL/TpSiR - Top Side Left/Right\n");
+			if (speaker_alloc->sil_sir)
+				printf("    SiL/SiR - Side Left/Right\n");
+			if (speaker_alloc->tpbc)
+				printf("    TpBC - Top Back Center\n");
+			if (speaker_alloc->lfe2)
+				printf("    LFE2 - Low Frequency Effects 2\n");
+			if (speaker_alloc->ls_rs)
+				printf("    LS/RS - Left/Right Surround\n");
+			if (speaker_alloc->tpfc)
+				printf("    TpFC - Top Front Center\n");
+			if (speaker_alloc->tpc)
+				printf("    TpC - Top Center\n");
+			if (speaker_alloc->tpfl_tpfr)
+				printf("    TpFL/TpFR - Top Front Left/Right\n");
+			if (speaker_alloc->btfl_btfr)
+				printf("    BtFL/BtFR - Bottom Front Left/Right\n");
+			if (speaker_alloc->btfc)
+				printf("    BtFC - Bottom Front Center\n");
+			if (speaker_alloc->tpbl_tpbr)
+				printf("    TpBL/TpBR - Top Back Left/Right\n");
 			break;
 		case DI_CTA_DATA_BLOCK_VIDEO_CAP:
 			video_cap = di_cta_data_block_get_video_cap(data_block);

@@ -481,6 +481,55 @@ parse_audio_block(struct di_edid_cta *cta, struct di_cta_audio_block *audio,
 }
 
 static bool
+parse_speaker_alloc_block(struct di_edid_cta *cta,
+			  struct di_cta_speaker_alloc_block *speaker_alloc,
+			  const uint8_t *data, size_t size)
+{
+	bool rlc_rrc;
+
+	if (size < 3) {
+		add_failure(cta,
+			    "Speaker Allocation Data Block: Empty Data Block with length %zu.",
+			    size);
+		return false;
+	}
+
+	speaker_alloc->flw_frw = has_bit(data[0], 7);
+	rlc_rrc = has_bit(data[0], 6);
+	speaker_alloc->flc_frc = has_bit(data[0], 5);
+	speaker_alloc->bc = has_bit(data[0], 4);
+	speaker_alloc->bl_br = has_bit(data[0], 3);
+	speaker_alloc->fc = has_bit(data[0], 2);
+	speaker_alloc->lfe1 = has_bit(data[0], 1);
+	speaker_alloc->fl_fr = has_bit(data[0], 0);
+	if (rlc_rrc) {
+		if (cta->revision >= 3)
+			add_failure(cta, "Speaker Allocation Data Block: Deprecated bit F16 must be 0.");
+		else
+			speaker_alloc->bl_br = true;
+	}
+
+	speaker_alloc->tpsil_tpsir = has_bit(data[1], 7);
+	speaker_alloc->sil_sir = has_bit(data[1], 6);
+	speaker_alloc->tpbc = has_bit(data[1], 5);
+	speaker_alloc->lfe2 = has_bit(data[1], 4);
+	speaker_alloc->ls_rs = has_bit(data[1], 3);
+	speaker_alloc->tpfc = has_bit(data[1], 2);
+	speaker_alloc->tpc = has_bit(data[1], 1);
+	speaker_alloc->tpfl_tpfr = has_bit(data[1], 0);
+
+	if (get_bit_range(data[2], 7, 4) != 0)
+		add_failure(cta, "Speaker Allocation Data Block: Bits F37, F36, F34 must be 0.");
+	if (cta->revision >= 3 && has_bit(data[2], 3))
+		add_failure(cta, "Speaker Allocation Data Block: Deprecated bit F33 must be 0.");
+	speaker_alloc->btfl_btfr = has_bit(data[2], 2);
+	speaker_alloc->btfc = has_bit(data[2], 1);
+	speaker_alloc->tpbl_tpbr = has_bit(data[2], 0);
+
+	return true;
+}
+
+static bool
 parse_video_cap_block(struct di_edid_cta *cta,
 		      struct di_cta_video_cap_block *video_cap,
 		      const uint8_t *data, size_t size)
@@ -1051,6 +1100,9 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 		goto skip;
 	case 4:
 		tag = DI_CTA_DATA_BLOCK_SPEAKER_ALLOC;
+		if (!parse_speaker_alloc_block(cta, &data_block->speaker_alloc,
+					       data, size))
+			goto error;
 		break;
 	case 5:
 		tag = DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC;
@@ -1314,6 +1366,15 @@ di_cta_data_block_get_sads(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return (const struct di_cta_sad *const *) block->audio.sads;
+}
+
+const struct di_cta_speaker_alloc_block *
+di_cta_data_block_get_speaker_alloc(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_SPEAKER_ALLOC) {
+		return NULL;
+	}
+	return &block->speaker_alloc;
 }
 
 const struct di_cta_colorimetry_block *

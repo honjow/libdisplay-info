@@ -53,7 +53,7 @@
    Audio Data Block:
      Linear PCM:
        Max channels: 2
-@@ -92,49 +92,23 @@
+@@ -92,13 +92,10 @@
        Supported sample rates (kHz): 48 44.1 32
        Supports Joint Object Coding
      AC-4:
@@ -67,10 +67,10 @@
      MAT (MLP):
        Max channels: 8
        Supported sample rates (kHz): 48
-       Supports Dolby TrueHD, object audio PCM and channel-based PCM
+@@ -106,35 +103,13 @@
        Hash calculation not required for object audio PCM or channel-based PCM
    Speaker Allocation Data Block:
--    FL/FR - Front Left/Right
+     FL/FR - Front Left/Right
 -  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
 -    Source physical address: 3.0.0.0
 -    DC_36bit
@@ -104,7 +104,7 @@
    Colorimetry Data Block:
      BT2020YCC
      BT2020RGB
-@@ -148,42 +122,12 @@
+@@ -148,42 +123,12 @@
    HDR Dynamic Metadata Data Block:
      HDR Dynamic Metadata Type 4
        Version: 4

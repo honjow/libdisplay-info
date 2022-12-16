@@ -300,6 +300,41 @@ const struct di_cta_sad *const *
 di_cta_data_block_get_sads(const struct di_cta_data_block *data_block);
 
 /**
+ * Speaker allocation data block (SADB), defined in section 7.5.3.
+ *
+ * This block indicates which speakers are present. See figure 6 for the meaning
+ * of the fields.
+ */
+struct di_cta_speaker_alloc_block {
+	bool flw_frw; /* FLw/FRw - Front Left/Right Wide */
+	bool flc_frc; /* FLc/FRc - Front Left/Right of Center */
+	bool bc; /* BC - Back Center */
+	bool bl_br; /* BL/BR - Back Left/Right */
+	bool fc; /* FC - Front Center */
+	bool lfe1; /* LFE1 - Low Frequency Effects 1 */
+	bool fl_fr; /* FL/FR - Front Left/Right */
+	bool tpsil_tpsir; /* TpSiL/TpSiR - Top Side Left/Right */
+	bool sil_sir; /* SiL/SiR - Side Left/Right */
+	bool tpbc; /* TpBC - Top Back Center */
+	bool lfe2; /* LFE2 - Low Frequency Effects 2 */
+	bool ls_rs; /* LS/RS - Left/Right Surround*/
+	bool tpfc; /* TpFC - Top Front Center */
+	bool tpc; /* TpC - Top Center*/
+	bool tpfl_tpfr; /* TpFL/TpFR - Top Front Left/Right */
+	bool btfl_btfr; /* BtFL/BtFR - Bottom Front Left/Right */
+	bool btfc; /* BtFC - Bottom Front Center */
+	bool tpbl_tpbr; /* TpBL/TpBR - Top Back Left/Right */
+};
+
+/**
+ * Get the speaker allocation from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_SPEAKER_ALLOC.
+ */
+const struct di_cta_speaker_alloc_block *
+di_cta_data_block_get_speaker_alloc(const struct di_cta_data_block *block);
+
+/**
  * Over- and underscan capability.
  */
 enum di_cta_video_cap_over_underscan {
