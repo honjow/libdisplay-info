@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <libdisplay-info/cvt.h>
 #include <libdisplay-info/displayid.h>
 
 #include "di-edid-decode.h"
@@ -253,6 +254,59 @@ print_displayid_tiled_topo(const struct di_displayid_tiled_topo *tiled_topo)
 	       tiled_topo->serial_number);
 }
 
+static void
+print_displayid_type_iii_timing(const struct di_displayid_type_iii_timing *t)
+{
+	struct di_cvt_options cvt_options = {0};
+	struct di_cvt_timing cvt_timing = {0};
+	int hratio, vratio;
+	double hbl, htotal;
+
+	switch (t->algo) {
+	case DI_DISPLAYID_TYPE_III_TIMING_CVT_STANDARD_BLANKING:
+		cvt_options.red_blank_ver = DI_CVT_REDUCED_BLANKING_NONE;
+		break;
+	case DI_DISPLAYID_TYPE_III_TIMING_CVT_REDUCED_BLANKING:
+		cvt_options.red_blank_ver = DI_CVT_REDUCED_BLANKING_V1;
+		break;
+	}
+
+	cvt_options.h_pixels = t->horiz_active;
+
+	get_displayid_timing_aspect_ratio(t->aspect_ratio, &hratio, &vratio);
+	if (t->aspect_ratio == DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED)
+		return;
+
+	cvt_options.v_lines = (cvt_options.h_pixels * vratio) / hratio;
+	cvt_options.ip_freq_rqd = t->refresh_rate_hz;
+	cvt_options.int_rqd = t->interlaced;
+
+	di_cvt_compute(&cvt_timing, &cvt_options);
+
+	hbl = cvt_timing.h_front_porch + cvt_timing.h_sync + cvt_timing.h_back_porch;
+	htotal = cvt_timing.total_active_pixels + hbl;
+
+	printf("    CVT: %5dx%-5d", (int)cvt_options.h_pixels, (int)cvt_options.v_lines);
+	printf(" %10.6f Hz", cvt_timing.act_frame_rate);
+	printf(" %3u:%-3u", hratio, vratio);
+	printf(" %8.3f kHz %13.6f MHz", cvt_timing.act_pixel_freq * 1000 / htotal,
+	       (double) cvt_timing.act_pixel_freq);
+	printf(" (aspect %d:%d%s)", hratio, vratio,
+	       t->preferred ? ", preferred" : "");
+	printf("\n");
+}
+
+static void
+print_displayid_type_iii_timing_block(const struct di_displayid_data_block *data_block)
+{
+	size_t i;
+	const struct di_displayid_type_iii_timing *const *timings;
+
+	timings = di_displayid_data_block_get_type_iii_timings(data_block);
+	for (i = 0; timings[i] != NULL; i++)
+		print_displayid_type_iii_timing(timings[i]);
+}
+
 static const char *
 displayid_product_type_name(enum di_displayid_product_type type)
 {
@@ -360,6 +414,9 @@ print_displayid(const struct di_displayid *displayid)
 			break;
 		case DI_DISPLAYID_DATA_BLOCK_TYPE_II_TIMING:
 			print_displayid_type_ii_timing_block(data_block);
+			break;
+		case DI_DISPLAYID_DATA_BLOCK_TYPE_III_TIMING:
+			print_displayid_type_iii_timing_block(data_block);
 			break;
 		default:
 			break; /* Ignore */

@@ -311,6 +311,41 @@ const struct di_displayid_tiled_topo *
 di_displayid_data_block_get_tiled_topo(const struct di_displayid_data_block *data_block);
 
 /**
+ * Formula/algorithm for type III timings.
+ */
+enum di_displayid_type_iii_timing_algo {
+	/* VESA CVT, standard blanking */
+	DI_DISPLAYID_TYPE_III_TIMING_CVT_STANDARD_BLANKING = 0,
+	/* VESA CVT, reduced blanking */
+	DI_DISPLAYID_TYPE_III_TIMING_CVT_REDUCED_BLANKING = 1,
+};
+
+/**
+ * Type III timing, defined in section 4.4.3.
+ */
+struct di_displayid_type_iii_timing {
+	bool preferred;
+	enum di_displayid_type_iii_timing_algo algo;
+	enum di_displayid_timing_aspect_ratio aspect_ratio;
+	/* Horizontal Active Image (in pixels) */
+	int32_t horiz_active;
+	bool interlaced;
+	/* Frame/Field Refresh Rate (in Hz) */
+	int32_t refresh_rate_hz;
+};
+
+/**
+ * Get type III timings from a DisplayID data block.
+ *
+ * The returned array is NULL-terminated.
+ *
+ * Returns NULL if the data block tag isn't
+ * DI_DISPLAYID_DATA_BLOCK_TYPE_III_TIMING.
+ */
+const struct di_displayid_type_iii_timing *const *
+di_displayid_data_block_get_type_iii_timings(const struct di_displayid_data_block *data_block);
+
+/**
  * Get DisplayID data blocks.
  *
  * The returned array is NULL-terminated.

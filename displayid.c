@@ -28,6 +28,10 @@
  * The size of a DisplayID type II timing.
  */
 #define DISPLAYID_TYPE_II_TIMING_SIZE 11
+/**
+ * The size of a DisplayID type III timing.
+ */
+#define DISPLAYID_TYPE_III_TIMING_SIZE 3
 
 static bool
 is_all_zeroes(const uint8_t *data, size_t size)
@@ -436,6 +440,82 @@ parse_tiled_topo_block(struct di_displayid *displayid,
 	return true;
 }
 
+static bool
+parse_type_iii_timing(struct di_displayid *displayid,
+		      struct di_displayid_data_block *data_block,
+		      const uint8_t data[static DISPLAYID_TYPE_III_TIMING_SIZE])
+{
+	struct di_displayid_type_iii_timing *t;
+	uint8_t algo, aspect_ratio;
+
+	t = calloc(1, sizeof(*t));
+	if (t == NULL)
+		return false;
+
+	t->preferred = has_bit(data[0], 7);
+
+	algo = get_bit_range(data[0], 6, 4);
+	switch (algo) {
+	case DI_DISPLAYID_TYPE_III_TIMING_CVT_STANDARD_BLANKING:
+	case DI_DISPLAYID_TYPE_III_TIMING_CVT_REDUCED_BLANKING:
+		t->algo = algo;
+		break;
+	default:
+		add_failure(displayid,
+			    "Video Timing Modes Type 3 - Short Timings Data Block: Reserved algorithm 0x%02x.",
+			    algo);
+		goto error_reserved;
+	}
+
+	aspect_ratio = get_bit_range(data[0], 3, 0);
+	if (timing_aspect_ratio_is_valid(aspect_ratio)) {
+		t->aspect_ratio = aspect_ratio;
+	} else {
+		add_failure(displayid,
+			    "Video Timing Modes Type 3 - Short Timings Data Block: Reserved aspect ratio 0x%02x.",
+			    aspect_ratio);
+		goto error_reserved;
+	}
+
+	t->horiz_active = ((int32_t)data[1] + 1) * 8;
+
+	t->interlaced = has_bit(data[2], 7);
+	t->refresh_rate_hz = (int32_t)get_bit_range(data[2], 6, 0) + 1;
+
+	assert(data_block->type_iii_timings_len < DISPLAYID_MAX_TYPE_III_TIMINGS);
+	data_block->type_iii_timings[data_block->type_iii_timings_len++] = t;
+	return true;
+
+error_reserved:
+	free(t);
+	return true;
+}
+
+static bool
+parse_type_iii_timing_block(struct di_displayid *displayid,
+			    struct di_displayid_data_block *data_block,
+			    const uint8_t *data, size_t size)
+{
+	size_t i;
+
+	check_data_block_revision(displayid, data,
+				  "Video Timing Modes Type 3 - Short Timings Data Block",
+				  1);
+
+	if ((size - DISPLAYID_DATA_BLOCK_HEADER_SIZE) % DISPLAYID_TYPE_III_TIMING_SIZE != 0)
+		add_failure(displayid,
+			    "Video Timing Modes Type 3 - Short Timings Data Block: payload size not divisible by element size.");
+
+	for (i = DISPLAYID_DATA_BLOCK_HEADER_SIZE;
+	     i + DISPLAYID_TYPE_III_TIMING_SIZE <= size;
+	     i += DISPLAYID_TYPE_III_TIMING_SIZE) {
+		if (!parse_type_iii_timing(displayid, data_block, &data[i]))
+			return false;
+	}
+
+	return true;
+}
+
 static ssize_t
 parse_data_block(struct di_displayid *displayid, const uint8_t *data,
 		 size_t size)
@@ -479,9 +559,12 @@ parse_data_block(struct di_displayid *displayid, const uint8_t *data,
 		if (!parse_type_ii_timing_block(displayid, data_block, data, data_block_size))
 			goto error;
 		break;
+	case DI_DISPLAYID_DATA_BLOCK_TYPE_III_TIMING:
+		if (!parse_type_iii_timing_block(displayid, data_block, data, data_block_size))
+			goto error;
+		break;
 	case DI_DISPLAYID_DATA_BLOCK_PRODUCT_ID:
 	case DI_DISPLAYID_DATA_BLOCK_COLOR_CHARACT:
-	case DI_DISPLAYID_DATA_BLOCK_TYPE_III_TIMING:
 	case DI_DISPLAYID_DATA_BLOCK_TYPE_IV_TIMING:
 	case DI_DISPLAYID_DATA_BLOCK_VESA_TIMING:
 	case DI_DISPLAYID_DATA_BLOCK_CEA_TIMING:
@@ -630,6 +713,10 @@ destroy_data_block(struct di_displayid_data_block *data_block)
 		for (i = 0; i < data_block->type_ii_timings_len; i++)
 			free(data_block->type_ii_timings[i]);
 		break;
+	case DI_DISPLAYID_DATA_BLOCK_TYPE_III_TIMING:
+		for (i = 0; i < data_block->type_iii_timings_len; i++)
+			free(data_block->type_iii_timings[i]);
+		break;
 	default:
 		break; /* Nothing to do */
 	}
@@ -704,6 +791,15 @@ di_displayid_data_block_get_tiled_topo(const struct di_displayid_data_block *dat
 		return NULL;
 	}
 	return &data_block->tiled_topo.base;
+}
+
+const struct di_displayid_type_iii_timing *const *
+di_displayid_data_block_get_type_iii_timings(const struct di_displayid_data_block *data_block)
+{
+	if (data_block->tag != DI_DISPLAYID_DATA_BLOCK_TYPE_III_TIMING) {
+		return NULL;
+	}
+	return (const struct di_displayid_type_iii_timing *const *) data_block->type_iii_timings;
 }
 
 const struct di_displayid_data_block *const *
