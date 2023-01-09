@@ -520,6 +520,259 @@ parse_video_cap_block(struct di_edid_cta *cta,
 }
 
 static bool
+check_vesa_dddb_num_channels(enum di_cta_vesa_dddb_interface_type interface,
+			     uint8_t num_channels)
+{
+	switch (interface) {
+	case DI_CTA_VESA_DDDB_INTERFACE_VGA:
+	case DI_CTA_VESA_DDDB_INTERFACE_NAVI_V:
+	case DI_CTA_VESA_DDDB_INTERFACE_NAVI_D:
+		return num_channels == 0;
+	case DI_CTA_VESA_DDDB_INTERFACE_LVDS:
+	case DI_CTA_VESA_DDDB_INTERFACE_RSDS:
+		return true;
+	case DI_CTA_VESA_DDDB_INTERFACE_DVI_D:
+		return num_channels == 1 || num_channels == 2;
+	case DI_CTA_VESA_DDDB_INTERFACE_DVI_I_ANALOG:
+		return num_channels == 0;
+	case DI_CTA_VESA_DDDB_INTERFACE_DVI_I_DIGITAL:
+		return num_channels == 1 || num_channels == 2;
+	case DI_CTA_VESA_DDDB_INTERFACE_HDMI_A:
+		return num_channels == 1;
+	case DI_CTA_VESA_DDDB_INTERFACE_HDMI_B:
+		return num_channels == 2;
+	case DI_CTA_VESA_DDDB_INTERFACE_MDDI:
+		return num_channels == 1 || num_channels == 2;
+	case DI_CTA_VESA_DDDB_INTERFACE_DISPLAYPORT:
+		return num_channels == 1 || num_channels == 2 || num_channels == 4;
+	case DI_CTA_VESA_DDDB_INTERFACE_IEEE_1394:
+	case DI_CTA_VESA_DDDB_INTERFACE_M1_ANALOG:
+		return num_channels == 0;
+	case DI_CTA_VESA_DDDB_INTERFACE_M1_DIGITAL:
+		return num_channels == 1 || num_channels == 2;
+	}
+	abort(); /* unreachable */
+}
+
+static void
+parse_vesa_dddb_additional_primary_chromaticity(struct di_cta_vesa_dddb_additional_primary_chromaticity *coords,
+						uint8_t low,
+						const uint8_t high[static 2])
+{
+	uint16_t raw_x, raw_y; /* only 10 bits are used */
+
+	raw_x = (uint16_t) ((high[0] << 2) | get_bit_range(low, 3, 2));
+	raw_y = (uint16_t) ((high[1] << 2) | get_bit_range(low, 1, 0));
+
+	*coords = (struct di_cta_vesa_dddb_additional_primary_chromaticity) {
+		.x = (float) raw_x / 1024,
+		.y = (float) raw_y / 1024,
+	};
+}
+
+static bool
+parse_vesa_dddb(struct di_edid_cta *cta, struct di_cta_vesa_dddb *dddb,
+		const uint8_t *data, size_t size)
+{
+	const size_t offset = 2; /* CTA block header */
+	uint8_t interface_type, num_channels, content_protection, scan_direction,
+		subpixel_layout;
+
+	if (size + offset != 32) {
+		add_failure(cta, "VESA Video Display Device Data Block: Invalid length %u.", size);
+		return false;
+	}
+
+	interface_type = get_bit_range(data[0x02 - offset], 7, 4);
+	num_channels = get_bit_range(data[0x02 - offset], 3, 0);
+	switch (interface_type) {
+	case 0x0: /* Analog */
+		/* Special case: num_channels contains the detailed interface
+		 * type. */
+		switch (num_channels) {
+		case 0x0:
+			dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_VGA;
+			break;
+		case 0x1:
+			dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_NAVI_V;
+			break;
+		case 0x2:
+			dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_NAVI_D;
+			break;
+		default:
+			add_failure(cta,
+				    "VESA Video Display Device Data Block: Unknown analog interface type 0x%x.",
+				    num_channels);
+			return false;
+		}
+		num_channels = 0;
+		break;
+	case 0x1:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_LVDS;
+		break;
+	case 0x2:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_RSDS;
+		break;
+	case 0x3:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_DVI_D;
+		break;
+	case 0x4:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_DVI_I_ANALOG;
+		break;
+	case 0x5:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_DVI_I_DIGITAL;
+		break;
+	case 0x6:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_HDMI_A;
+		break;
+	case 0x7:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_HDMI_B;
+		break;
+	case 0x8:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_MDDI;
+		break;
+	case 0x9:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_DISPLAYPORT;
+		break;
+	case 0xA:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_IEEE_1394;
+		break;
+	case 0xB:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_M1_ANALOG;
+		break;
+	case 0xC:
+		dddb->interface_type = DI_CTA_VESA_DDDB_INTERFACE_M1_DIGITAL;
+		break;
+	default:
+		add_failure(cta,
+			    "VESA Video Display Device Data Block: Unknown interface type 0x%x.",
+			    interface_type);
+		return false;
+	}
+
+	if (check_vesa_dddb_num_channels(dddb->interface_type, num_channels))
+		dddb->num_channels = num_channels;
+	else
+		add_failure(cta,
+			    "VESA Video Display Device Data Block: Invalid number of lanes/channels %u.",
+			    num_channels);
+
+	dddb->interface_version = get_bit_range(data[0x03 - offset], 7, 4);
+	dddb->interface_release = get_bit_range(data[0x03 - offset], 3, 0);
+
+	content_protection = data[0x04 - offset];
+	switch (content_protection) {
+	case DI_CTA_VESA_DDDB_CONTENT_PROTECTION_NONE:
+	case DI_CTA_VESA_DDDB_CONTENT_PROTECTION_HDCP:
+	case DI_CTA_VESA_DDDB_CONTENT_PROTECTION_DTCP:
+	case DI_CTA_VESA_DDDB_CONTENT_PROTECTION_DPCP:
+		dddb->content_protection = content_protection;
+		break;
+	default:
+		add_failure(cta,
+			    "VESA Video Display Device Data Block: Invalid content protection 0x%x.",
+			    content_protection);
+	}
+
+	dddb->min_clock_freq_mhz = get_bit_range(data[0x05 - offset], 7, 2);
+	dddb->max_clock_freq_mhz =
+		(get_bit_range(data[0x05 - offset], 1, 0) << 8) | data[0x06 - offset];
+	if (dddb->min_clock_freq_mhz > dddb->max_clock_freq_mhz) {
+		add_failure(cta,
+			    "VESA Video Display Device Data Block: Minimum clock frequency (%d MHz) greater than maximum (%d MHz).",
+			    dddb->min_clock_freq_mhz, dddb->max_clock_freq_mhz);
+		dddb->min_clock_freq_mhz = dddb->max_clock_freq_mhz = 0;
+	}
+
+	dddb->native_horiz_pixels = data[0x07 - offset] | (data[0x08 - offset] << 8);
+	dddb->native_vert_pixels = data[0x09 - offset] | (data[0x0A - offset] << 8);
+
+	dddb->aspect_ratio = (float)data[0x0B - offset] / 100 + 1;
+	dddb->default_orientation = get_bit_range(data[0x0C - offset], 7, 6);
+	dddb->rotation_cap = get_bit_range(data[0x0C - offset], 5, 4);
+	dddb->zero_pixel_location = get_bit_range(data[0x0C - offset], 3, 2);
+	scan_direction = get_bit_range(data[0x0C - offset], 1, 0);
+	if (scan_direction != 3)
+		dddb->scan_direction = scan_direction;
+	else
+		add_failure(cta,
+			   "VESA Video Display Device Data Block: Invalid scan direction 0x%x.",
+			   scan_direction);
+
+	subpixel_layout = data[0x0D - offset];
+	switch (subpixel_layout) {
+	case DI_CTA_VESA_DDDB_SUBPIXEL_UNDEFINED:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_RGB_VERT:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_RGB_HORIZ:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_EDID_CHROM_VERT:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_EDID_CHROM_HORIZ:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_QUAD_RGGB:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_QUAD_GBRG:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_DELTA_RGB:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_MOSAIC:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_QUAD_ANY:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_FIVE:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_SIX:
+	case DI_CTA_VESA_DDDB_SUBPIXEL_CLAIRVOYANTE_PENTILE:
+		dddb->subpixel_layout = subpixel_layout;
+		break;
+	default:
+		add_failure(cta,
+			   "VESA Video Display Device Data Block: Invalid subpixel layout 0x%x.",
+			   subpixel_layout);
+	}
+
+	dddb->horiz_pitch_mm = (float)data[0x0E - offset] * 0.01f;
+	dddb->vert_pitch_mm = (float)data[0x0F - offset] * 0.01f;
+
+	dddb->dithering_type = get_bit_range(data[0x10 - offset], 7, 6);
+	dddb->direct_drive = has_bit(data[0x10 - offset], 5);
+	dddb->overdrive_not_recommended = has_bit(data[0x10 - offset], 4);
+	dddb->deinterlacing = has_bit(data[0x10 - offset], 3);
+	if (get_bit_range(data[0x10 - offset], 2, 0) != 0)
+		add_failure(cta, "VESA Video Display Device Data Block: Reserved miscellaneous display capabilities bits 2-0 must be 0.");
+
+	dddb->audio_support = has_bit(data[0x11 - offset], 7);
+	dddb->separate_audio_inputs = has_bit(data[0x11 - offset], 6);
+	dddb->audio_input_override = has_bit(data[0x11 - offset], 5);
+	if (get_bit_range(data[0x11 - offset], 4, 0) != 0)
+		add_failure(cta, "VESA Video Display Device Data Block: Reserved audio bits 4-0 must be 0.");
+
+	dddb->audio_delay_provided = data[0x12 - offset] != 0;
+	dddb->audio_delay_ms = 2 * get_bit_range(data[0x12 - offset], 6, 0);
+	if (!has_bit(data[0x12 - offset], 7))
+		dddb->audio_delay_ms = -dddb->audio_delay_ms;
+
+	dddb->frame_rate_conversion = get_bit_range(data[0x13 - offset], 7, 6);
+	dddb->frame_rate_range_hz = get_bit_range(data[0x13 - offset], 5, 0);
+	dddb->frame_rate_native_hz = data[0x14 - offset];
+
+	dddb->bit_depth_interface = get_bit_range(data[0x15 - offset], 7, 4) + 1;
+	dddb->bit_depth_display = get_bit_range(data[0x15 - offset], 3, 0) + 1;
+
+	dddb->additional_primary_chromaticities_len = get_bit_range(data[0x17 - offset], 1, 0);
+	parse_vesa_dddb_additional_primary_chromaticity(&dddb->additional_primary_chromaticities[0],
+							get_bit_range(data[0x16 - offset], 7, 4),
+							&data[0x18 - offset]);
+	parse_vesa_dddb_additional_primary_chromaticity(&dddb->additional_primary_chromaticities[1],
+							get_bit_range(data[0x16 - offset], 3, 0),
+							&data[0x1A - offset]);
+	parse_vesa_dddb_additional_primary_chromaticity(&dddb->additional_primary_chromaticities[2],
+							get_bit_range(data[0x17 - offset], 7, 4),
+							&data[0x1C - offset]);
+	if (get_bit_range(data[0x17 - offset], 3, 2) != 0)
+		add_failure(cta, "VESA Video Display Device Data Block: Reserved additional primary chromaticities bits 3-2 of byte 0x17 must be 0.");
+
+	dddb->resp_time_transition = has_bit(data[0x1E - offset], 7);
+	dddb->resp_time_ms = get_bit_range(data[0x1E - offset], 6, 0);
+
+	dddb->overscan_horiz_pct = get_bit_range(data[0x1F - offset], 7, 4);
+	dddb->overscan_vert_pct = get_bit_range(data[0x1F - offset], 3, 0);
+
+	return true;
+}
+
+static bool
 parse_colorimetry_block(struct di_edid_cta *cta,
 			struct di_cta_colorimetry_block *colorimetry,
 			const uint8_t *data, size_t size)
@@ -713,6 +966,9 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 2:
 			tag = DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE;
+			if (!parse_vesa_dddb(cta, &data_block->vesa_dddb,
+					     data, size))
+				goto skip;
 			break;
 		case 5:
 			tag = DI_CTA_DATA_BLOCK_COLORIMETRY;
@@ -968,6 +1224,15 @@ di_cta_data_block_get_video_cap(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return &block->video_cap;
+}
+
+const struct di_cta_vesa_dddb *
+di_cta_data_block_get_vesa_dddb(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE) {
+		return NULL;
+	}
+	return &block->vesa_dddb;
 }
 
 const struct di_edid_detailed_timing_def *const *

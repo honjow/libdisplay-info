@@ -96,6 +96,8 @@ struct di_cta_data_block {
 	struct di_cta_audio_block audio;
 	/* Used for DI_CTA_DATA_BLOCK_VIDEO_CAP */
 	struct di_cta_video_cap_block video_cap;
+	/* Used for DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE */
+	struct di_cta_vesa_dddb vesa_dddb;
 	/* Used for DI_CTA_DATA_BLOCK_COLORIMETRY */
 	struct di_cta_colorimetry_block colorimetry;
 	/* Used for DI_CTA_DATA_BLOCK_HDR_STATIC_METADATA */

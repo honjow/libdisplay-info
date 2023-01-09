@@ -338,6 +338,232 @@ const struct di_cta_video_cap_block *
 di_cta_data_block_get_video_cap(const struct di_cta_data_block *block);
 
 /**
+ * Interface types, defined in VESA DDDB section 2.3.1 and 2.3.2.
+ *
+ * Note, the enum values don't match the specification.
+ */
+enum di_cta_vesa_dddb_interface_type {
+	DI_CTA_VESA_DDDB_INTERFACE_VGA, /* 15HD/VGA */
+	DI_CTA_VESA_DDDB_INTERFACE_NAVI_V, /* VESA NAVI-V */
+	DI_CTA_VESA_DDDB_INTERFACE_NAVI_D, /* VESA NAVI-D */
+	DI_CTA_VESA_DDDB_INTERFACE_LVDS, /* LVDS */
+	DI_CTA_VESA_DDDB_INTERFACE_RSDS, /* RSDS */
+	DI_CTA_VESA_DDDB_INTERFACE_DVI_D, /* DVI-D */
+	DI_CTA_VESA_DDDB_INTERFACE_DVI_I_ANALOG, /* DVI-I analog */
+	DI_CTA_VESA_DDDB_INTERFACE_DVI_I_DIGITAL, /* DVI-I digital */
+	DI_CTA_VESA_DDDB_INTERFACE_HDMI_A, /* HDMI-A */
+	DI_CTA_VESA_DDDB_INTERFACE_HDMI_B, /* HDMI-B */
+	DI_CTA_VESA_DDDB_INTERFACE_MDDI, /* MDDI */
+	DI_CTA_VESA_DDDB_INTERFACE_DISPLAYPORT, /* DisplayPort */
+	DI_CTA_VESA_DDDB_INTERFACE_IEEE_1394, /* IEEE-1394 */
+	DI_CTA_VESA_DDDB_INTERFACE_M1_ANALOG, /* M1 analog */
+	DI_CTA_VESA_DDDB_INTERFACE_M1_DIGITAL, /* M1 digital */
+};
+
+enum di_cta_vesa_dddb_content_protection {
+	DI_CTA_VESA_DDDB_CONTENT_PROTECTION_NONE = 0x00, /* None */
+	DI_CTA_VESA_DDDB_CONTENT_PROTECTION_HDCP = 0x01, /* HDCP */
+	DI_CTA_VESA_DDDB_CONTENT_PROTECTION_DTCP = 0x02, /* DTCP */
+	DI_CTA_VESA_DDDB_CONTENT_PROTECTION_DPCP = 0x03, /* DPCP */
+};
+
+enum di_cta_vesa_dddb_default_orientation {
+	DI_CTA_VESA_DDDB_DEFAULT_ORIENTATION_LANDSCAPE = 0, /* Landscape */
+	DI_CTA_VESA_DDDB_DEFAULT_ORIENTATION_PORTAIT = 1, /* Portrait */
+	DI_CTA_VESA_DDDB_DEFAULT_ORIENTATION_UNFIXED = 2, /* Not fixed, may be rotated by the user */
+	DI_CTA_VESA_DDDB_DEFAULT_ORIENTATION_UNDEFINED = 3, /* Undefined */
+};
+
+enum di_cta_vesa_dddb_rotation_cap {
+	DI_CTA_VESA_DDDB_ROTATION_CAP_NONE = 0, /* No rotation capability */
+	DI_CTA_VESA_DDDB_ROTATION_CAP_90DEG_CLOCKWISE = 1, /* 90 degrees clockwise */
+	DI_CTA_VESA_DDDB_ROTATION_CAP_90DEG_COUNTERCLOCKWISE = 2, /* 90 degrees counterclockwise */
+	DI_CTA_VESA_DDDB_ROTATION_CAP_90DEG_EITHER = 3, /* 90 degrees in either direction */
+};
+
+enum di_cta_vesa_dddb_zero_pixel_location {
+	DI_CTA_VESA_DDDB_ZERO_PIXEL_UPPER_LEFT = 0, /* Upper left corner */
+	DI_CTA_VESA_DDDB_ZERO_PIXEL_UPPER_RIGHT = 1, /* Upper right corner */
+	DI_CTA_VESA_DDDB_ZERO_PIXEL_LOWER_LEFT = 2, /* Lower left corner */
+	DI_CTA_VESA_DDDB_ZERO_PIXEL_LOWER_RIGHT = 3, /* Lower right corner */
+};
+
+enum di_cta_vesa_dddb_scan_direction {
+	/* Undefined */
+	DI_CTA_VESA_DDDB_SCAN_DIRECTION_UNDEFINED = 0,
+	/* Fast (line) scan is along the long axis, slow (frame or field) scan
+	 * is along the short axis */
+	DI_CTA_VESA_DDDB_SCAN_DIRECTION_FAST_LONG_SLOW_SHORT = 1,
+	/* Fast (line) scan is along the short axis, slow (frame or field) scan
+	 * is along the long axis */
+	DI_CTA_VESA_DDDB_SCAN_DIRECTION_FAST_SHORT_SLOW_LONG = 2,
+};
+
+/**
+ * Subpixel layout, defined in VESA DDDB section 2.9.
+ *
+ * For layouts with more than 3 subpixels, the color coordinates of the
+ * additional subpixels are defined in the additional primary chromaticities.
+ */
+enum di_cta_vesa_dddb_subpixel_layout {
+	/* Undefined */
+	DI_CTA_VESA_DDDB_SUBPIXEL_UNDEFINED = 0x00,
+	/* Red, green, blue vertical stripes */
+	DI_CTA_VESA_DDDB_SUBPIXEL_RGB_VERT = 0x01,
+	/* Red, green, blue horizontal stripes */
+	DI_CTA_VESA_DDDB_SUBPIXEL_RGB_HORIZ = 0x02,
+	/* Vertical stripes with the primary ordering given by the order of the
+	 * chromaticity information in the base EDID */
+	DI_CTA_VESA_DDDB_SUBPIXEL_EDID_CHROM_VERT = 0x03,
+	/* Horizontal stripes with the primary ordering given by the order of
+	 * the chromaticity information in the base EDID */
+	DI_CTA_VESA_DDDB_SUBPIXEL_EDID_CHROM_HORIZ = 0x04,
+	/* Quad subpixels:
+	 * R G
+	 * G B
+	 */
+	DI_CTA_VESA_DDDB_SUBPIXEL_QUAD_RGGB = 0x05,
+	/* Quad subpixels:
+	 * G B
+	 * R G
+	 */
+	DI_CTA_VESA_DDDB_SUBPIXEL_QUAD_GBRG = 0x06,
+	/* Delta (triad) RGB subpixels */
+	DI_CTA_VESA_DDDB_SUBPIXEL_DELTA_RGB = 0x07,
+	/* Mosaic */
+	DI_CTA_VESA_DDDB_SUBPIXEL_MOSAIC = 0x08,
+	/* Quad subpixels: one each of red, green, blue, and one additional
+	 * color (including white) in any order */
+	DI_CTA_VESA_DDDB_SUBPIXEL_QUAD_ANY = 0x09,
+	/* Five subpixels, including RGB subpixels aligned as in the case of
+	 * DI_CTA_VESA_DDDB_SUBPIXEL_RGB_VERT, with two additional subpixels
+	 * located above or below this group */
+	DI_CTA_VESA_DDDB_SUBPIXEL_FIVE = 0x0A,
+	/* Six subpixels, including RGB subpixels aligned as in the case of
+	 * DI_CTA_VESA_DDDB_SUBPIXEL_RGB_VERT, with three additional subpixels
+	 * located above or below this group */
+	DI_CTA_VESA_DDDB_SUBPIXEL_SIX = 0x0B,
+	/* Clairvoyante, Inc. PenTile Matrix™ layout */
+	DI_CTA_VESA_DDDB_SUBPIXEL_CLAIRVOYANTE_PENTILE = 0x0C,
+};
+
+enum di_cta_vesa_dddb_dithering_type {
+	DI_CTA_VESA_DDDB_DITHERING_NONE = 0, /* None */
+	DI_CTA_VESA_DDDB_DITHERING_SPACIAL = 1, /* Spacial */
+	DI_CTA_VESA_DDDB_DITHERING_TEMPORAL = 2, /* Temporal */
+	DI_CTA_VESA_DDDB_DITHERING_SPATIAL_AND_TEMPORAL = 3, /* Spacial and temporal */
+};
+
+struct di_cta_vesa_dddb_additional_primary_chromaticity {
+	float x, y;
+};
+
+enum di_cta_vesa_dddb_frame_rate_conversion {
+	/* No dedicated rate conversion hardware is provided */
+	DI_CTA_VESA_DDDB_FRAME_RATE_CONVERSION_NONE = 0,
+	/* Frame rate conversion is supported, tearing or other artifacts may
+	 * be visible */
+	DI_CTA_VESA_DDDB_FRAME_RATE_CONVERSION_SINGLE_BUFFERING = 1,
+	/* Frame rate conversion is supported, input frames may be duplicated or
+	 * dropped */
+	DI_CTA_VESA_DDDB_FRAME_RATE_CONVERSION_DOUBLE_BUFFERING = 2,
+	/* Frame rate conversion is supported via a more advanced technique
+	 * (e.g. inter-frame interpolation) */
+	DI_CTA_VESA_DDDB_FRAME_RATE_CONVERSION_ADVANCED = 3,
+};
+
+enum di_cta_vesa_dddb_resp_time_transition {
+	DI_CTA_VESA_DDDB_RESP_TIME_BLACK_TO_WHITE = 0, /* Black to white */
+	DI_CTA_VESA_DDDB_RESP_TIME_WHITE_TO_BLACK = 1, /* White to black */
+};
+
+/**
+ * VESA Display Device Data Block (DDDB), defined in VESA Display Device Data
+ * Block (DDDB) Standard version 1.
+ */
+struct di_cta_vesa_dddb {
+	/* Interface type */
+	enum di_cta_vesa_dddb_interface_type interface_type;
+	/* Number of lanes/channels, zero if N/A */
+	int32_t num_channels;
+	/* Interface standard version and release number */
+	int32_t interface_version, interface_release;
+	/* Content protection support */
+	enum di_cta_vesa_dddb_content_protection content_protection;
+	/* Minimum and maximum clock frequency (in mega-hertz), zero if unset
+	 * (ie. maximum and minimum as permitted under the appropriate interface
+	 * specification or standard) */
+	int32_t min_clock_freq_mhz, max_clock_freq_mhz;
+	/* Device native pixel format, zero if unset */
+	int32_t native_horiz_pixels, native_vert_pixels;
+	/* Aspect ratio taken as long axis divided by short axis */
+	float aspect_ratio;
+	/* Default orientation */
+	enum di_cta_vesa_dddb_default_orientation default_orientation;
+	/* Rotation capability */
+	enum di_cta_vesa_dddb_rotation_cap rotation_cap;
+	/* Zero pixel location */
+	enum di_cta_vesa_dddb_zero_pixel_location zero_pixel_location;
+	/* Scan direction */
+	enum di_cta_vesa_dddb_scan_direction scan_direction;
+	/* Subpixel layout */
+	enum di_cta_vesa_dddb_subpixel_layout subpixel_layout;
+	/* Horizontal and vertical dot/pixel pitch (in millimeters) */
+	float horiz_pitch_mm, vert_pitch_mm;
+	/* Dithering type */
+	enum di_cta_vesa_dddb_dithering_type dithering_type;
+	/* Direct drive: no scaling, de-interlacing, frame-rate conversion, etc.
+	 * between this interface and the panel or other display device */
+	bool direct_drive;
+	/* Overdrive not recommended: the source should not apply "overdrive" to
+	 * the video signal */
+	bool overdrive_not_recommended;
+	/* Display can deinterlaced video input */
+	bool deinterlacing;
+	/* Video interface supports audio */
+	bool audio_support;
+	/* Audio inputs are provided separately from the video interface */
+	bool separate_audio_inputs;
+	/* Audio information received via the video interface will automatically
+	 * override any other audio input channels provided */
+	bool audio_input_override;
+	/* True if audio delay information is provided */
+	bool audio_delay_provided;
+	/* Audio delay (in milliseconds, may be negative), with the maximum
+	 * absolute value of 254 ms */
+	int32_t audio_delay_ms;
+	/* Frame rate/mode conversion */
+	enum di_cta_vesa_dddb_frame_rate_conversion frame_rate_conversion;
+	/* Frame rate range (in Hz), with the maximum value of 63 Hz */
+	int32_t frame_rate_range_hz;
+	/* Native/nominal rate (in Hz) */
+	int32_t frame_rate_native_hz;
+	/* Color bit depth for the interface and display device */
+	int32_t bit_depth_interface, bit_depth_display;
+	/* Number of additional primary color chromaticities */
+	size_t additional_primary_chromaticities_len;
+	/* Additional primary color chromaticities given as 1931 CIE xy color
+	 * space coordinates (also defines the color of subpixels for some
+	 * subpixel layouts) */
+	struct di_cta_vesa_dddb_additional_primary_chromaticity additional_primary_chromaticities[3];
+	/* Response time transition */
+	enum di_cta_vesa_dddb_resp_time_transition resp_time_transition;
+	/* Response time (in milliseconds), with the maximum value of 127 ms */
+	int32_t resp_time_ms;
+	/* Overscan horizontal and vertical percentage */
+	int32_t overscan_horiz_pct, overscan_vert_pct;
+};
+
+/**
+ * Get the VESA Display Device Data Block (DDDB) from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not
+ * DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE.
+ */
+const struct di_cta_vesa_dddb *
+di_cta_data_block_get_vesa_dddb(const struct di_cta_data_block *block);
+
+/**
  * CTA colorimetry data block, defined in section 7.5.5.
  */
 struct di_cta_colorimetry_block {
