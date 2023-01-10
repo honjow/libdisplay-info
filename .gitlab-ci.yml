@@ -17,6 +17,7 @@ stages:
   - "Contribution checks"
   - "Prepare container"
   - "Build and test"
+  - "Publish"
 
 check-mr:
   extends: .fdo.ci-fairy
@@ -87,13 +88,24 @@ build-clang:
   rules:
     - when: on_success
 
-pages:
+build-docs:
   extends: .fdo.distribution-image@alpine
   stage: "Build and test"
   script:
     - gyosu -I$PWD/include/ -fexported-symbols='di_*'
       -ffile-prefix-map=$PWD/include/= -fsite-name=libdisplay-info
       -o public $PWD/include/libdisplay-info/
+  artifacts:
+    paths:
+      - public/
+  rules:
+    - when: on_success
+
+pages:
+  extends: .fdo.distribution-image@alpine
+  stage: "Publish"
+  script:
+    - "true"
   artifacts:
     paths:
       - public/
