@@ -861,6 +861,119 @@ parse_hdr_static_metadata_block(struct di_edid_cta *cta,
 
 	return true;
 }
+static bool
+parse_hdr_dynamic_metadata_block(struct di_edid_cta *cta,
+				 struct di_cta_hdr_dynamic_metadata_block_priv *priv,
+				 const uint8_t *data, size_t size)
+{
+	struct di_cta_hdr_dynamic_metadata_block *base;
+	struct di_cta_hdr_dynamic_metadata_block_type1 *type1;
+	struct di_cta_hdr_dynamic_metadata_block_type2 *type2;
+	struct di_cta_hdr_dynamic_metadata_block_type3 *type3;
+	struct di_cta_hdr_dynamic_metadata_block_type4 *type4;
+	struct di_cta_hdr_dynamic_metadata_block_type256 *type256;
+	size_t length;
+	int type;
+
+	base = &priv->base;
+	type1 = &priv->type1;
+	type2 = &priv->type2;
+	type3 = &priv->type3;
+	type4 = &priv->type4;
+	type256 = &priv->type256;
+
+	if (size < 3) {
+		add_failure(cta, "HDR Dynamic Metadata Data Block: Empty Data Block with length %u.",
+			    size);
+		return false;
+	}
+
+	while (size >= 3) {
+		length = data[0];
+
+		if (size < length + 1) {
+			add_failure(cta, "HDR Dynamic Metadata Data Block: Length of type bigger than block size.");
+			return false;
+		}
+
+		if (length < 2) {
+			add_failure(cta, "HDR Dynamic Metadata Data Block: Type has wrong length.");
+			return false;
+		}
+
+		type = (data[2] << 8) | data[1];
+		switch (type) {
+		case 0x0001:
+			if (length < 3) {
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 1 missing Support Flags.");
+				break;
+			}
+			if (length != 3)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 1 length must be 3.");
+			type1->type_1_hdr_metadata_version = get_bit_range(data[3], 3, 0);
+			base->type1 = type1;
+			if (get_bit_range(data[3], 7, 4) != 0)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 1 support flags bits 7-4 must be 0.");
+			break;
+		case 0x0002:
+			if (length < 3) {
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 2 missing Support Flags.");
+				break;
+			}
+			if (length != 3)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 2 length must be 3.");
+			type2->ts_103_433_spec_version = get_bit_range(data[3], 3, 0);
+			if (type2->ts_103_433_spec_version == 0) {
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 2 spec version of 0 is not allowed.");
+				break;
+			}
+			type2->ts_103_433_1_capable = has_bit(data[3], 4);
+			type2->ts_103_433_2_capable = has_bit(data[3], 5);
+			type2->ts_103_433_3_capable = has_bit(data[3], 6);
+			base->type2 = type2;
+			if (has_bit(data[3], 7) != 0)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 1 support flags bit 7 must be 0.");
+			break;
+		case 0x0003:
+			if (length != 2)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 3 length must be 2.");
+			base->type3 = type3;
+			break;
+		case 0x0004:
+			if (length < 3) {
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 4 missing Support Flags.");
+				break;
+			}
+			if (length != 3)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 4 length must be 3.");
+			type4->type_4_hdr_metadata_version = get_bit_range(data[3], 3, 0);
+			base->type4 = type4;
+			if (get_bit_range(data[3], 7, 4) != 0)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 4 support flags bits 7-4 must be 0.");
+			break;
+		case 0x0100:
+			if (length < 3) {
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 256 missing Support Flags.");
+				break;
+			}
+			if (length != 3)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 256 length must be 3.");
+			type256->graphics_overlay_flag_version = get_bit_range(data[3], 3, 0);
+			base->type256 = type256;
+			if (get_bit_range(data[3], 7, 4) != 0)
+				add_failure(cta, "HDR Dynamic Metadata Data Block: Type 256 support flags bits 7-4 must be 0.");
+			break;
+		default:
+			add_failure(cta, "HDR Dynamic Metadata Data Block: Unknown Type 0x%04x.", type);
+			break;
+		}
+
+		size -= length + 1;
+		data += length + 1;
+	}
+
+	return true;
+}
 
 static bool
 parse_vesa_transfer_characteristics_block(struct di_edid_cta *cta,
@@ -986,6 +1099,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 7:
 			tag = DI_CTA_DATA_BLOCK_HDR_DYNAMIC_METADATA;
+			if (!parse_hdr_dynamic_metadata_block(cta,
+							      &data_block->hdr_dynamic_metadata,
+							      data, size))
+				goto skip;
 			break;
 		case 13:
 			tag = DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF;
@@ -1215,6 +1332,15 @@ di_cta_data_block_get_hdr_static_metadata(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return &block->hdr_static_metadata.base;
+}
+
+const struct di_cta_hdr_dynamic_metadata_block *
+di_cta_data_block_get_hdr_dynamic_metadata(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_HDR_DYNAMIC_METADATA) {
+		return NULL;
+	}
+	return &block->hdr_dynamic_metadata.base;
 }
 
 const struct di_cta_video_cap_block *

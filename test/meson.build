@@ -28,6 +28,7 @@ test_cases = [
 	'sun-gh19ps-dvi',
 	'viewsonic-vp2768-dp',
 	'cvt',
+	'philips-ftv-490',
 ]
 
 test_env = [

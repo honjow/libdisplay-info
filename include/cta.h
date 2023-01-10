@@ -62,6 +62,19 @@ struct di_cta_hdr_static_metadata_block_priv {
 	struct di_cta_hdr_static_metadata_block_descriptors descriptors;
 };
 
+struct di_cta_hdr_dynamic_metadata_block_type3 {
+	uint8_t unused;
+};
+
+struct di_cta_hdr_dynamic_metadata_block_priv {
+	struct di_cta_hdr_dynamic_metadata_block base;
+	struct di_cta_hdr_dynamic_metadata_block_type1 type1;
+	struct di_cta_hdr_dynamic_metadata_block_type2 type2;
+	struct di_cta_hdr_dynamic_metadata_block_type3 type3;
+	struct di_cta_hdr_dynamic_metadata_block_type4 type4;
+	struct di_cta_hdr_dynamic_metadata_block_type256 type256;
+};
+
 struct di_cta_video_block {
 	/* NULL-terminated */
 	struct di_cta_svd *svds[EDID_CTA_MAX_VIDEO_BLOCK_ENTRIES + 1];
@@ -102,6 +115,8 @@ struct di_cta_data_block {
 	struct di_cta_colorimetry_block colorimetry;
 	/* Used for DI_CTA_DATA_BLOCK_HDR_STATIC_METADATA */
 	struct di_cta_hdr_static_metadata_block_priv hdr_static_metadata;
+	/* Used for DI_CTA_DATA_BLOCK_HDR_DYNAMIC_METADATA */
+	struct di_cta_hdr_dynamic_metadata_block_priv hdr_dynamic_metadata;
 	/* Used for DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC */
 	struct di_cta_vesa_transfer_characteristics vesa_transfer_characteristics;
 };

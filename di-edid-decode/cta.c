@@ -363,6 +363,36 @@ print_cta_hdr_static_metadata(const struct di_cta_hdr_static_metadata_block *met
 }
 
 static void
+print_cta_hdr_dynamic_metadata(const struct di_cta_hdr_dynamic_metadata_block *metadata)
+{
+	if (metadata->type1) {
+		printf("    HDR Dynamic Metadata Type 1\n");
+		printf("      Version: %d\n", metadata->type1->type_1_hdr_metadata_version);
+	}
+	if (metadata->type2) {
+		printf("    HDR Dynamic Metadata Type 2\n");
+		printf("      Version: %d\n", metadata->type2->ts_103_433_spec_version);
+		if (metadata->type2->ts_103_433_1_capable)
+			printf("      ETSI TS 103 433-1 capable\n");
+		if (metadata->type2->ts_103_433_2_capable)
+			printf("      ETSI TS 103 433-2 [i.12] capable\n");
+		if (metadata->type2->ts_103_433_3_capable)
+			printf("      ETSI TS 103 433-3 [i.13] capable\n");
+	}
+	if (metadata->type3) {
+		printf("    HDR Dynamic Metadata Type 3\n");
+	}
+	if (metadata->type4) {
+		printf("    HDR Dynamic Metadata Type 4\n");
+		printf("      Version: %d\n", metadata->type4->type_4_hdr_metadata_version);
+	}
+	if (metadata->type256) {
+		printf("    HDR Dynamic Metadata Type 256\n");
+		printf("      Version: %d\n", metadata->type256->graphics_overlay_flag_version);
+	}
+}
+
+static void
 print_cta_vesa_transfer_characteristics(const struct di_cta_vesa_transfer_characteristics *tf)
 {
 	size_t i;
@@ -632,6 +662,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_vesa_dddb *vesa_dddb;
 	const struct di_cta_colorimetry_block *colorimetry;
 	const struct di_cta_hdr_static_metadata_block *hdr_static_metadata;
+	const struct di_cta_hdr_dynamic_metadata_block *hdr_dynamic_metadata;
 	const struct di_cta_vesa_transfer_characteristics *transfer_characteristics;
 	const struct di_cta_sad *const *sads;
 	size_t i;
@@ -714,6 +745,10 @@ print_cta(const struct di_edid_cta *cta)
 		case DI_CTA_DATA_BLOCK_HDR_STATIC_METADATA:
 			hdr_static_metadata = di_cta_data_block_get_hdr_static_metadata(data_block);
 			print_cta_hdr_static_metadata(hdr_static_metadata);
+			break;
+		case DI_CTA_DATA_BLOCK_HDR_DYNAMIC_METADATA:
+			hdr_dynamic_metadata = di_cta_data_block_get_hdr_dynamic_metadata(data_block);
+			print_cta_hdr_dynamic_metadata(hdr_dynamic_metadata);
 			break;
 		case DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC:
 			transfer_characteristics = di_cta_data_block_get_vesa_transfer_characteristics(data_block);
