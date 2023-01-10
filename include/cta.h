@@ -65,6 +65,13 @@
  * is 63 bytes, and each Speaker Location Descriptors uses at least 2 byte.
  */
 #define EDID_CTA_MAX_SPEAKER_LOCATION_BLOCK_ENTRIES 31
+/**
+ * The maximum number of SVR entries in a video format preference block.
+ *
+ * Each data block has its size described in a 5-bit field, so its maximum size
+ * is 63 bytes, and each SVR uses 1 byte.
+ */
+#define EDID_CTA_MAX_VIDEO_FORMAT_PREF_BLOCK_ENTRIES 63
 
 struct di_edid_cta {
 	int revision;
@@ -142,6 +149,12 @@ struct di_cta_speaker_location_block {
 	size_t locations_len;
 };
 
+struct di_cta_video_format_pref_block {
+	/* NULL-terminated */
+	struct di_cta_svr *svrs[EDID_CTA_MAX_VIDEO_FORMAT_PREF_BLOCK_ENTRIES + 1];
+	size_t svrs_len;
+};
+
 struct di_cta_data_block {
 	enum di_cta_data_block_tag tag;
 
@@ -173,6 +186,8 @@ struct di_cta_data_block {
 	struct di_cta_room_configuration room_config;
 	/* Used for DI_CTA_DATA_BLOCK_SPEAKER_LOCATION */
 	struct di_cta_speaker_location_block speaker_location;
+	/* Used for DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF */
+	struct di_cta_video_format_pref_block video_format_pref;
 };
 
 extern const struct di_cta_video_format _di_cta_video_formats[];

@@ -15,6 +15,7 @@ sun-gh19ps-dvi		| ./Digital/Sun/SUN058C/34B2E3B9A052		| cff7fe4d44
 viewsonic-vp2768-dp	| ./Digital/ViewSonic/VSC2034/6B81BEA28A1E	| cff7fe4d44
 philips-ftv-490		| ./Digital/Philips/PHL01EA/03A4224323A6	| cff7fe4d44
 hitachi-55r6+		| ./Digital/Hitachi/HEC0000/58C711CBA787	| cff7fe4d44
+philips-ftv-2017	| ./Digital/Philips/PHL0000/CDF43E0C4634	| cff7fe4d44
 
 The following blobs originate from the [edid-decode] repository and are under
 the same license as the rest of the libdisplay-info project:
@@ -26,6 +27,7 @@ custom-uncommon-cta-vesa	| ./test/cta-vesa.test		| 894eefd
 dell-2408wfp-dp			| ./data/dell-2408wfp-dp	| 894eefd
 samsung-q800t-hdmi2.0		| ./data/samsung-q800t-hdmi2.0	| 894eefd
 cta-timings			| ./test/cta-timings.test	| 894eefd
+cta-vfpdb			| ./test/cta-vfpdb.test		| 894eefd
 
 The other blobs are under the same license as the rest of the libdisplay-info
 project:

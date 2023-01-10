@@ -31,18 +31,21 @@
    Video Capability Data Block:
      YCbCr quantization: Selectable (via AVI YQ)
      RGB quantization: Selectable (via AVI Q)
-@@ -110,31 +93,15 @@
-     IT scan behavior: Always Underscanned
+@@ -111,30 +94,21 @@
      CE scan behavior: Always Underscanned
    Video Format Preference Data Block:
--    VTDB   1
+     VTDB   1
 -    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
 -    VIC 114:  3840x2160   48.000000 Hz  16:9    108.000 kHz    594.000000 MHz
--    DTD   1
--    DTD   3
++    VIC  97
++    VIC 114
+     DTD   1
+     DTD   3
 -    DMT 0x48
 -    VTDB   2
 -    RID 7@60p
++    T8VTDB
++    VTDB   1
    YCbCr 4:2:0 Capability Map Data Block:
      VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
    YCbCr 4:2:0 Video Data Block:
@@ -63,7 +66,7 @@
    Detailed Timing Descriptors:
      DTD 2:  3840x2160   59.996625 Hz  16:9    133.312 kHz    533.250000 MHz (960 mm x 540 mm)
                   Hfront   48 Hsync  32 Hback   80 Hpol P
-@@ -152,9 +119,9 @@
+@@ -152,10 +126,14 @@
    Native detailed modes: 1
    Detailed Timing Descriptors:
      DTD 3:  1280x720    59.855126 Hz  16:9     44.772 kHz     74.500000 MHz (analog composite, sync-on-green, 960 mm x 540 mm)
@@ -76,3 +79,9 @@
  
  ----------------
  
+-EDID conformity: PASS
++Failures:
++
++Block 2, CTA-861 Extension Block:
++  Video Format Preference Data Block: using reserved Short Video Reference value 166.
++EDID conformity: FAIL

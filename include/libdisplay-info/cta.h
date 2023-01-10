@@ -1056,4 +1056,46 @@ di_cta_data_block_get_speaker_locations(const struct di_cta_data_block *block);
 const struct di_edid_detailed_timing_def *const *
 di_edid_cta_get_detailed_timing_defs(const struct di_edid_cta *cta);
 
+enum di_cta_svr_type {
+	/* reference contains a VIC */
+	DI_CTA_SVR_TYPE_VIC,
+	/* reference contains an index into DTDs */
+	DI_CTA_SVR_TYPE_DTD_INDEX,
+	/* reference contains an index into T7VTDB (DisplayID Type VII Video
+	 * Timing Data Block) DTDs and T10VTDB (DisplayID Type X Video Timing
+	 * Data Block) CVT descriptors */
+	DI_CTA_SVR_TYPE_T7T10VTDB,
+	/* references the first code of the first T8VTDB (DisplayID Type VIII
+	 * Video Timing Data Block) */
+	DI_CTA_SVR_TYPE_FIRST_T8VTDB,
+};
+
+/**
+ * Short Video Reference, defined in section 7.5.12.
+ */
+struct di_cta_svr {
+	enum di_cta_svr_type type;
+	/* A VIC if type is DI_CTA_SVR_TYPE_VIC */
+	uint8_t vic;
+	/* The index into DTDs in order of appearance if type is
+	 * DI_CTA_SVR_TYPE_DTD_INDEX */
+	uint8_t dtd_index;
+	/* The index into T7VTDB and T10VTDB in order of appearance if type is
+	 * DI_CTA_SVR_TYPE_T7T10VTDB */
+	uint8_t t7_t10_vtdb_index;
+};
+
+/**
+ * Get an array of Short Video References (SVRs) from a CTA data block. The
+ * first SVR refers to the most-preferred Video Format, while the next SVRs
+ * are listed in order of decreasing preference.
+ *
+ * Returns NULL if the data block tag is not
+ * DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF.
+ *
+ * The returned array is NULL-terminated.
+ */
+const struct di_cta_svr *const *
+di_cta_data_block_get_svrs(const struct di_cta_data_block *block);
+
 #endif

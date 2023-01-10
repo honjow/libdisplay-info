@@ -1097,6 +1097,56 @@ parse_vesa_transfer_characteristics_block(struct di_edid_cta *cta,
 	return true;
 }
 
+static bool
+parse_video_format_pref_block(struct di_edid_cta *cta,
+			      struct di_cta_video_format_pref_block *vfpdb,
+			      const uint8_t *data, size_t size)
+{
+	struct di_cta_svr *svr;
+	size_t i;
+	uint8_t code;
+
+	for (i = 0; i < size; i++) {
+		code = data[i];
+
+		if (code == 0 ||
+		    code == 128 ||
+		    (code >= 161 && code <= 192) ||
+		    code == 255) {
+			add_failure(cta, "Video Format Preference Data Block: "
+				    "using reserved Short Video Reference value %u.",
+				    code);
+			continue;
+		}
+
+		svr = calloc(1, sizeof(*svr));
+		if (!svr)
+			return false;
+
+		if ((code >= 1 && code <= 127) ||
+		    (code >= 193 && code <= 253)) {
+			svr->type = DI_CTA_SVR_TYPE_VIC;
+			svr->vic = code;
+		} else if (code >= 129 && code <= 144) {
+			svr->type = DI_CTA_SVR_TYPE_DTD_INDEX;
+			svr->dtd_index = code - 129;
+		} else if (code >= 145 && code <= 160) {
+			svr->type = DI_CTA_SVR_TYPE_T7T10VTDB;
+			svr->dtd_index = code - 145;
+		} else if (code == 254) {
+			svr->type = DI_CTA_SVR_TYPE_FIRST_T8VTDB;
+		} else {
+			abort(); /* unreachable */
+		}
+
+		assert(vfpdb->svrs_len < EDID_CTA_MAX_VIDEO_FORMAT_PREF_BLOCK_ENTRIES);
+		vfpdb->svrs[vfpdb->svrs_len++] = svr;
+	}
+
+	return true;
+}
+
+
 static void
 parse_ycbcr420_cap_map(struct di_edid_cta *cta,
 		       struct di_cta_ycbcr420_cap_map *ycbcr420_cap_map,
@@ -1359,6 +1409,7 @@ destroy_data_block(struct di_cta_data_block *data_block)
 	struct di_cta_audio_block *audio;
 	struct di_cta_infoframe_block_priv *infoframe;
 	struct di_cta_speaker_location_block *speaker_location;
+	struct di_cta_video_format_pref_block *vfpdb;
 
 	switch (data_block->tag) {
 	case DI_CTA_DATA_BLOCK_VIDEO:
@@ -1385,6 +1436,11 @@ destroy_data_block(struct di_cta_data_block *data_block)
 		speaker_location = &data_block->speaker_location;
 		for (i = 0; i < speaker_location->locations_len; i++)
 			free(speaker_location->locations[i]);
+		break;
+	case DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF:
+		vfpdb = &data_block->video_format_pref;
+		for (i = 0; i < vfpdb->svrs_len; i++)
+			free(vfpdb->svrs[i]);
 		break;
 	default:
 		break; /* Nothing to do */
@@ -1485,6 +1541,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 13:
 			tag = DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF;
+			if (!parse_video_format_pref_block(cta,
+							   &data_block->video_format_pref,
+							   data, size))
+				goto skip;
 			break;
 		case 14:
 			tag = DI_CTA_DATA_BLOCK_YCBCR420;
@@ -1712,6 +1772,15 @@ di_cta_data_block_get_ycbcr420_svds(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return (const struct di_cta_svd *const *) block->ycbcr420.svds;
+}
+
+const struct di_cta_svr *const *
+di_cta_data_block_get_svrs(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF) {
+		return NULL;
+	}
+	return (const struct di_cta_svr *const *) block->video_format_pref.svrs;
 }
 
 const struct di_cta_sad *const *

@@ -29,6 +29,8 @@ test_cases = [
 	'samsung-q800t-hdmi2.0',
 	'cta-timings',
 	'hitachi-55r6+',
+	'cta-vfpdb',
+	'philips-ftv-2017',
 ]
 
 test_env = [

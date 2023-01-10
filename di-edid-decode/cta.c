@@ -669,6 +669,35 @@ print_ycbcr420_cap_map(const struct di_edid_cta *cta,
 	}
 }
 
+static void
+printf_cta_svrs(const struct di_cta_svr *const *svrs)
+{
+	size_t i;
+	const struct di_cta_svr *svr;
+
+	/* TODO: resolve the references once we parse all timings and print
+	 * the resolved timings */
+
+	for (i = 0; svrs[i] != NULL; i++) {
+		svr = svrs[i];
+
+		switch (svr->type) {
+		case DI_CTA_SVR_TYPE_VIC:
+			printf("    VIC %3u\n", svr->vic);
+			break;
+		case DI_CTA_SVR_TYPE_DTD_INDEX:
+			printf("    DTD %3u\n", svr->dtd_index + 1);
+			break;
+		case DI_CTA_SVR_TYPE_T7T10VTDB:
+			printf("    VTDB %3u\n", svr->t7_t10_vtdb_index + 1);
+			break;
+		case DI_CTA_SVR_TYPE_FIRST_T8VTDB:
+			printf("    T8VTDB\n");
+			break;
+		}
+	}
+}
+
 static const char *
 cta_infoframe_type_name(enum di_cta_infoframe_type type)
 {
@@ -832,6 +861,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_sad *const *sads;
 	const struct di_cta_ycbcr420_cap_map *ycbcr420_cap_map;
 	const struct di_cta_infoframe_block *infoframe;
+	const struct di_cta_svr *const *svrs;
 	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
 
@@ -941,6 +971,10 @@ print_cta(const struct di_edid_cta *cta)
 			infoframe = di_cta_data_block_get_infoframe(data_block);
 			printf("    VSIFs: %d\n", infoframe->num_simultaneous_vsifs - 1);
 			print_infoframes(infoframe->infoframes);
+			break;
+		case DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF:
+			svrs = di_cta_data_block_get_svrs(data_block);
+			printf_cta_svrs(svrs);
 			break;
 		default:
 			break; /* Ignore */
