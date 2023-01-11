@@ -753,6 +753,17 @@ struct di_cta_svd {
 const struct di_cta_svd *const *
 di_cta_data_block_get_svds(const struct di_cta_data_block *block);
 
+/**
+ * Get an array of short video descriptors which only allow YCbCr 4:2:0 sampling
+ * mode from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_YCBCR420.
+ *
+ * The returned array is NULL-terminated.
+ */
+const struct di_cta_svd *const *
+di_cta_data_block_get_ycbcr420_svds(const struct di_cta_data_block *block);
+
 enum di_cta_vesa_transfer_characteristics_usage {
 	/* White transfer characteristic */
 	DI_CTA_VESA_TRANSFER_CHARACTERISTIC_USAGE_WHITE = 0,

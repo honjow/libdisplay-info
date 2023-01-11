@@ -29,6 +29,7 @@ test_cases = [
 	'viewsonic-vp2768-dp',
 	'cvt',
 	'philips-ftv-490',
+	'samsung-q800t-hdmi2.0',
 ]
 
 test_env = [

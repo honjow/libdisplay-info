@@ -698,6 +698,10 @@ print_cta(const struct di_edid_cta *cta)
 			svds = di_cta_data_block_get_svds(data_block);
 			printf_cta_svds(svds);
 			break;
+		case DI_CTA_DATA_BLOCK_YCBCR420:
+			svds = di_cta_data_block_get_ycbcr420_svds(data_block);
+			printf_cta_svds(svds);
+			break;
 		case DI_CTA_DATA_BLOCK_SPEAKER_ALLOC:
 			speaker_alloc = di_cta_data_block_get_speaker_alloc(data_block);
 			if (speaker_alloc->flw_frw)

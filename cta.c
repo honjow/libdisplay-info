@@ -47,43 +47,74 @@ add_failure_until(struct di_edid_cta *cta, int revision, const char fmt[], ...)
 	va_end(args);
 }
 
+static struct di_cta_svd *
+parse_svd(struct di_edid_cta *cta, uint8_t raw, const char *prefix)
+{
+	struct di_cta_svd svd, *svd_ptr;
+
+	if (raw == 0 || raw == 128 || raw >= 254) {
+		/* Reserved */
+		add_failure_until(cta, 3,
+				  "%s: Unknown VIC %" PRIu8 ".",
+				  prefix,
+				  raw);
+		return NULL;
+	} else if (raw <= 127 || raw >= 193) {
+		svd = (struct di_cta_svd) {
+			.vic = raw,
+		};
+	} else {
+		svd = (struct di_cta_svd) {
+			.vic = get_bit_range(raw, 6, 0),
+			.native = true,
+		};
+	}
+
+	svd_ptr = calloc(1, sizeof(*svd_ptr));
+	if (!svd_ptr)
+		return NULL;
+	*svd_ptr = svd;
+	return svd_ptr;
+}
+
 static bool
 parse_video_block(struct di_edid_cta *cta, struct di_cta_video_block *video,
 		  const uint8_t *data, size_t size)
 {
 	size_t i;
-	uint8_t raw;
-	struct di_cta_svd svd, *svd_ptr;
+	struct di_cta_svd *svd;
 
 	if (size == 0)
 		add_failure(cta, "Video Data Block: Empty Data Block");
 
 	for (i = 0; i < size; i++) {
-		raw = data[i];
-
-		if (raw == 0 || raw == 128 || raw >= 254) {
-			/* Reserved */
-			add_failure_until(cta, 3,
-					  "Video Data Block: Unknown VIC %" PRIu8 ".",
-					  raw);
+		svd = parse_svd(cta, data[i], "Video Data Block");
+		if (!svd)
 			continue;
-		} else if (raw <= 127 || raw >= 193) {
-			svd = (struct di_cta_svd) {
-				.vic = raw,
-			};
-		} else {
-			svd = (struct di_cta_svd) {
-				.vic = get_bit_range(raw, 6, 0),
-				.native = true,
-			};
-		}
-
-		svd_ptr = calloc(1, sizeof(*svd_ptr));
-		if (!svd_ptr)
-			return false;
-		*svd_ptr = svd;
 		assert(video->svds_len < EDID_CTA_MAX_VIDEO_BLOCK_ENTRIES);
-		video->svds[video->svds_len++] = svd_ptr;
+		video->svds[video->svds_len++] = svd;
+	}
+
+	return true;
+}
+
+static bool
+parse_ycbcr420_block(struct di_edid_cta *cta,
+		     struct di_cta_video_block *ycbcr420,
+		     const uint8_t *data, size_t size)
+{
+	size_t i;
+	struct di_cta_svd *svd;
+
+	if (size == 0)
+		add_failure(cta, "YCbCr 4:2:0 Video Data Block: Empty Data Block");
+
+	for (i = 0; i < size; i++) {
+		svd = parse_svd(cta, data[i], "YCbCr 4:2:0 Video Data Block");
+		if (!svd)
+			continue;
+		assert(ycbcr420->svds_len < EDID_CTA_MAX_VIDEO_BLOCK_ENTRIES);
+		ycbcr420->svds[ycbcr420->svds_len++] = svd;
 	}
 
 	return true;
@@ -1060,6 +1091,11 @@ destroy_data_block(struct di_cta_data_block *data_block)
 		for (i = 0; i < video->svds_len; i++)
 			free(video->svds[i]);
 		break;
+	case DI_CTA_DATA_BLOCK_YCBCR420:
+		video = &data_block->ycbcr420;
+		for (i = 0; i < video->svds_len; i++)
+			free(video->svds[i]);
+		break;
 	case DI_CTA_DATA_BLOCK_AUDIO:
 		audio = &data_block->audio;
 		for (i = 0; i < audio->sads_len; i++)
@@ -1161,6 +1197,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 14:
 			tag = DI_CTA_DATA_BLOCK_YCBCR420;
+			if (!parse_ycbcr420_block(cta,
+						  &data_block->ycbcr420,
+						  data, size))
+				goto skip;
 			break;
 		case 15:
 			tag = DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP;
@@ -1357,6 +1397,15 @@ di_cta_data_block_get_svds(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return (const struct di_cta_svd *const *) block->video.svds;
+}
+
+const struct di_cta_svd *const *
+di_cta_data_block_get_ycbcr420_svds(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_YCBCR420) {
+		return NULL;
+	}
+	return (const struct di_cta_svd *const *) block->ycbcr420.svds;
 }
 
 const struct di_cta_sad *const *
