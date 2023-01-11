@@ -51,6 +51,7 @@ di_lib = library(
 	'display-info',
 	[
 		'cta.c',
+		'cta-vic-table.c',
 		'cvt.c',
 		'displayid.c',
 		'dmt-table.c',

@@ -23,6 +23,15 @@
  */
 #define CTA_SAD_SIZE 3
 
+const struct di_cta_video_format *
+di_cta_video_format_from_vic(uint8_t vic)
+{
+	if (vic > _di_cta_video_formats_len ||
+	    _di_cta_video_formats[vic].vic == 0)
+		return NULL;
+	return &_di_cta_video_formats[vic];
+}
+
 static void
 add_failure(struct di_edid_cta *cta, const char fmt[], ...)
 {

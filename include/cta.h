@@ -140,6 +140,9 @@ struct di_cta_data_block {
 	struct di_cta_ycbcr420_cap_map ycbcr420_cap_map;
 };
 
+extern const struct di_cta_video_format _di_cta_video_formats[];
+extern const size_t _di_cta_video_formats_len;
+
 bool
 _di_edid_cta_parse(struct di_edid_cta *cta, const uint8_t *data, size_t size,
 		   struct di_logger *logger);
