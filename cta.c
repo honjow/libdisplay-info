@@ -1079,6 +1079,20 @@ parse_vesa_transfer_characteristics_block(struct di_edid_cta *cta,
 }
 
 static void
+parse_ycbcr420_cap_map(struct di_edid_cta *cta,
+		       struct di_cta_ycbcr420_cap_map *ycbcr420_cap_map,
+		       const uint8_t *data, size_t size)
+{
+	if (size == 0) {
+		ycbcr420_cap_map->all = true;
+		return;
+	}
+
+	assert(size <= sizeof(ycbcr420_cap_map->svd_bitmap));
+	memcpy(ycbcr420_cap_map->svd_bitmap, data, size);
+}
+
+static void
 destroy_data_block(struct di_cta_data_block *data_block)
 {
 	size_t i;
@@ -1204,6 +1218,9 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 15:
 			tag = DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP;
+			parse_ycbcr420_cap_map(cta,
+					       &data_block->ycbcr420_cap_map,
+					       data, size);
 			break;
 		case 18:
 			tag = DI_CTA_DATA_BLOCK_HDMI_AUDIO;
@@ -1469,6 +1486,33 @@ di_cta_data_block_get_vesa_dddb(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return &block->vesa_dddb;
+}
+
+bool
+di_cta_ycbcr420_cap_map_supported(const struct di_cta_ycbcr420_cap_map *cap_map,
+				  size_t svd_index)
+{
+	size_t byte, bit;
+
+	if (cap_map->all)
+		return true;
+
+	byte = svd_index / 8;
+	bit = svd_index % 8;
+
+	if (byte >= EDID_CTA_MAX_YCBCR420_CAP_MAP_BLOCK_ENTRIES)
+		return false;
+
+	return cap_map->svd_bitmap[byte] & (1 << bit);
+}
+
+const struct di_cta_ycbcr420_cap_map *
+di_cta_data_block_get_ycbcr420_cap_map(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP) {
+		return NULL;
+	}
+	return &block->ycbcr420_cap_map;
 }
 
 const struct di_edid_detailed_timing_def *const *

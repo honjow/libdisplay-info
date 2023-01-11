@@ -41,7 +41,7 @@
    Audio Data Block:
      Linear PCM:
        Max channels: 2
-@@ -97,33 +97,13 @@
+@@ -97,33 +97,15 @@
        Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:
      FL/FR - Front Left/Right
@@ -72,10 +72,12 @@
    YCbCr 4:2:0 Capability Map Data Block:
 -    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
 -    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
++    VIC  97
++    VIC  96
    HDR Static Metadata Data Block:
      Electro optical transfer functions:
        Traditional gamma - SDR luminance range
-@@ -133,7 +113,6 @@
+@@ -133,7 +115,6 @@
        Static metadata type 1
      Desired content max luminance: 92 (366.802 cd/m^2)
      Desired content max frame-average luminance: 92 (366.802 cd/m^2)
@@ -83,7 +85,7 @@
    Detailed Timing Descriptors:
      DTD 2:  2560x1440   59.950550 Hz  16:9     88.787 kHz    241.500000 MHz (700 mm x 390 mm)
                   Hfront   48 Hsync  32 Hback   80 Hpol P
-@@ -144,29 +123,12 @@
+@@ -144,29 +125,12 @@
      DTD 4:  1280x768    59.870228 Hz   5:3     47.776 kHz     79.500000 MHz (700 mm x 390 mm)
                   Hfront   64 Hsync 128 Hback  192 Hpol N
                   Vfront    3 Vsync   7 Vback   20 Vpol P

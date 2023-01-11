@@ -40,6 +40,14 @@
  * is 63 bytes, and each SAD uses 3 bytes.
  */
 #define EDID_CTA_MAX_AUDIO_BLOCK_ENTRIES 21
+/**
+ * The maximum number of Capability Bit Map entries in a YCbCr 4:2:0 video data
+ * block.
+ *
+ * Each data block has its size described in a 5-bit field, so its maximum size
+ * is 63 bytes, and each Capability Bit Map uses 1 byte.
+ */
+#define EDID_CTA_MAX_YCBCR420_CAP_MAP_BLOCK_ENTRIES 63
 
 struct di_edid_cta {
 	int revision;
@@ -100,6 +108,11 @@ struct di_cta_audio_block {
 	size_t sads_len;
 };
 
+struct di_cta_ycbcr420_cap_map {
+	bool all;
+	uint8_t svd_bitmap[EDID_CTA_MAX_YCBCR420_CAP_MAP_BLOCK_ENTRIES];
+};
+
 struct di_cta_data_block {
 	enum di_cta_data_block_tag tag;
 
@@ -123,6 +136,8 @@ struct di_cta_data_block {
 	struct di_cta_hdr_dynamic_metadata_block_priv hdr_dynamic_metadata;
 	/* Used for DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC */
 	struct di_cta_vesa_transfer_characteristics vesa_transfer_characteristics;
+	/* Used for DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP */
+	struct di_cta_ycbcr420_cap_map ycbcr420_cap_map;
 };
 
 bool

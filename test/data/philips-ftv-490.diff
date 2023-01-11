@@ -67,7 +67,7 @@
      MAT (MLP):
        Max channels: 8
        Supported sample rates (kHz): 48
-@@ -106,35 +103,13 @@
+@@ -106,35 +103,15 @@
        Hash calculation not required for object audio PCM or channel-based PCM
    Speaker Allocation Data Block:
      FL/FR - Front Left/Right
@@ -101,10 +101,12 @@
    YCbCr 4:2:0 Capability Map Data Block:
 -    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
 -    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
++    VIC  97
++    VIC  96
    Colorimetry Data Block:
      BT2020YCC
      BT2020RGB
-@@ -148,42 +123,12 @@
+@@ -148,42 +125,12 @@
    HDR Dynamic Metadata Data Block:
      HDR Dynamic Metadata Type 4
        Version: 4

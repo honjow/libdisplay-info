@@ -803,6 +803,27 @@ const struct di_cta_vesa_transfer_characteristics *
 di_cta_data_block_get_vesa_transfer_characteristics(const struct di_cta_data_block *block);
 
 /**
+ * CTA YCbCr 4:2:0 Capability Map block, defined in section 7.5.11.
+ */
+struct di_cta_ycbcr420_cap_map;
+
+/**
+ * Returns true if the SVD in regular Video Data Blocks at index `svd_index`
+ * supports YCbCr 4:2:0 subsampling.
+ */
+bool
+di_cta_ycbcr420_cap_map_supported(const struct di_cta_ycbcr420_cap_map *cap_map,
+				  size_t svd_index);
+
+/**
+ * Get the YCbCr 4:2:0 Capability Map from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP.
+ */
+const struct di_cta_ycbcr420_cap_map *
+di_cta_data_block_get_ycbcr420_cap_map(const struct di_cta_data_block *block);
+
+/**
  * Get a list of EDID detailed timing definitions.
  *
  * The returned array is NULL-terminated.

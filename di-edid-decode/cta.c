@@ -8,18 +8,21 @@
 #include "di-edid-decode.h"
 
 static void
+printf_cta_svd(const struct di_cta_svd *svd)
+{
+	printf("    VIC %3" PRIu8, svd->vic);
+	if (svd->native)
+		printf(" (native)");
+	printf("\n");
+}
+
+static void
 printf_cta_svds(const struct di_cta_svd *const *svds)
 {
 	size_t i;
-	const struct di_cta_svd *svd;
 
 	for (i = 0; svds[i] != NULL; i++) {
-		svd = svds[i];
-
-		printf("    VIC %3" PRIu8, svd->vic);
-		if (svd->native)
-			printf(" (native)");
-		printf("\n");
+		printf_cta_svd(svds[i]);
 
 		// TODO: print detailed mode info
 	}
@@ -583,6 +586,35 @@ print_cta_sads(const struct di_cta_sad *const *sads)
 	}
 }
 
+static void
+print_ycbcr420_cap_map(const struct di_edid_cta *cta,
+		       const struct di_cta_ycbcr420_cap_map *map)
+{
+	const struct di_cta_data_block *const *data_blocks;
+	const struct di_cta_data_block *data_block;
+	enum di_cta_data_block_tag tag;
+	const struct di_cta_svd *const *svds;
+	size_t i, j, svd_index = 0;
+
+	data_blocks = di_edid_cta_get_data_blocks(cta);
+
+	for (i = 0; data_blocks[i] != NULL; i++) {
+		data_block = data_blocks[i];
+
+		tag = di_cta_data_block_get_tag(data_block);
+		if (tag != DI_CTA_DATA_BLOCK_VIDEO)
+			continue;
+
+		svds = di_cta_data_block_get_svds(data_block);
+		for (j = 0; svds[j] != NULL; j++) {
+			if (di_cta_ycbcr420_cap_map_supported(map, svd_index))
+				printf_cta_svd(svds[j]);
+
+			svd_index++;
+		}
+	}
+}
+
 static const char *
 cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 {
@@ -666,6 +698,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_hdr_dynamic_metadata_block *hdr_dynamic_metadata;
 	const struct di_cta_vesa_transfer_characteristics *transfer_characteristics;
 	const struct di_cta_sad *const *sads;
+	const struct di_cta_ycbcr420_cap_map *ycbcr420_cap_map;
 	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
 
@@ -801,6 +834,10 @@ print_cta(const struct di_edid_cta *cta)
 		case DI_CTA_DATA_BLOCK_AUDIO:
 			sads = di_cta_data_block_get_sads(data_block);
 			print_cta_sads(sads);
+			break;
+		case DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP:
+			ycbcr420_cap_map = di_cta_data_block_get_ycbcr420_cap_map(data_block);
+			print_ycbcr420_cap_map(cta, ycbcr420_cap_map);
 			break;
 		default:
 			break; /* Ignore */
