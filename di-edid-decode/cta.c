@@ -7,10 +7,54 @@
 
 #include "di-edid-decode.h"
 
+static const char *
+video_format_picture_aspect_ratio_name(enum di_cta_video_format_picture_aspect_ratio ar)
+{
+	switch (ar) {
+	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_4_3:
+		return " 4:3 ";
+	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_16_9:
+		return "16:9 ";
+	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_64_27:
+		return "64:27";
+	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_256_135:
+		return "256:135";
+	}
+	abort(); /* unreachable */
+}
+
+static void
+print_vic(uint8_t vic)
+{
+	const struct di_cta_video_format *fmt;
+	int32_t h_blank, v_blank, h_total, v_total;
+	double refresh, h_freq_hz, pixel_clock_mhz;
+
+	printf("    VIC %3" PRIu8, vic);
+
+	fmt = di_cta_video_format_from_vic(vic);
+	if (fmt == NULL)
+		return;
+
+	h_blank = fmt->h_front + fmt->h_sync + fmt->h_back;
+	v_blank = fmt->v_front + fmt->v_sync + fmt->v_back;
+	h_total = fmt->h_active + h_blank;
+	v_total = fmt->v_active + v_blank;
+	refresh = (double) fmt->pixel_clock_hz / (h_total * v_total);
+	h_freq_hz = (double) fmt->pixel_clock_hz / h_total;
+	pixel_clock_mhz = (double) fmt->pixel_clock_hz / (1000 * 1000);
+
+	printf(":");
+	printf(" %5dx%-5d", fmt->h_active, fmt->v_active);
+	printf(" %10.6f Hz", refresh);
+	printf("  %s ", video_format_picture_aspect_ratio_name(fmt->picture_aspect_ratio));
+	printf(" %8.3f kHz %13.6f MHz", h_freq_hz / 1000, pixel_clock_mhz);
+}
+
 static void
 printf_cta_svd(const struct di_cta_svd *svd)
 {
-	printf("    VIC %3" PRIu8, svd->vic);
+	print_vic(svd->vic);
 	if (svd->native)
 		printf(" (native)");
 	printf("\n");
@@ -21,11 +65,8 @@ printf_cta_svds(const struct di_cta_svd *const *svds)
 {
 	size_t i;
 
-	for (i = 0; svds[i] != NULL; i++) {
+	for (i = 0; svds[i] != NULL; i++)
 		printf_cta_svd(svds[i]);
-
-		// TODO: print detailed mode info
-	}
 }
 
 static const char *

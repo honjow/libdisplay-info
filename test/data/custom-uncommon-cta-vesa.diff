@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -58,7 +58,7 @@
-   Supports YCbCr 4:2:2
-   Native detailed modes: 0
-   Video Data Block:
--    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
-+    VIC  97
-   Audio Data Block:
-     Linear PCM:
-       Max channels: 2
 @@ -106,21 +106,8 @@
      DTD 2:  3840x2160   59.996625 Hz  16:9    133.312 kHz    533.250000 MHz (960 mm x 652 mm)
                   Hfront   48 Hsync  32 Hback   80 Hpol P

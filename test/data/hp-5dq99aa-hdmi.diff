@@ -1,33 +1,15 @@
 --- ref
 +++ di
-@@ -51,32 +51,21 @@
-   Supports YCbCr 4:2:2
-   Native detailed modes: 1
-   Video Data Block:
--    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
--    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
--    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
--    VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
--    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
--    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
--    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
--    VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz
--    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
+@@ -60,23 +60,12 @@
+     VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
+     VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz
+     VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
 -  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
 -    Source physical address: 1.0.0.0
 -    DC_36bit
 -    DC_30bit
 -    DC_Y444
 -    Maximum TMDS clock: 310 MHz
-+    VIC  16
-+    VIC   4
-+    VIC   3
-+    VIC   2
-+    VIC  31
-+    VIC  19
-+    VIC  18
-+    VIC  17
-+    VIC   1
    Video Capability Data Block:
      YCbCr quantization: No Data
      RGB quantization: No Data

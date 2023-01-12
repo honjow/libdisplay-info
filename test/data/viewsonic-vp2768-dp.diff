@@ -1,40 +1,14 @@
 --- ref
 +++ di
-@@ -79,20 +79,20 @@
-   Supports YCbCr 4:2:2
+@@ -80,7 +80,7 @@
    Native detailed modes: 1
    Video Data Block:
--    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
+     VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
 -    VIC   5:  1920x1080i  60.000000 Hz  16:9     33.750 kHz     74.250000 MHz
--    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
--    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
--    VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
--    VIC  15:  1440x480    59.940060 Hz  16:9     31.469 kHz     54.000000 MHz
--    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
--    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
--    VIC  30:  1440x576    50.000000 Hz  16:9     31.250 kHz     54.000000 MHz
--    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
--    VIC  32:  1920x1080   24.000000 Hz  16:9     27.000 kHz     74.250000 MHz
--    VIC  33:  1920x1080   25.000000 Hz  16:9     28.125 kHz     74.250000 MHz
--    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
--    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-+    VIC  16 (native)
-+    VIC   5
-+    VIC   4
-+    VIC   3
-+    VIC   2
-+    VIC  15
-+    VIC  18
-+    VIC  19
-+    VIC  30
-+    VIC  31
-+    VIC  32
-+    VIC  33
-+    VIC  34
-+    VIC   1
-   Audio Data Block:
-     Linear PCM:
-       Max channels: 2
++    VIC   5:  1920x1080   30.626134 Hz  16:9     33.750 kHz     74.250000 MHz
+     VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
+     VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
+     VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
 @@ -104,10 +104,9 @@
      DTD 2:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (597 mm x 336 mm)
                   Hfront   88 Hsync  44 Hback  148 Hpol P

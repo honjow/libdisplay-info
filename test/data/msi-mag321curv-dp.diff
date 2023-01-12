@@ -1,47 +1,21 @@
 --- ref
 +++ di
-@@ -73,23 +73,23 @@
-   Supports YCbCr 4:2:2
-   Native detailed modes: 1
-   Video Data Block:
--    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
--    VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
--    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
--    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
+@@ -77,12 +77,12 @@
+     VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
+     VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
+     VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
 -    VIC   5:  1920x1080i  60.000000 Hz  16:9     33.750 kHz     74.250000 MHz
--    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
--    VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz
--    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
--    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
++    VIC   5:  1920x1080   30.626134 Hz  16:9     33.750 kHz     74.250000 MHz
+     VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
+     VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz
+     VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
+     VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
 -    VIC  20:  1920x1080i  50.000000 Hz  16:9     28.125 kHz     74.250000 MHz
--    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
--    VIC  32:  1920x1080   24.000000 Hz  16:9     27.000 kHz     74.250000 MHz
--    VIC  33:  1920x1080   25.000000 Hz  16:9     28.125 kHz     74.250000 MHz
--    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
--    VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
--    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
--    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
-+    VIC   1
-+    VIC   2
-+    VIC   3
-+    VIC   4
-+    VIC   5
-+    VIC  16
-+    VIC  17
-+    VIC  18
-+    VIC  19
-+    VIC  20
-+    VIC  31
-+    VIC  32
-+    VIC  33
-+    VIC  34
-+    VIC  95
-+    VIC  97
-+    VIC  96
-   Audio Data Block:
-     Linear PCM:
-       Max channels: 2
-@@ -97,33 +97,15 @@
++    VIC  20:  1920x1080   25.521779 Hz  16:9     28.125 kHz     74.250000 MHz
+     VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
+     VIC  32:  1920x1080   24.000000 Hz  16:9     27.000 kHz     74.250000 MHz
+     VIC  33:  1920x1080   25.000000 Hz  16:9     28.125 kHz     74.250000 MHz
+@@ -97,30 +97,12 @@
        Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:
      FL/FR - Front Left/Right
@@ -70,13 +44,8 @@
      BT2020RGB
 -    Reserved MD0
    YCbCr 4:2:0 Capability Map Data Block:
--    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
--    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
-+    VIC  97
-+    VIC  96
-   HDR Static Metadata Data Block:
-     Electro optical transfer functions:
-       Traditional gamma - SDR luminance range
+     VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
+     VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
 @@ -133,7 +115,6 @@
        Static metadata type 1
      Desired content max luminance: 92 (366.802 cd/m^2)

@@ -1,58 +1,30 @@
 --- ref
 +++ di
-@@ -51,29 +51,29 @@
-   Supports YCbCr 4:2:2
-   Native detailed modes: 1
-   Video Data Block:
--    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
--    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
--    VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
--    VIC  94:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
--    VIC  93:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
--    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
--    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
--    VIC  32:  1920x1080   24.000000 Hz  16:9     27.000 kHz     74.250000 MHz
--    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
--    VIC  33:  1920x1080   25.000000 Hz  16:9     28.125 kHz     74.250000 MHz
+@@ -61,18 +61,18 @@
+     VIC  32:  1920x1080   24.000000 Hz  16:9     27.000 kHz     74.250000 MHz
+     VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
+     VIC  33:  1920x1080   25.000000 Hz  16:9     28.125 kHz     74.250000 MHz
 -    VIC  20:  1920x1080i  50.000000 Hz  16:9     28.125 kHz     74.250000 MHz
--    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
--    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
--    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
--    VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz
--    VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
++    VIC  20:  1920x1080   25.521779 Hz  16:9     28.125 kHz     74.250000 MHz
+     VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
+     VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
+     VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
+     VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz
+     VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
 -    VIC  22:  1440x576i   50.000000 Hz  16:9     15.625 kHz     27.000000 MHz
 -    VIC   7:  1440x480i   59.940060 Hz  16:9     15.734 kHz     27.000000 MHz
 -    VIC  21:  1440x576i   50.000000 Hz   4:3     15.625 kHz     27.000000 MHz
 -    VIC   5:  1920x1080i  60.000000 Hz  16:9     33.750 kHz     74.250000 MHz
--    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
++    VIC  22:  1440x576    26.041667 Hz  16:9     15.625 kHz     27.000000 MHz
++    VIC   7:  1440x480    31.343159 Hz  16:9     15.734 kHz     27.000000 MHz
++    VIC  21:  1440x576    26.041667 Hz   4:3     15.625 kHz     27.000000 MHz
++    VIC   5:  1920x1080   30.626134 Hz  16:9     33.750 kHz     74.250000 MHz
+     VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
 -    VIC   6:  1440x480i   59.940060 Hz   4:3     15.734 kHz     27.000000 MHz
--    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-+    VIC  97
-+    VIC  96
-+    VIC  95
-+    VIC  94
-+    VIC  93
-+    VIC  16
-+    VIC  31
-+    VIC  32
-+    VIC  34
-+    VIC  33
-+    VIC  20
-+    VIC   4
-+    VIC  19
-+    VIC  18
-+    VIC  17
-+    VIC   2
-+    VIC  22
-+    VIC   7
-+    VIC  21
-+    VIC   5
-+    VIC   3
-+    VIC   6
-+    VIC   1
++    VIC   6:  1440x480    31.343159 Hz   4:3     15.734 kHz     27.000000 MHz
+     VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
    Audio Data Block:
      Linear PCM:
-       Max channels: 2
 @@ -92,13 +92,10 @@
        Supported sample rates (kHz): 48 44.1 32
        Supports Joint Object Coding
@@ -67,7 +39,7 @@
      MAT (MLP):
        Max channels: 8
        Supported sample rates (kHz): 48
-@@ -106,35 +103,15 @@
+@@ -106,29 +103,9 @@
        Hash calculation not required for object audio PCM or channel-based PCM
    Speaker Allocation Data Block:
      FL/FR - Front Left/Right
@@ -98,14 +70,6 @@
      PT scan behavior: No Data
      IT scan behavior: Always Underscanned
      CE scan behavior: Always Overscanned
-   YCbCr 4:2:0 Capability Map Data Block:
--    VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
--    VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
-+    VIC  97
-+    VIC  96
-   Colorimetry Data Block:
-     BT2020YCC
-     BT2020RGB
 @@ -148,42 +125,12 @@
    HDR Dynamic Metadata Data Block:
      HDR Dynamic Metadata Type 4
