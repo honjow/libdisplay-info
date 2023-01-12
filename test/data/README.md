@@ -14,6 +14,7 @@ samsung-s27a950d-dp	| ./Digital/Samsung/SAM079F/6D343EDB39F8	| cff7fe4d44
 sun-gh19ps-dvi		| ./Digital/Sun/SUN058C/34B2E3B9A052		| cff7fe4d44
 viewsonic-vp2768-dp	| ./Digital/ViewSonic/VSC2034/6B81BEA28A1E	| cff7fe4d44
 philips-ftv-490		| ./Digital/Philips/PHL01EA/03A4224323A6	| cff7fe4d44
+hitachi-55r6+		| ./Digital/Hitachi/HEC0000/58C711CBA787	| cff7fe4d44
 
 The following blobs originate from the [edid-decode] repository and are under
 the same license as the rest of the libdisplay-info project:

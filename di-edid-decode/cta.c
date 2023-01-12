@@ -670,6 +670,39 @@ print_ycbcr420_cap_map(const struct di_edid_cta *cta,
 }
 
 static const char *
+cta_infoframe_type_name(enum di_cta_infoframe_type type)
+{
+	switch (type) {
+	case DI_CTA_INFOFRAME_TYPE_AUXILIARY_VIDEO_INFORMATION:
+		return "Auxiliary Video Information InfoFrame (2)";
+	case DI_CTA_INFOFRAME_TYPE_SOURCE_PRODUCT_DESCRIPTION:
+		return "Source Product Description InfoFrame (3)";
+	case DI_CTA_INFOFRAME_TYPE_AUDIO:
+		return "Audio InfoFrame (4)";
+	case DI_CTA_INFOFRAME_TYPE_MPEG_SOURCE:
+		return "MPEG Source InfoFrame (5)";
+	case DI_CTA_INFOFRAME_TYPE_NTSC_VBI:
+		return "NTSC VBI InfoFrame (6)";
+	case DI_CTA_INFOFRAME_TYPE_DYNAMIC_RANGE_AND_MASTERING:
+		return "Dynamic Range and Mastering InfoFrame (7)";
+	}
+	abort();
+}
+
+static void
+print_infoframes(const struct di_cta_infoframe_descriptor *const *infoframes)
+{
+	size_t i;
+	const struct di_cta_infoframe_descriptor *infoframe;
+
+	for (i = 0; infoframes[i] != NULL; i++) {
+		infoframe = infoframes[i];
+		printf("    %s\n",
+		       cta_infoframe_type_name(infoframe->type));
+	}
+}
+
+static const char *
 cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 {
 	switch (tag) {
@@ -757,6 +790,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_vesa_transfer_characteristics *transfer_characteristics;
 	const struct di_cta_sad *const *sads;
 	const struct di_cta_ycbcr420_cap_map *ycbcr420_cap_map;
+	const struct di_cta_infoframe_block *infoframe;
 	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
 
@@ -896,6 +930,11 @@ print_cta(const struct di_edid_cta *cta)
 		case DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP:
 			ycbcr420_cap_map = di_cta_data_block_get_ycbcr420_cap_map(data_block);
 			print_ycbcr420_cap_map(cta, ycbcr420_cap_map);
+			break;
+		case DI_CTA_DATA_BLOCK_INFOFRAME:
+			infoframe = di_cta_data_block_get_infoframe(data_block);
+			printf("    VSIFs: %d\n", infoframe->num_simultaneous_vsifs - 1);
+			print_infoframes(infoframe->infoframes);
 			break;
 		default:
 			break; /* Ignore */

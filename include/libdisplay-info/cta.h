@@ -878,6 +878,53 @@ const struct di_cta_ycbcr420_cap_map *
 di_cta_data_block_get_ycbcr420_cap_map(const struct di_cta_data_block *block);
 
 /**
+ * InfoFrame types, defined in table 7.
+ *
+ * Note, the enum values don't match the specification.
+ */
+enum di_cta_infoframe_type {
+	/* Auxiliary Video Information, defined in section 6.4. */
+	DI_CTA_INFOFRAME_TYPE_AUXILIARY_VIDEO_INFORMATION,
+	/* Source Product Description, defined in section 6.5. */
+	DI_CTA_INFOFRAME_TYPE_SOURCE_PRODUCT_DESCRIPTION,
+	/* Audio, defined in section 6.6. */
+	DI_CTA_INFOFRAME_TYPE_AUDIO,
+	/* MPEG Source, defined in section 6.7. */
+	DI_CTA_INFOFRAME_TYPE_MPEG_SOURCE,
+	/* NTSC VBI, defined in section 6.8. */
+	DI_CTA_INFOFRAME_TYPE_NTSC_VBI,
+	/* Dynamic Range and Mastering, defined in section 6.9. */
+	DI_CTA_INFOFRAME_TYPE_DYNAMIC_RANGE_AND_MASTERING,
+};
+
+/**
+ * CTA InfoFrame descriptor, defined in section 7.5.9.
+ */
+struct di_cta_infoframe_descriptor {
+	/* Type of InfoFrame */
+	enum di_cta_infoframe_type type;
+};
+
+/**
+ * CTA InfoFrame processing, defined in section 7.5.9.
+ */
+struct di_cta_infoframe_block {
+	/* Number of Vendor-specific InfoFrames that can be received
+	 * simultaneously */
+	int num_simultaneous_vsifs;
+	/* Supported InfoFrames. The array is NULL-terminated. */
+	const struct di_cta_infoframe_descriptor *const *infoframes;
+};
+
+/**
+ * Get the InfoFrame information from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_INFOFRAME.
+ */
+const struct di_cta_infoframe_block *
+di_cta_data_block_get_infoframe(const struct di_cta_data_block *block);
+
+/**
  * Get a list of EDID detailed timing definitions.
  *
  * The returned array is NULL-terminated.

@@ -1101,12 +1101,128 @@ parse_ycbcr420_cap_map(struct di_edid_cta *cta,
 	memcpy(ycbcr420_cap_map->svd_bitmap, data, size);
 }
 
+static struct di_cta_infoframe_descriptor *
+parse_infoframe(struct di_edid_cta *cta, uint8_t type,
+		const uint8_t *data, size_t size)
+{
+	struct di_cta_infoframe_descriptor infoframe = {0};
+	struct di_cta_infoframe_descriptor *ifp;
+
+	if (type >= 8 && type <= 0x1f) {
+		add_failure(cta, "InfoFrame Data Block: Type code %u is reserved.",
+			    type);
+		return NULL;
+	}
+
+	if (type >= 0x20) {
+		add_failure(cta, "InfoFrame Data Block: Type code %u is forbidden.",
+			    type);
+		return NULL;
+	}
+
+	if (type == 1) {
+		/* No known vendor specific InfoFrames, yet */
+		return NULL;
+	} else {
+		switch (type) {
+		case 0x02:
+			infoframe.type = DI_CTA_INFOFRAME_TYPE_AUXILIARY_VIDEO_INFORMATION;
+			break;
+		case 0x03:
+			infoframe.type = DI_CTA_INFOFRAME_TYPE_SOURCE_PRODUCT_DESCRIPTION;
+			break;
+		case 0x04:
+			infoframe.type = DI_CTA_INFOFRAME_TYPE_AUDIO;
+			break;
+		case 0x05:
+			infoframe.type = DI_CTA_INFOFRAME_TYPE_MPEG_SOURCE;
+			break;
+		case 0x06:
+			infoframe.type = DI_CTA_INFOFRAME_TYPE_NTSC_VBI;
+			break;
+		case 0x07:
+			infoframe.type = DI_CTA_INFOFRAME_TYPE_DYNAMIC_RANGE_AND_MASTERING;
+			break;
+		default:
+			abort(); /* unreachable */
+		}
+	}
+
+	ifp = calloc(1, sizeof(*ifp));
+	if (!ifp)
+		return NULL;
+
+	*ifp = infoframe;
+	return ifp;
+}
+
+static bool
+parse_infoframe_block(struct di_edid_cta *cta,
+		      struct di_cta_infoframe_block_priv *ifb,
+		      const uint8_t *data, size_t size)
+{
+	size_t index = 0, length;
+	uint8_t type;
+	struct di_cta_infoframe_descriptor *infoframe;
+
+	if (size < 2) {
+		add_failure(cta, "InfoFrame Data Block: Empty Data Block with length %u.",
+			    size);
+		return false;
+	}
+
+	ifb->block.num_simultaneous_vsifs = data[1] + 1;
+	ifb->block.infoframes = (const struct di_cta_infoframe_descriptor *const *)ifb->infoframes;
+
+	index = get_bit_range(data[0], 7, 5) + 2;
+	if (get_bit_range(data[0], 4, 0) != 0)
+		add_failure(cta, "InfoFrame Data Block: InfoFrame Processing "
+				 "Descriptor Header bits F14-F10 shall be 0.");
+
+	while (true) {
+		if (index == size)
+			break;
+		if (index > size) {
+			add_failure(cta, "InfoFrame Data Block: Payload length exceeds block size.");
+			return false;
+		}
+
+		length = get_bit_range(data[index], 7, 5);
+		type = get_bit_range(data[index], 4, 0);
+
+		if (type == 0) {
+			add_failure(cta, "InfoFrame Data Block: Short InfoFrame Descriptor with type 0 is forbidden.");
+			return false;
+		} else if (type == 1) {
+			length += 4;
+		} else {
+			length += 1;
+		}
+
+		if (index + length > size) {
+			add_failure(cta, "InfoFrame Data Block: Payload length exceeds block size.");
+			return false;
+		}
+
+		infoframe = parse_infoframe(cta, type, &data[index], length);
+		if (infoframe) {
+			assert(ifb->infoframes_len < EDID_CTA_INFOFRAME_BLOCK_ENTRIES);
+			ifb->infoframes[ifb->infoframes_len++] = infoframe;
+		}
+
+		index += length;
+	}
+
+	return true;
+}
+
 static void
 destroy_data_block(struct di_cta_data_block *data_block)
 {
 	size_t i;
 	struct di_cta_video_block *video;
 	struct di_cta_audio_block *audio;
+	struct di_cta_infoframe_block_priv *infoframe;
 
 	switch (data_block->tag) {
 	case DI_CTA_DATA_BLOCK_VIDEO:
@@ -1123,6 +1239,11 @@ destroy_data_block(struct di_cta_data_block *data_block)
 		audio = &data_block->audio;
 		for (i = 0; i < audio->sads_len; i++)
 			free(audio->sads[i]);
+		break;
+	case DI_CTA_DATA_BLOCK_INFOFRAME:
+		infoframe = &data_block->infoframe;
+		for (i = 0; i < infoframe->infoframes_len; i++)
+			free(infoframe->infoframes[i]);
 		break;
 	default:
 		break; /* Nothing to do */
@@ -1248,6 +1369,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 32:
 			tag = DI_CTA_DATA_BLOCK_INFOFRAME;
+			if (!parse_infoframe_block(cta,
+						   &data_block->infoframe,
+						   data, size))
+				goto skip;
 			break;
 		case 34:
 			tag = DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VII;
@@ -1528,6 +1653,15 @@ di_cta_data_block_get_ycbcr420_cap_map(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return &block->ycbcr420_cap_map;
+}
+
+const struct di_cta_infoframe_block *
+di_cta_data_block_get_infoframe(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_INFOFRAME) {
+		return NULL;
+	}
+	return &block->infoframe.block;
 }
 
 const struct di_edid_detailed_timing_def *const *

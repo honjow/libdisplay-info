@@ -48,6 +48,15 @@
  * is 63 bytes, and each Capability Bit Map uses 1 byte.
  */
 #define EDID_CTA_MAX_YCBCR420_CAP_MAP_BLOCK_ENTRIES 63
+/**
+ * The maximum number of Short InfoFrame Descriptor or Short Vendor-Specific
+ * InfoFrame Descriptor entries in a InfoFrame data block.
+ *
+ * Each data block has its size described in a 5-bit field, so its maximum size
+ * is 63 bytes, the header takes up at least 2 bytes and the smallest Short
+ * InfoFrame Descriptor is 1 byte.
+ */
+#define EDID_CTA_INFOFRAME_BLOCK_ENTRIES 61
 
 struct di_edid_cta {
 	int revision;
@@ -113,6 +122,12 @@ struct di_cta_ycbcr420_cap_map {
 	uint8_t svd_bitmap[EDID_CTA_MAX_YCBCR420_CAP_MAP_BLOCK_ENTRIES];
 };
 
+struct di_cta_infoframe_block_priv {
+	struct di_cta_infoframe_block block;
+	struct di_cta_infoframe_descriptor *infoframes[EDID_CTA_INFOFRAME_BLOCK_ENTRIES + 1];
+	size_t infoframes_len;
+};
+
 struct di_cta_data_block {
 	enum di_cta_data_block_tag tag;
 
@@ -138,6 +153,8 @@ struct di_cta_data_block {
 	struct di_cta_vesa_transfer_characteristics vesa_transfer_characteristics;
 	/* Used for DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP */
 	struct di_cta_ycbcr420_cap_map ycbcr420_cap_map;
+	/* Used for DI_CTA_DATA_BLOCK_INFOFRAME */
+	struct di_cta_infoframe_block_priv infoframe;
 };
 
 extern const struct di_cta_video_format _di_cta_video_formats[];
