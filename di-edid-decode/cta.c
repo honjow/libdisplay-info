@@ -12,11 +12,11 @@ video_format_picture_aspect_ratio_name(enum di_cta_video_format_picture_aspect_r
 {
 	switch (ar) {
 	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_4_3:
-		return " 4:3 ";
+		return "  4:3  ";
 	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_16_9:
-		return "16:9 ";
+		return " 16:9  ";
 	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_64_27:
-		return "64:27";
+		return " 64:27 ";
 	case DI_CTA_VIDEO_FORMAT_PICTURE_ASPECT_RATIO_256_135:
 		return "256:135";
 	}
@@ -47,7 +47,7 @@ print_vic(uint8_t vic)
 	printf(":");
 	printf(" %5dx%-5d", fmt->h_active, fmt->v_active);
 	printf(" %10.6f Hz", refresh);
-	printf("  %s ", video_format_picture_aspect_ratio_name(fmt->picture_aspect_ratio));
+	printf(" %s", video_format_picture_aspect_ratio_name(fmt->picture_aspect_ratio));
 	printf(" %8.3f kHz %13.6f MHz", h_freq_hz / 1000, pixel_clock_mhz);
 }
 
