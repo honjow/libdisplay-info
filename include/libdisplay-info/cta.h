@@ -931,6 +931,38 @@ const struct di_cta_infoframe_block *
 di_cta_data_block_get_infoframe(const struct di_cta_data_block *block);
 
 /**
+ * Room Configuration Data Block, defined in section 7.5.15.
+ */
+struct di_cta_room_configuration {
+	/* Present speakers */
+	struct di_cta_speaker_allocation speakers;
+	/* Total number of L-PCM channels */
+	int speaker_count;
+	/* All speakers are defined by Speaker Location Descriptors */
+	bool has_speaker_location_descriptors;
+	/* Rectangular box that contains all of the components of interest
+	 * centered on the Primary Listening Position.
+	 * See 7.5.16.1 Room Coordinate System
+	 * Only valid if any Speaker Location Descriptor has coordinates set. */
+	int max_x; /* in dm */
+	int max_y; /* in dm */
+	int max_z; /* in dm */
+	/* The position of the center of the display in normalized coordinates.
+	 * Only valid if any Speaker Location Descriptor has coordinates set. */
+	double display_x; /* normalized to max_x */
+	double display_y; /* normalized to max_y */
+	double display_z; /* normalized to max_z */
+};
+
+/**
+ * Get the Room Configuration from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_ROOM_CONFIG.
+ */
+const struct di_cta_room_configuration *
+di_cta_data_block_get_room_configuration(const struct di_cta_data_block *block);
+
+/**
  * Get a list of EDID detailed timing definitions.
  *
  * The returned array is NULL-terminated.

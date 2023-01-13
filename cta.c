@@ -1226,6 +1226,81 @@ parse_infoframe_block(struct di_edid_cta *cta,
 	return true;
 }
 
+static double
+decode_coord(unsigned char x)
+{
+	signed char s = (signed char)x;
+
+	return s / 64.0;
+}
+
+static bool
+parse_room_config_block(struct di_edid_cta *cta,
+			struct di_cta_room_configuration *rc,
+			const uint8_t *data, size_t size)
+{
+	bool has_display_coords;
+	bool has_speaker_count;
+
+	if (size < 4) {
+		add_failure(cta, "Room Configuration Data Block: Empty Data Block with length %u.",
+			    size);
+		return false;
+	}
+
+	has_display_coords = has_bit(data[0], 7);
+	has_speaker_count = has_bit(data[0], 6);
+	rc->has_speaker_location_descriptors = has_bit(data[0], 5);
+
+	if (has_speaker_count) {
+		rc->speaker_count = get_bit_range(data[0], 4, 0) + 1;
+	} else {
+		if (get_bit_range(data[0], 4, 0) != 0) {
+			add_failure(cta, "Room Configuration Data Block: "
+					 "'Speaker' flag is 0, but the Speaker Count is not 0.");
+		}
+
+		if (rc->has_speaker_location_descriptors) {
+			add_failure(cta, "Room Configuration Data Block: "
+					 "'Speaker' flag is 0, but there are "
+					 "Speaker Location Descriptors.");
+		}
+	}
+
+	parse_speaker_alloc(cta, &rc->speakers, &data[1], "Room Configuration Data Block");
+
+	rc->max_x = 16;
+	rc->max_y = 16;
+	rc->max_z = 8;
+	rc->display_x = 0.0;
+	rc->display_y = 1.0;
+	rc->display_z = 0.0;
+
+	if (size < 7) {
+		if (has_display_coords)
+			add_failure(cta, "Room Configuration Data Block: "
+					 "'Display' flag is 1, but the Display and Maximum coordinates are not present.");
+		return true;
+	}
+
+	rc->max_x = data[4];
+	rc->max_y = data[5];
+	rc->max_z = data[6];
+
+	if (size < 10) {
+		if (has_display_coords)
+			add_failure(cta, "Room Configuration Data Block: "
+					 "'Display' flag is 1, but the Display coordinates are not present.");
+		return true;
+	}
+
+	rc->display_x = decode_coord(data[7]);
+	rc->display_y = decode_coord(data[8]);
+	rc->display_z = decode_coord(data[9]);
+
+	return true;
+}
+
 static void
 destroy_data_block(struct di_cta_data_block *data_block)
 {
@@ -1373,6 +1448,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 19:
 			tag = DI_CTA_DATA_BLOCK_ROOM_CONFIG;
+			if (!parse_room_config_block(cta,
+						     &data_block->room_config,
+						     data, size))
+				goto skip;
 			break;
 		case 20:
 			tag = DI_CTA_DATA_BLOCK_SPEAKER_LOCATION;
@@ -1687,4 +1766,13 @@ di_cta_data_block_get_vesa_transfer_characteristics(const struct di_cta_data_blo
 		return NULL;
 	}
 	return &block->vesa_transfer_characteristics;
+}
+
+const struct di_cta_room_configuration *
+di_cta_data_block_get_room_configuration(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_ROOM_CONFIG) {
+		return NULL;
+	}
+	return &block->room_config;
 }

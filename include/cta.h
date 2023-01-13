@@ -155,6 +155,8 @@ struct di_cta_data_block {
 	struct di_cta_ycbcr420_cap_map ycbcr420_cap_map;
 	/* Used for DI_CTA_DATA_BLOCK_INFOFRAME */
 	struct di_cta_infoframe_block_priv infoframe;
+	/* Used for DI_CTA_DATA_BLOCK_ROOM_CONFIG */
+	struct di_cta_room_configuration room_config;
 };
 
 extern const struct di_cta_video_format _di_cta_video_formats[];
