@@ -65,7 +65,7 @@ To fuzz libdisplay-info with [AFL], the library needs to be instrumented:
 
     CC=afl-gcc meson build/
     ninja -C build/
-    afl-fuzz -i test/data/ -o afl/ build/di-edid-decode
+    afl-fuzz -i test/data/ -o afl/ build/di-edid-decode/di-edid-decode
 
 [website]: https://emersion.pages.freedesktop.org/libdisplay-info/
 [GitLab project]: https://gitlab.freedesktop.org/emersion/libdisplay-info
