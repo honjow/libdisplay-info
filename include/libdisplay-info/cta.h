@@ -962,6 +962,92 @@ struct di_cta_room_configuration {
 const struct di_cta_room_configuration *
 di_cta_data_block_get_room_configuration(const struct di_cta_data_block *block);
 
+enum di_cta_speaker_placement {
+	/* FL - Front Left */
+	DI_CTA_SPEAKER_PLACEMENT_FL = 0x00,
+	/* FR - Front Right */
+	DI_CTA_SPEAKER_PLACEMENT_FR = 0x01,
+	/* FC - Front Center */
+	DI_CTA_SPEAKER_PLACEMENT_FC = 0x02,
+	/* LFE1 - Low Frequency Effects 1 */
+	DI_CTA_SPEAKER_PLACEMENT_LFE1 = 0x03,
+	/* BL - Back Left */
+	DI_CTA_SPEAKER_PLACEMENT_BL = 0x04,
+	/* BR - Back Right */
+	DI_CTA_SPEAKER_PLACEMENT_BR = 0x05,
+	/* FLc - Front Left of Center */
+	DI_CTA_SPEAKER_PLACEMENT_FLC = 0x06,
+	/* FRc - Front Right of Center */
+	DI_CTA_SPEAKER_PLACEMENT_FRC = 0x07,
+	/* BC - Back Center */
+	DI_CTA_SPEAKER_PLACEMENT_BC = 0x08,
+	/* LFE2 - Low Frequency Effects 2 */
+	DI_CTA_SPEAKER_PLACEMENT_LFE2 = 0x09,
+	/* SiL - Side Left */
+	DI_CTA_SPEAKER_PLACEMENT_SIL = 0x0a,
+	/* SiR - Side Right */
+	DI_CTA_SPEAKER_PLACEMENT_SIR = 0x0b,
+	/* TpFL - Top Front Left */
+	DI_CTA_SPEAKER_PLACEMENT_TPFL = 0x0c,
+	/* TpFR - Top Front Right */
+	DI_CTA_SPEAKER_PLACEMENT_TPFR = 0x0d,
+	/* TpFC - Top Front Center */
+	DI_CTA_SPEAKER_PLACEMENT_TPFC = 0x0e,
+	/* TpC - Top Center */
+	DI_CTA_SPEAKER_PLACEMENT_TPC = 0x0f,
+	/* TpBL - Top Back Left */
+	DI_CTA_SPEAKER_PLACEMENT_TPBL = 0x10,
+	/* TpBR - Top Back Right */
+	DI_CTA_SPEAKER_PLACEMENT_TPBR = 0x11,
+	/* TpSiL - Top Side Left */
+	DI_CTA_SPEAKER_PLACEMENT_TPSIL = 0x12,
+	/* TpSiR - Top Side Right */
+	DI_CTA_SPEAKER_PLACEMENT_TPSIR = 0x13,
+	/* TpBC - Top Back Center */
+	DI_CTA_SPEAKER_PLACEMENT_TPBC = 0x14,
+	/* BtFC - Bottom Front Center */
+	DI_CTA_SPEAKER_PLACEMENT_BTFC = 0x15,
+	/* BtFL - Bottom Front Left */
+	DI_CTA_SPEAKER_PLACEMENT_BTFL = 0x16,
+	/* BtFR - Bottom Front Right */
+	DI_CTA_SPEAKER_PLACEMENT_BRFR = 0x17,
+	/* FLw - Front Left Wide */
+	DI_CTA_SPEAKER_PLACEMENT_FLW = 0x18,
+	/* FRw - Front Right Wide */
+	DI_CTA_SPEAKER_PLACEMENT_FRW = 0x19,
+	/* LS - Left Surround */
+	DI_CTA_SPEAKER_PLACEMENT_LS = 0x1a,
+	/* RS - Right Surround */
+	DI_CTA_SPEAKER_PLACEMENT_RS = 0x1b,
+};
+
+/**
+ * Speaker Location Data Block, defined in section 7.5.16.
+ */
+struct di_cta_speaker_locations {
+	/* Index of the audio channel where the audio for the described speaker
+	 * is to be transmitted. */
+	int channel_index;
+	/* If the channel shall be rendered on a speaker by the Sink. */
+	bool is_active;
+	/* If the speaker has coordinates instead of a named speaker placement. */
+	bool has_coords;
+	/* The position of the speaker in normalized coordinates. */
+	double x, y, z;
+	/* The named location of the speaker. Only valid if has_coords is false. */
+	enum di_cta_speaker_placement speaker_id;
+};
+
+/**
+ * Get an array of Speaker Locations.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_SPEAKER_LOCATION.
+ *
+ * The returned array is NULL-terminated.
+ */
+const struct di_cta_speaker_locations *const *
+di_cta_data_block_get_speaker_locations(const struct di_cta_data_block *block);
+
 /**
  * Get a list of EDID detailed timing definitions.
  *

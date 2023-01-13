@@ -1301,6 +1301,56 @@ parse_room_config_block(struct di_edid_cta *cta,
 	return true;
 }
 
+static bool
+parse_speaker_location_block(struct di_edid_cta *cta,
+			     struct di_cta_speaker_location_block *sldb,
+			     const uint8_t *data, size_t size)
+{
+	struct di_cta_speaker_locations speaker_loc, *slp;
+
+	if (size < 2) {
+		add_failure(cta, "Speaker Location Data Block: Empty Data Block with length %u.",
+			    size);
+		return false;
+	}
+
+	while (size >= 2) {
+		speaker_loc.has_coords = has_bit(data[0], 6);
+		speaker_loc.is_active = has_bit(data[0], 5);
+		speaker_loc.channel_index = get_bit_range(data[0], 4, 0);
+		speaker_loc.speaker_id = get_bit_range(data[1], 4, 0);
+
+		if (has_bit(data[0], 7) || get_bit_range(data[1], 7, 5) != 0) {
+			add_failure(cta, "Speaker Location Data Block: Bits F27-F25, F17 must be 0.");
+		}
+
+		if (speaker_loc.has_coords && size >= 5) {
+			speaker_loc.x = decode_coord(data[2]);
+			speaker_loc.y = decode_coord(data[3]);
+			speaker_loc.z = decode_coord(data[4]);
+			size -= 5;
+			data += 5;
+		} else if (speaker_loc.has_coords) {
+			add_failure(cta, "Speaker Location Data Block: COORD bit "
+					 "set but contains no Coordinates.");
+			return false;
+		} else {
+			size -= 2;
+			data += 2;
+		}
+
+		slp = calloc(1, sizeof(*slp));
+		if (!slp)
+			return false;
+
+		*slp = speaker_loc;
+		assert(sldb->locations_len < EDID_CTA_MAX_SPEAKER_LOCATION_BLOCK_ENTRIES);
+		sldb->locations[sldb->locations_len++] = slp;
+	}
+
+	return true;
+}
+
 static void
 destroy_data_block(struct di_cta_data_block *data_block)
 {
@@ -1308,6 +1358,7 @@ destroy_data_block(struct di_cta_data_block *data_block)
 	struct di_cta_video_block *video;
 	struct di_cta_audio_block *audio;
 	struct di_cta_infoframe_block_priv *infoframe;
+	struct di_cta_speaker_location_block *speaker_location;
 
 	switch (data_block->tag) {
 	case DI_CTA_DATA_BLOCK_VIDEO:
@@ -1329,6 +1380,11 @@ destroy_data_block(struct di_cta_data_block *data_block)
 		infoframe = &data_block->infoframe;
 		for (i = 0; i < infoframe->infoframes_len; i++)
 			free(infoframe->infoframes[i]);
+		break;
+	case DI_CTA_DATA_BLOCK_SPEAKER_LOCATION:
+		speaker_location = &data_block->speaker_location;
+		for (i = 0; i < speaker_location->locations_len; i++)
+			free(speaker_location->locations[i]);
 		break;
 	default:
 		break; /* Nothing to do */
@@ -1455,6 +1511,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 20:
 			tag = DI_CTA_DATA_BLOCK_SPEAKER_LOCATION;
+			if (!parse_speaker_location_block(cta,
+							  &data_block->speaker_location,
+							  data, size))
+				goto skip;
 			break;
 		case 32:
 			tag = DI_CTA_DATA_BLOCK_INFOFRAME;
@@ -1751,6 +1811,15 @@ di_cta_data_block_get_infoframe(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return &block->infoframe.block;
+}
+
+const struct di_cta_speaker_locations *const *
+di_cta_data_block_get_speaker_locations(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_SPEAKER_LOCATION) {
+		return NULL;
+	}
+	return (const struct di_cta_speaker_locations *const *) block->speaker_location.locations;
 }
 
 const struct di_edid_detailed_timing_def *const *

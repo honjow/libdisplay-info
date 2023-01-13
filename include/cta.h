@@ -57,6 +57,14 @@
  * InfoFrame Descriptor is 1 byte.
  */
 #define EDID_CTA_INFOFRAME_BLOCK_ENTRIES 61
+/**
+ * The maximum number of Speaker Location Descriptors in a Speaker Location data
+ * block.
+ *
+ * Each data block has its size described in a 5-bit field, so its maximum size
+ * is 63 bytes, and each Speaker Location Descriptors uses at least 2 byte.
+ */
+#define EDID_CTA_MAX_SPEAKER_LOCATION_BLOCK_ENTRIES 31
 
 struct di_edid_cta {
 	int revision;
@@ -128,6 +136,12 @@ struct di_cta_infoframe_block_priv {
 	size_t infoframes_len;
 };
 
+struct di_cta_speaker_location_block {
+	/* NULL-terminated */
+	struct di_cta_speaker_locations *locations[EDID_CTA_MAX_SPEAKER_LOCATION_BLOCK_ENTRIES + 1];
+	size_t locations_len;
+};
+
 struct di_cta_data_block {
 	enum di_cta_data_block_tag tag;
 
@@ -157,6 +171,8 @@ struct di_cta_data_block {
 	struct di_cta_infoframe_block_priv infoframe;
 	/* Used for DI_CTA_DATA_BLOCK_ROOM_CONFIG */
 	struct di_cta_room_configuration room_config;
+	/* Used for DI_CTA_DATA_BLOCK_SPEAKER_LOCATION */
+	struct di_cta_speaker_location_block speaker_location;
 };
 
 extern const struct di_cta_video_format _di_cta_video_formats[];
