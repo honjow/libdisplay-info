@@ -172,6 +172,17 @@ print_displayid_type_i_timing_block(const struct di_displayid_data_block *data_b
 		print_displayid_type_i_ii_vii_timing(timings[i], 4, "DTD");
 }
 
+static void
+print_displayid_type_ii_timing_block(const struct di_displayid_data_block *data_block)
+{
+	size_t i;
+	const struct di_displayid_type_i_ii_vii_timing *const *timings;
+
+	timings = di_displayid_data_block_get_type_ii_timings(data_block);
+	for (i = 0; timings[i] != NULL; i++)
+		print_displayid_type_i_ii_vii_timing(timings[i], 4, "DTD");
+}
+
 static const char *
 displayid_tiled_topo_missing_recv_behavior_name(enum di_displayid_tiled_topo_missing_recv_behavior behavior)
 {
@@ -346,6 +357,9 @@ print_displayid(const struct di_displayid *displayid)
 		case DI_DISPLAYID_DATA_BLOCK_TILED_DISPLAY_TOPO:
 			tiled_topo = di_displayid_data_block_get_tiled_topo(data_block);
 			print_displayid_tiled_topo(tiled_topo);
+			break;
+		case DI_DISPLAYID_DATA_BLOCK_TYPE_II_TIMING:
+			print_displayid_type_ii_timing_block(data_block);
 			break;
 		default:
 			break; /* Ignore */
