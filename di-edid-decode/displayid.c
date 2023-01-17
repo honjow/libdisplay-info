@@ -1,6 +1,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <libdisplay-info/displayid.h>
 
@@ -111,7 +112,8 @@ displayid_type_i_vii_timing_sync_polarity_name(enum di_displayid_type_i_vii_timi
 }
 
 static void
-print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t)
+print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t,
+				  int indent, const char *prefix)
 {
 	int horiz_total, vert_total;
 	int horiz_back_porch, vert_back_porch;
@@ -127,7 +129,7 @@ print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t
 	refresh = pixel_clock_hz / (horiz_total * vert_total);
 	horiz_freq_hz = pixel_clock_hz / horiz_total;
 
-	printf("    DTD:");
+	printf("%*s%s:", indent, "", prefix);
 	printf(" %5dx%-5d", t->horiz_active, t->vert_active);
 	if (t->interlaced) {
 		printf("i");
@@ -147,13 +149,13 @@ print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t
 	printf(")\n");
 
 	horiz_back_porch = t->horiz_blank - t->horiz_sync_width - t->horiz_offset;
-	printf("               Hfront %4d Hsync %3d Hback %4d Hpol %s",
+	printf("%*sHfront %4d Hsync %3d Hback %4d Hpol %s", indent + 8 + (int)strlen(prefix), "",
 	       t->horiz_offset, t->horiz_sync_width, horiz_back_porch,
 	       displayid_type_i_vii_timing_sync_polarity_name(t->horiz_sync_polarity));
 	printf("\n");
 
 	vert_back_porch = t->vert_blank - t->vert_sync_width - t->vert_offset;
-	printf("               Vfront %4d Vsync %3d Vback %4d Vpol %s",
+	printf("%*sVfront %4d Vsync %3d Vback %4d Vpol %s", indent + 8 + (int)strlen(prefix), "",
 	       t->vert_offset, t->vert_sync_width, vert_back_porch,
 	       displayid_type_i_vii_timing_sync_polarity_name(t->vert_sync_polarity));
 	printf("\n");
@@ -167,7 +169,7 @@ print_displayid_type_i_timing_block(const struct di_displayid_data_block *data_b
 
 	timings = di_displayid_data_block_get_type_i_timings(data_block);
 	for (i = 0; timings[i] != NULL; i++)
-		print_displayid_type_i_vii_timing(timings[i]);
+		print_displayid_type_i_vii_timing(timings[i], 4, "DTD");
 }
 
 static const char *
