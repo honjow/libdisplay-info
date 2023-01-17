@@ -70,4 +70,11 @@ _di_displayid_parse(struct di_displayid *displayid, const uint8_t *data,
 void
 _di_displayid_finish(struct di_displayid *displayid);
 
+bool
+_di_displayid_parse_type_1_7_timing(struct di_displayid_type_i_vii_timing *timing,
+				    struct di_logger *logger,
+				    const char *prefix,
+				    const uint8_t *data,
+				    bool is_type7);
+
 #endif

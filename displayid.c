@@ -49,6 +49,16 @@ add_failure(struct di_displayid *displayid, const char fmt[], ...)
 }
 
 static void
+logger_add_failure(struct di_logger *logger, const char fmt[], ...)
+{
+	va_list args;
+
+	va_start(args, fmt);
+	_di_logger_va_add_failure(logger, fmt, args);
+	va_end(args);
+}
+
+static void
 check_data_block_revision(struct di_displayid *displayid,
 			  const uint8_t data[static DISPLAYID_DATA_BLOCK_HEADER_SIZE],
 			  const char *block_name, uint8_t max_revision)
@@ -111,21 +121,21 @@ parse_display_params_block(struct di_displayid *displayid,
 	return true;
 }
 
-static bool
-parse_type_i_timing(struct di_displayid *displayid,
-		    struct di_displayid_data_block *data_block,
-		    const uint8_t data[static DISPLAYID_TYPE_I_TIMING_SIZE])
+bool
+_di_displayid_parse_type_1_7_timing(struct di_displayid_type_i_vii_timing *t,
+				    struct di_logger *logger,
+				    const char *prefix,
+				    const uint8_t *data,
+				    bool is_type7)
 {
 	int raw_pixel_clock;
 	uint8_t stereo_3d, aspect_ratio;
 
-	struct di_displayid_type_i_vii_timing *t = calloc(1, sizeof(*t));
-	if (t == NULL) {
-		return false;
-	}
-
 	raw_pixel_clock = data[0] | (data[1] << 8) | (data[2] << 16);
-	t->pixel_clock_mhz = (double)(1 + raw_pixel_clock) * 0.01;
+	if (is_type7)
+		t->pixel_clock_mhz = (double)(1 + raw_pixel_clock) * 0.001;
+	else
+		t->pixel_clock_mhz = (double)(1 + raw_pixel_clock) * 0.01;
 
 	t->preferred = has_bit(data[3], 7);
 	t->interlaced = has_bit(data[3], 4);
@@ -138,9 +148,8 @@ parse_type_i_timing(struct di_displayid *displayid,
 		t->stereo_3d = stereo_3d;
 		break;
 	default:
-		add_failure(displayid,
-			    "Video Timing Modes Type 1 - Detailed Timings Data Block: Reserved stereo 0x%02x.",
-			    stereo_3d);
+		logger_add_failure(logger, "%s: Reserved stereo 0x%02x.",
+				   prefix, stereo_3d);
 		break;
 	}
 
@@ -159,9 +168,8 @@ parse_type_i_timing(struct di_displayid *displayid,
 		break;
 	default:
 		t->aspect_ratio = DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_UNDEFINED;
-		add_failure(displayid,
-			    "Video Timing Modes Type 1 - Detailed Timings Data Block: Unknown aspect 0x%02x.",
-			    aspect_ratio);
+		logger_add_failure(logger, "%s: Unknown aspect 0x%02x.",
+				   prefix, aspect_ratio);
 		break;
 	}
 
@@ -176,6 +184,27 @@ parse_type_i_timing(struct di_displayid *displayid,
 	t->vert_sync_polarity = has_bit(data[17], 7);
 	t->vert_sync_width = 1 + (data[18] | (data[19] << 8));
 
+	return true;
+}
+
+static bool
+parse_type_i_timing(struct di_displayid *displayid,
+		    struct di_displayid_data_block *data_block,
+		    const uint8_t data[static DISPLAYID_TYPE_I_TIMING_SIZE])
+{
+	struct di_displayid_type_i_vii_timing timing, *t;
+
+	if (!_di_displayid_parse_type_1_7_timing(&timing, displayid->logger,
+						 "Video Timing Modes Type 1 - Detailed Timings Data Block",
+						 data, false))
+		return false;
+
+	t = calloc(1, sizeof(*t));
+	if (t == NULL) {
+		return false;
+	}
+
+	*t = timing;
 	assert(data_block->type_i_timings_len < DISPLAYID_MAX_TYPE_I_TIMINGS);
 	data_block->type_i_timings[data_block->type_i_timings_len++] = t;
 	return true;
