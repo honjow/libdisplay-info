@@ -220,6 +220,17 @@ const struct di_displayid_type_i_ii_vii_timing *const *
 di_displayid_data_block_get_type_i_timings(const struct di_displayid_data_block *data_block);
 
 /**
+ * Get type II timings from a DisplayID data block.
+ *
+ * The returned array is NULL-terminated.
+ *
+ * Returns NULL if the data block tag isn't
+ * DI_DISPLAYID_DATA_BLOCK_TYPE_II_TIMING.
+ */
+const struct di_displayid_type_i_ii_vii_timing *const *
+di_displayid_data_block_get_type_ii_timings(const struct di_displayid_data_block *data_block);
+
+/**
  * Behavior when more than 1 tile and less than total number of tiles are driven
  * by the source.
  */
