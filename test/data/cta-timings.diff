@@ -31,7 +31,7 @@
    Video Capability Data Block:
      YCbCr quantization: Selectable (via AVI YQ)
      RGB quantization: Selectable (via AVI Q)
-@@ -111,30 +94,21 @@
+@@ -111,13 +94,12 @@
      CE scan behavior: Always Underscanned
    Video Format Preference Data Block:
      VTDB   1
@@ -49,11 +49,9 @@
    YCbCr 4:2:0 Capability Map Data Block:
      VIC  96:  3840x2160   50.000000 Hz  16:9    112.500 kHz    594.000000 MHz
    YCbCr 4:2:0 Video Data Block:
-     VIC 114:  3840x2160   48.000000 Hz  16:9    108.000 kHz    594.000000 MHz
-   DisplayID Type VII Video Timing Data Block:
--    VTDB 1:  5120x2160   60.000000 Hz   1:1    133.320 kHz    693.264000 MHz (aspect 1:1, no 3D stereo)
--                  Hfront    8 Hsync  32 Hback   40 Hpol P
--                  Vfront   48 Vsync   8 Vback    6 Vpol N
+@@ -127,14 +109,9 @@
+                   Hfront    8 Hsync  32 Hback   40 Hpol P
+                   Vfront   48 Vsync   8 Vback    6 Vpol N
    DisplayID Type VIII Video Timing Data Block:
 -    DMT 0x48:  1920x1200  119.908612 Hz  16:10   152.404 kHz    317.000000 MHz (RB)
    DisplayID Type X Video Timing Data Block:
@@ -66,7 +64,7 @@
    Detailed Timing Descriptors:
      DTD 2:  3840x2160   59.996625 Hz  16:9    133.312 kHz    533.250000 MHz (960 mm x 540 mm)
                   Hfront   48 Hsync  32 Hback   80 Hpol P
-@@ -152,10 +126,14 @@
+@@ -152,10 +129,14 @@
    Native detailed modes: 1
    Detailed Timing Descriptors:
      DTD 3:  1280x720    59.855126 Hz  16:9     44.772 kHz     74.500000 MHz (analog composite, sync-on-green, 960 mm x 540 mm)

@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <libdisplay-info/cta.h>
+#include <displayid.h>
 
 /**
  * The maximum number of data blocks in an EDID CTA block.
@@ -188,6 +189,8 @@ struct di_cta_data_block {
 	struct di_cta_speaker_location_block speaker_location;
 	/* Used for DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF */
 	struct di_cta_video_format_pref_block video_format_pref;
+	/* Used for DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VII */
+	struct di_displayid_type_i_vii_timing did_vii_timing;
 };
 
 extern const struct di_cta_video_format _di_cta_video_formats[];

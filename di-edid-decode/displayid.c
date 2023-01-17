@@ -111,7 +111,7 @@ displayid_type_i_vii_timing_sync_polarity_name(enum di_displayid_type_i_vii_timi
 	abort(); /* Unreachable */
 }
 
-static void
+void
 print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t,
 				  int indent, const char *prefix)
 {

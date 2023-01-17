@@ -731,6 +731,14 @@ print_infoframes(const struct di_cta_infoframe_descriptor *const *infoframes)
 	}
 }
 
+static void
+print_did_type_vii_timing(const struct di_displayid_type_i_vii_timing *t, int vtdb_index)
+{
+	char buf[32];
+	snprintf(buf, 32, "VTDB %d", vtdb_index + 1);
+	print_displayid_type_i_vii_timing(t, 4, buf);
+}
+
 static const char *
 cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 {
@@ -864,6 +872,8 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_svr *const *svrs;
 	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
+	const struct di_displayid_type_i_vii_timing *type_vii_timing;
+	int vtdb_index = 0;
 
 	printf("  Revision: %d\n", di_edid_cta_get_revision(cta));
 
@@ -975,6 +985,11 @@ print_cta(const struct di_edid_cta *cta)
 		case DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF:
 			svrs = di_cta_data_block_get_svrs(data_block);
 			printf_cta_svrs(svrs);
+			break;
+		case DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VII:
+			type_vii_timing = di_cta_data_block_get_did_type_vii_timing(data_block);
+			print_did_type_vii_timing(type_vii_timing, vtdb_index);
+			vtdb_index++;
 			break;
 		default:
 			break; /* Ignore */

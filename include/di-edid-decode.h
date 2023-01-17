@@ -3,6 +3,10 @@
 
 #include <stdbool.h>
 
+#include <libdisplay-info/edid.h>
+#include <libdisplay-info/cta.h>
+#include <libdisplay-info/displayid.h>
+
 struct uncommon_features {
 	bool color_point_descriptor;
 	bool color_management_data;
@@ -27,5 +31,9 @@ print_cta(const struct di_edid_cta *cta);
 
 void
 print_displayid(const struct di_displayid *displayid);
+
+void
+print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t,
+				  int indent, const char *prefix);
 
 #endif

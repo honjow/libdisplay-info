@@ -1049,6 +1049,15 @@ const struct di_cta_speaker_locations *const *
 di_cta_data_block_get_speaker_locations(const struct di_cta_data_block *block);
 
 /**
+ * Get the DisplayID Type VII Video Timing from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not
+ * DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VII.
+ */
+const struct di_displayid_type_i_vii_timing *
+di_cta_data_block_get_did_type_vii_timing(const struct di_cta_data_block *block);
+
+/**
  * Get a list of EDID detailed timing definitions.
  *
  * The returned array is NULL-terminated.

@@ -31,6 +31,7 @@ test_cases = [
 	'hitachi-55r6+',
 	'cta-vfpdb',
 	'philips-ftv-2017',
+	'cta-timings',
 ]
 
 test_env = [

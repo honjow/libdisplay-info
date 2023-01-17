@@ -9,6 +9,7 @@
 #include "cta.h"
 #include "log.h"
 #include "edid.h"
+#include "displayid.h"
 
 /**
  * Number of bytes in the CTA header (tag + revision + DTD offset + flags).
@@ -1401,6 +1402,53 @@ parse_speaker_location_block(struct di_edid_cta *cta,
 	return true;
 }
 
+static bool
+parse_did_type_vii_timing(struct di_edid_cta *cta,
+			  struct di_displayid_type_i_vii_timing *t,
+			  const uint8_t *data, size_t size)
+{
+	uint8_t revision;
+
+	if (size != 21) {
+		add_failure(cta, "DisplayID Type VII Video Timing Data Block: "
+				 "Empty Data Block with length %u.", size);
+		return false;
+	}
+
+	if (get_bit_range(data[0], 6, 4) != 0) {
+		add_failure(cta, "DisplayID Type VII Video Timing Data Block: "
+				 "T7_M shall be 000b.");
+		return false;
+	}
+
+	revision = get_bit_range(data[0], 2, 0);
+	if (revision != 2) {
+		add_failure(cta, "DisplayID Type VII Video Timing Data Block: "
+				 "Unexpected revision (%u != %u).",
+			    revision, 2);
+		return false;
+	}
+
+	if (has_bit(data[0], 3)) {
+		add_failure(cta, "DisplayID Type VII Video Timing Data Block: "
+				 "DSC_PT shall be 0.");
+	}
+	if (has_bit(data[0], 7)) {
+		add_failure(cta, "DisplayID Type VII Video Timing Data Block: "
+				 "Block Revision and Other Data Bit 7 must be 0.");
+	}
+
+	data += 1;
+	size -= 1;
+
+	if (!_di_displayid_parse_type_1_7_timing(t, cta->logger,
+						 "DisplayID Type VII Video Timing Data Block",
+						 data, true))
+		return false;
+
+	return true;
+}
+
 static void
 destroy_data_block(struct di_cta_data_block *data_block)
 {
@@ -1585,6 +1633,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 34:
 			tag = DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VII;
+			if (!parse_did_type_vii_timing(cta,
+						       &data_block->did_vii_timing,
+						       data, size))
+				goto skip;
 			break;
 		case 35:
 			tag = DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VIII;
@@ -1889,6 +1941,15 @@ di_cta_data_block_get_speaker_locations(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return (const struct di_cta_speaker_locations *const *) block->speaker_location.locations;
+}
+
+const struct di_displayid_type_i_vii_timing *
+di_cta_data_block_get_did_type_vii_timing(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_DISPLAYID_VIDEO_TIMING_VII) {
+		return NULL;
+	}
+	return &block->did_vii_timing;
 }
 
 const struct di_edid_detailed_timing_def *const *
