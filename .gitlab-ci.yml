@@ -30,6 +30,19 @@ check-mr:
       when: always
     - when: never
 
+check-test-data:
+  extends: .fdo.ci-fairy
+  stage: "Contribution checks"
+  script:
+   - |
+     for f in ./test/data/*.edid; do
+       grep -q "^$(basename ${f%.edid})\s" ./test/data/README.md
+       [[ $? -ne 0 ]] && echo "$f not in README.md" && exit 1
+     done
+     exit 0
+  rules:
+    - when: on_success
+
 prepare-container:
   extends: .fdo.container-build@alpine@x86_64
   stage: "Prepare container"
