@@ -30,6 +30,7 @@ test_cases = [
 	'cvt',
 	'philips-ftv-490',
 	'samsung-q800t-hdmi2.0',
+	'cta-timings'
 ]
 
 test_env = [

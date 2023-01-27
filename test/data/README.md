@@ -24,6 +24,7 @@ apple-xdr-dp			| ./data/apple-xdr-6k-tile0	| 894eefd
 custom-uncommon-cta-vesa	| ./test/cta-vesa.test		| 894eefd
 dell-2408wfp-dp			| ./data/dell-2408wfp-dp	| 894eefd
 samsung-q800t-hdmi2.0		| ./data/samsung-q800t-hdmi2.0	| 894eefd
+cta-timings			| ./test/cta-timings.test	| 894eefd
 
 The other blobs are under the same license as the rest of the libdisplay-info
 project:

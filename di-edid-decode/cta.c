@@ -681,6 +681,8 @@ cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 		return "Speaker Allocation Data Block";
 	case DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC:
 		return "VESA Display Transfer Characteristics Data Block";
+	case DI_CTA_DATA_BLOCK_VIDEO_FORMAT:
+		return "Video Format Data Block";
 	case DI_CTA_DATA_BLOCK_VIDEO_CAP:
 		return "Video Capability Data Block";
 	case DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE:
@@ -691,6 +693,8 @@ cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 		return "HDR Static Metadata Data Block";
 	case DI_CTA_DATA_BLOCK_HDR_DYNAMIC_METADATA:
 		return "HDR Dynamic Metadata Data Block";
+	case DI_CTA_DATA_BLOCK_NATIVE_VIDEO_RESOLUTION:
+		return "Native Video Resolution Data Block";
 	case DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF:
 		return "Video Format Preference Data Block";
 	case DI_CTA_DATA_BLOCK_YCBCR420:

@@ -126,6 +126,8 @@ enum di_cta_data_block_tag {
 	DI_CTA_DATA_BLOCK_SPEAKER_ALLOC,
 	/* VESA Display Transfer Characteristic Data Block */
 	DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC,
+	/* Video Format Data Block */
+	DI_CTA_DATA_BLOCK_VIDEO_FORMAT,
 
 	/* Video Capability Data Block */
 	DI_CTA_DATA_BLOCK_VIDEO_CAP,
@@ -137,6 +139,8 @@ enum di_cta_data_block_tag {
 	DI_CTA_DATA_BLOCK_HDR_STATIC_METADATA,
 	/* HDR Dynamic Metadata Data Block */
 	DI_CTA_DATA_BLOCK_HDR_DYNAMIC_METADATA,
+	/* Native Video Resolution Data Block */
+	DI_CTA_DATA_BLOCK_NATIVE_VIDEO_RESOLUTION,
 	/* Video Format Preference Data Block */
 	DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF,
 	/* YCbCr 4:2:0 Video Data Block */

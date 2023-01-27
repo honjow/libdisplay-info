@@ -1170,6 +1170,9 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 							       data, size))
 			goto error;
 		break;
+	case 6:
+		tag = DI_CTA_DATA_BLOCK_VIDEO_FORMAT;
+		break;
 	case 7:
 		/* Use Extended Tag */
 		if (size < 1) {
@@ -1214,6 +1217,9 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 							      &data_block->hdr_dynamic_metadata,
 							      data, size))
 				goto skip;
+			break;
+		case 8:
+			tag = DI_CTA_DATA_BLOCK_NATIVE_VIDEO_RESOLUTION;
 			break;
 		case 13:
 			tag = DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF;
