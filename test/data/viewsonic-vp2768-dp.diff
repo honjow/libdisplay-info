@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -80,7 +80,7 @@
-   Native detailed modes: 1
-   Video Data Block:
-     VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
--    VIC   5:  1920x1080i  60.000000 Hz  16:9     33.750 kHz     74.250000 MHz
-+    VIC   5:  1920x1080   30.626134 Hz  16:9     33.750 kHz     74.250000 MHz
-     VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
-     VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
-     VIC   2:   720x480    59.940060 Hz   4:3     31.469 kHz     27.000000 MHz
 @@ -104,10 +104,9 @@
      DTD 2:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (597 mm x 336 mm)
                   Hfront   88 Hsync  44 Hback  148 Hpol P

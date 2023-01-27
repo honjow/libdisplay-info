@@ -27,8 +27,9 @@ static void
 print_vic(uint8_t vic)
 {
 	const struct di_cta_video_format *fmt;
-	int32_t h_blank, v_blank, h_total, v_total;
-	double refresh, h_freq_hz, pixel_clock_mhz;
+	int32_t h_blank, v_blank, v_active;
+	double refresh, h_freq_hz, pixel_clock_mhz, h_total, v_total;
+	char buf[10];
 
 	printf("    VIC %3" PRIu8, vic);
 
@@ -36,16 +37,28 @@ print_vic(uint8_t vic)
 	if (fmt == NULL)
 		return;
 
+	v_active = fmt->v_active;
+	if (fmt->interlaced)
+		v_active /= 2;
+
 	h_blank = fmt->h_front + fmt->h_sync + fmt->h_back;
 	v_blank = fmt->v_front + fmt->v_sync + fmt->v_back;
 	h_total = fmt->h_active + h_blank;
-	v_total = fmt->v_active + v_blank;
+
+	v_total = v_active + v_blank;
+	if (fmt->interlaced)
+		v_total += 0.5;
+
 	refresh = (double) fmt->pixel_clock_hz / (h_total * v_total);
 	h_freq_hz = (double) fmt->pixel_clock_hz / h_total;
 	pixel_clock_mhz = (double) fmt->pixel_clock_hz / (1000 * 1000);
 
+	snprintf(buf, sizeof(buf), "%d%s",
+		 fmt->v_active,
+		 fmt->interlaced ? "i" : "");
+
 	printf(":");
-	printf(" %5dx%-5d", fmt->h_active, fmt->v_active);
+	printf(" %5dx%-5s", fmt->h_active, buf);
 	printf(" %10.6f Hz", refresh);
 	printf(" %s", video_format_picture_aspect_ratio_name(fmt->picture_aspect_ratio));
 	printf(" %8.3f kHz %13.6f MHz", h_freq_hz / 1000, pixel_clock_mhz);
