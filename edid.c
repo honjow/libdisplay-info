@@ -443,13 +443,13 @@ _di_edid_parse_detailed_timing_def(const uint8_t data[static EDID_BYTE_DESCRIPTO
 	case DI_EDID_DETAILED_TIMING_DEF_SIGNAL_ANALOG_COMPOSITE:
 		analog_composite = &priv->analog_composite;
 		analog_composite->sync_serrations = has_bit(flags, 2);
-		analog_composite->sync_on_green = has_bit(flags, 1);
+		analog_composite->sync_on_green = !has_bit(flags, 1);
 		def->analog_composite = analog_composite;
 		break;
 	case DI_EDID_DETAILED_TIMING_DEF_SIGNAL_BIPOLAR_ANALOG_COMPOSITE:
 		bipolar_analog_composite = &priv->bipolar_analog_composite;
 		bipolar_analog_composite->sync_serrations = has_bit(flags, 2);
-		bipolar_analog_composite->sync_on_green = has_bit(flags, 1);
+		bipolar_analog_composite->sync_on_green = !has_bit(flags, 1);
 		def->bipolar_analog_composite = bipolar_analog_composite;
 		break;
 	case DI_EDID_DETAILED_TIMING_DEF_SIGNAL_DIGITAL_COMPOSITE:

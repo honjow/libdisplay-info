@@ -63,15 +63,13 @@
    Detailed Timing Descriptors:
      DTD 2:  3840x2160   59.996625 Hz  16:9    133.312 kHz    533.250000 MHz (960 mm x 540 mm)
                   Hfront   48 Hsync  32 Hback   80 Hpol P
-@@ -151,10 +118,10 @@
-   Supports YCbCr 4:2:2
+@@ -152,9 +119,9 @@
    Native detailed modes: 1
    Detailed Timing Descriptors:
--    DTD 3:  1280x720    59.855126 Hz  16:9     44.772 kHz     74.500000 MHz (analog composite, sync-on-green, 960 mm x 540 mm)
+     DTD 3:  1280x720    59.855126 Hz  16:9     44.772 kHz     74.500000 MHz (analog composite, sync-on-green, 960 mm x 540 mm)
 -                 Hfront   64 Hsync 128 Hback  192 Hpol N
 -                 Vfront    3 Vsync   5 Vback   20 Vpol N
 -Checksum: 0xef  Unused space in Extension Block: 105 bytes
-+    DTD 3:  1280x720    59.855126 Hz  16:9     44.772 kHz     74.500000 MHz (analog composite, 960 mm x 540 mm)
 +                 Hfront   64 Hsync 128 Hback  192
 +                 Vfront    3 Vsync   5 Vback   20
 +Checksum: 0xef
