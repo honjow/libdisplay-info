@@ -12,7 +12,7 @@
    Colorimetry Data Block:
      xvYCC601
      xvYCC709
--    Reserved MD0
+-    Gamut Boundary Description Metadata Profile P0
 -  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
 -    Source physical address: 4.0.0.0
 -    Supports_AI
@@ -29,7 +29,7 @@
    HDR Static Metadata Data Block:
      Electro optical transfer functions:
        Traditional gamma - SDR luminance range
-@@ -136,37 +122,19 @@
+@@ -136,36 +122,19 @@
      VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
      VIC 101:  4096x2160   50.000000 Hz 256:135  112.500 kHz    594.000000 MHz
      VIC 102:  4096x2160   60.000000 Hz 256:135  135.000 kHz    594.000000 MHz
@@ -63,10 +63,10 @@
 -  Detailed Timing Descriptor #1: Mismatch of image size 1872x1053 mm vs display size 1650x930 mm.
 -  Detailed Timing Descriptor #2: Mismatch of image size 1872x1053 mm vs display size 1650x930 mm.
  Block 1, CTA-861 Extension Block:
-   Colorimetry Data Block: Reserved bits MD0-MD3 must be 0.
 -  Detailed Timing Descriptor #3: Mismatch of image size 1872x1053 mm vs display size 1650x930 mm.
 -  Detailed Timing Descriptor #4: Mismatch of image size 1872x1053 mm vs display size 1650x930 mm.
 -EDID:
 -  Base EDID: The DTD max image size is 1872x1053mm, which is larger than the display size 1650.0x930.0mm.
 -
++  Colorimetry Data Block: Reserved bits MD0-MD3 must be 0.
  EDID conformity: FAIL
