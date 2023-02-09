@@ -10,6 +10,8 @@ project(
 	],
 )
 
+assert(meson.project_version().split('.')[0] == '0')
+
 dep_hwdata = dependency('hwdata', required: false, native: true)
 if dep_hwdata.found()
 	hwdata_dir = dep_hwdata.get_variable(pkgconfig: 'pkgdatadir')
@@ -67,6 +69,8 @@ di_lib = library(
 	link_args: symbols_flag,
 	link_depends: symbols_file,
 	install: true,
+	version: meson.project_version(),
+	soversion: meson.project_version().split('.')[1],
 )
 
 install_subdir(
