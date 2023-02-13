@@ -81,6 +81,7 @@ install_subdir(
 pkgconfig = import('pkgconfig')
 pkgconfig.generate(
 	di_lib,
+	filebase: 'libdisplay-info',
 	description: 'EDID and DisplayID library',
 )
 
