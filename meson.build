@@ -1,7 +1,7 @@
 project(
 	'libdisplay-info',
 	'c',
-	version: '0.0.0',
+	version: '0.1.0',
 	license: 'MIT',
 	meson_version: '>= 0.57.0',
 	default_options: [
