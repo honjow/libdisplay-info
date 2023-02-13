@@ -82,6 +82,8 @@ pkgconfig = import('pkgconfig')
 pkgconfig.generate(
 	di_lib,
 	filebase: 'libdisplay-info',
+	name: 'libdisplay-info',
+	url: 'https://gitlab.freedesktop.org/emersion/libdisplay-info',
 	description: 'EDID and DisplayID library',
 )
 
