@@ -1,9 +1,3 @@
-ref_edid_decode = find_program('edid-decode', native: true, required: false)
-if not ref_edid_decode.found()
-	test('edid-decode-not-found', find_program('false'))
-	subdir_done()
-endif
-
 test_harness = find_program('./edid-decode-check.sh', native: true)
 
 di_edid_print = executable(
@@ -35,7 +29,6 @@ test_cases = [
 ]
 
 test_env = [
-	'REF_EDID_DECODE=' + ref_edid_decode.full_path(),
 	'DI_EDID_DECODE=' + di_edid_decode.full_path(),
 	'DI_EDID_PRINT=' + di_edid_print.full_path(),
 ]
@@ -64,9 +57,14 @@ foreach tc : test_cases
 	gen_targets += files('data/' + tc + '.edid')
 endforeach
 
-run_target(
-	'gen-test-data',
-	command: [test_gen] + gen_targets,
-	depends: [di_edid_decode, di_edid_print],
-	env: test_env,
-)
+ref_edid_decode = find_program('edid-decode', native: true, required: false)
+if ref_edid_decode.found()
+	test_env += 'REF_EDID_DECODE=' + ref_edid_decode.full_path()
+
+	run_target(
+		'gen-test-data',
+		command: [test_gen] + gen_targets,
+		depends: [di_edid_decode, di_edid_print],
+		env: test_env,
+	)
+endif

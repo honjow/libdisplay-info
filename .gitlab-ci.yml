@@ -53,15 +53,21 @@ prepare-container:
   rules:
     - when: on_success
 
-testing-check-edid-origin:
+testing-check:
   extends: .fdo.distribution-image@alpine
   stage: "Testing checks"
   script:
    - |
+     # Check if the origin of all test EDIDs is documented
      for f in ./test/data/*.edid; do
        grep -q "^$(basename ${f%.edid})\s" ./test/data/README.md ||
          (echo "$f not in README.md" && exit 1)
      done
+     # Check if the test references checked in the repo match what we have in CI
+     meson setup build/
+     ninja -C build/ gen-test-data
+     git diff --quiet ||
+       (echo "Checked in reference output does not match generated reference output" && exit 1)
   rules:
     - when: on_success
 

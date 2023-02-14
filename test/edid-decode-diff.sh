@@ -16,6 +16,7 @@ for edid in "$@"; do
 	diff="${edid%.edid}.diff"
 	"$REF_EDID_DECODE" --skip-hex-dump --check --skip-sha <"$edid" >"$workdir/ref" || [ $? = 254 ]
 	"$DI_EDID_DECODE" <"$edid" >"$workdir/di" || [ $? = 254 ]
+	cp "$workdir/ref" "${edid%.edid}.ref"
 	if ! diff -u --label ref "$workdir/ref" --label di "$workdir/di" >"$workdir/diff"; then
 		cp "$workdir/diff" "$diff"
 	else
