@@ -28,7 +28,8 @@ libdisplay-info uses [semantic versioning]. The public API is not yet stable.
 
 ## Contributing
 
-Open issues and merge requests on the [GitLab project].
+Open issues and merge requests on the [GitLab project]. Discuss and ask
+questions in the [#wayland] IRC channel on OFTC.
 
 In general, the [Wayland contribution guidelines] should be followed. In
 particular, each commit must carry a Signed-off-by tag to denote that the
@@ -71,6 +72,7 @@ To fuzz libdisplay-info with [AFL], the library needs to be instrumented:
 [website]: https://emersion.pages.freedesktop.org/libdisplay-info/
 [semantic versioning]: https://semver.org/
 [GitLab project]: https://gitlab.freedesktop.org/emersion/libdisplay-info
+[#wayland]: ircs://irc.oftc.net/#wayland
 [Wayland contribution guidelines]: https://gitlab.freedesktop.org/wayland/wayland/-/blob/main/CONTRIBUTING.md
 [Developer Certificate of Origin 1.1]: https://developercertificate.org/
 [freedesktop.org Contributor Covenant]: https://www.freedesktop.org/wiki/CodeOfConduct/
