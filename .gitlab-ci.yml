@@ -59,10 +59,9 @@ testing-check-edid-origin:
   script:
    - |
      for f in ./test/data/*.edid; do
-       grep -q "^$(basename ${f%.edid})\s" ./test/data/README.md
-       [[ $? -ne 0 ]] && echo "$f not in README.md" && exit 1
+       grep -q "^$(basename ${f%.edid})\s" ./test/data/README.md ||
+         (echo "$f not in README.md" && exit 1)
      done
-     exit 0
   rules:
     - when: on_success
 
