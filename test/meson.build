@@ -14,6 +14,7 @@ test_cases = [
 	'apple-xdr-dp',
 	'custom-uncommon-cta-vesa',
 	'dell-2408wfp-dp',
+	'goldstar-e2441',
 	'goldstar-ite6604-hdmi',
 	'hp-5dq99aa-hdmi',
 	'msi-mag321curv-dp',
