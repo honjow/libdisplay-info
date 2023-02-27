@@ -16,7 +16,6 @@ variables:
 stages:
   - "Contribution checks"
   - "Prepare container"
-  - "Testing checks"
   - "Build and test"
   - "Publish"
 
@@ -55,7 +54,7 @@ prepare-container:
 
 testing-check:
   extends: .fdo.distribution-image@alpine
-  stage: "Testing checks"
+  stage: "Build and test"
   script:
    - |
      # Check if the origin of all test EDIDs is documented
