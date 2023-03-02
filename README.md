@@ -53,11 +53,9 @@ The low-level EDID library is tested against [edid-decode]. `test/data/`
 contains a small collection of EDID blobs and diffs between upstream
 `edid-decode` and our `di-edid-decode` clone. Our CI ensures the diffs are
 up-to-date. A patch should never make the diffs grow larger. To re-generate the
-test data, run `ninja -C build/ gen-test-data`.
-
-To run the test suite locally, you need to use [edid-decode] of the git
-revision mentioned in `.gitlab-ci.yml`. Otherwise you may experience false
-failures.
+test data, build `edid-decode` at the Git revision mentioned in
+`.gitlab-ci.yml`, put the executable in `PATH`, and run
+`ninja -C build/ gen-test-data`.
 
 The latest code coverage report is available on [GitLab CI][coverage].
 
