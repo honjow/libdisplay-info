@@ -295,7 +295,7 @@ parse_tiled_topo_block(struct di_displayid *displayid,
 	}
 
 	memcpy(tiled_topo->vendor_id, &data[0x10], 3);
-	tiled_topo->product_code = data[0x13] | (uint16_t)(data[0x14] << 8);
+	tiled_topo->product_code = (uint16_t)(data[0x13] | (data[0x14] << 8));
 	tiled_topo->serial_number = data[0x15] |
 				    (uint32_t)(data[0x16] << 8) |
 				    (uint32_t)(data[0x17] << 16) |
