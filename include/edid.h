@@ -120,7 +120,7 @@ struct di_edid_display_descriptor {
 	size_t established_timings_iii_len;
 	/* Used for DCM_DATA */
 	struct di_edid_color_management_data dcm_data;
-	/* Used for DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES, NULL-terminated */
+	/* Used for CVT_TIMING_CODES, NULL-terminated */
 	struct di_edid_cvt_timing_code *cvt_timing_codes[EDID_MAX_DESCRIPTOR_CVT_TIMING_CODES_COUNT + 1];
 	size_t cvt_timing_codes_len;
 };

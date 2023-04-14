@@ -1297,12 +1297,16 @@ destroy_display_descriptor(struct di_edid_display_descriptor *desc)
 			free(desc->standard_timings[i]);
 		}
 		break;
+	case DI_EDID_DISPLAY_DESCRIPTOR_COLOR_POINT:
+		for (i = 0; i < desc->color_points_len; i++) {
+			free(desc->color_points[i]);
+		}
+		break;
 	case DI_EDID_DISPLAY_DESCRIPTOR_CVT_TIMING_CODES:
 		for (i = 0; i < desc->cvt_timing_codes_len; i++) {
 			free(desc->cvt_timing_codes[i]);
 		}
 		break;
-
 	default:
 		break; /* Nothing to do */
 	}
