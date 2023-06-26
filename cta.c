@@ -1464,9 +1464,9 @@ _di_edid_cta_parse(struct di_edid_cta *cta, const uint8_t *data, size_t size,
 		data_block_size = get_bit_range(data_block_header, 4, 0);
 
 		if (i + 1 + data_block_size > dtd_start) {
-			_di_edid_cta_finish(cta);
-			errno = EINVAL;
-			return false;
+			add_failure(cta, "Data Block at offset %zu overlaps Detailed Timing "
+					 "Definitions. Skipping all further Data Blocks.", i);
+			break;
 		}
 
 		if (!parse_data_block(cta, data_block_tag,
