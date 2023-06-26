@@ -13,6 +13,11 @@ variables:
   FDO_UPSTREAM_REPO: 'emersion/libdisplay-info'
   FDO_DISTRIBUTION_TAG: '2023-01-31.0'
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'push'
+
 stages:
   - "Contribution checks"
   - "Prepare container"
