@@ -1,11 +1,11 @@
 #!/bin/sh -eu
 
-if ! lsmod | grep i2c_dev &>/dev/null; then
+if ! lsmod | grep i2c_dev >/dev/null 2>&1; then
 	echo "kernel module i2c-dev must be loaded"
 	exit
 fi
 
-if ! command -v i2cdump &>/dev/null; then
+if ! command -v i2cdump >/dev/null 2>&1; then
 	echo "i2cdump from i2c-tools must be installed"
 	exit
 fi
