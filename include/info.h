@@ -12,6 +12,7 @@
  * struct di_info. These are exposed by the high-level API only.
  */
 struct di_derived_info {
+	struct di_hdr_static_metadata hdr_static_metadata;
 	struct di_color_primaries color_primaries;
 };
 

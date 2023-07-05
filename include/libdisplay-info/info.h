@@ -103,6 +103,49 @@ di_info_get_model(const struct di_info *info);
 char *
 di_info_get_serial(const struct di_info *info);
 
+/**
+ * Display HDR static metadata
+ */
+struct di_hdr_static_metadata {
+	/* Desired content max luminance (cd/m²), zero if unset */
+	float desired_content_max_luminance;
+	/* Desired content max frame-average luminance (cd/m²), zero if unset */
+	float desired_content_max_frame_avg_luminance;
+	/* Desired content min luminance (cd/m²), zero if unset */
+	float desired_content_min_luminance;
+
+	/* Supported metadata types: */
+
+	/* Static Metadata Type 1 */
+	bool type1;
+
+	/* Supported EOFTs: */
+
+	/* Traditional gamma - SDR luminance range */
+	bool traditional_sdr;
+	/* Traditional gamma - HDR luminance range */
+	bool traditional_hdr;
+	/* Perceptual Quantization (PQ) based on SMPTE ST 2084 */
+	bool pq;
+	/* Hybrid Log-Gamma (HLG) based on Rec. ITU-R BT.2100 */
+	bool hlg;
+};
+
+/**
+ * Get HDR static metadata support information as defined in ANSI/CTA-861-H
+ * as HDR Static Metadata Data Block.
+ *
+ * The returned pointer is owned by the struct di_info passed in. It remains
+ * valid only as long as the di_info exists, and must not be freed by the
+ * caller.
+ *
+ * This function does not return NULL. When HDR static metadata does not exist,
+ * all luminance fields are zero and only traditional_sdr is flagged as
+ * supported.
+ */
+const struct di_hdr_static_metadata *
+di_info_get_hdr_static_metadata(const struct di_info *info);
+
 /** CIE 1931 2-degree observer chromaticity coordinates */
 struct di_chromaticity_cie1931 {
 	float x;

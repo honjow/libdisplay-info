@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "edid.h"
 #include "info.h"
@@ -10,6 +11,85 @@
 /* Generated file pnp-id-table.c: */
 const char *
 pnp_id_table(const char *key);
+
+static bool
+di_cta_data_block_allowed_multiple(enum di_cta_data_block_tag tag)
+{
+	/* See CTA-861-H, 7.6 Multiple Instances of Data Blocks. */
+	switch (tag) {
+	case DI_CTA_DATA_BLOCK_SPEAKER_ALLOC:
+	case DI_CTA_DATA_BLOCK_VESA_DISPLAY_TRANSFER_CHARACTERISTIC:
+	case DI_CTA_DATA_BLOCK_VIDEO_CAP:
+	case DI_CTA_DATA_BLOCK_VESA_DISPLAY_DEVICE:
+	case DI_CTA_DATA_BLOCK_COLORIMETRY:
+	case DI_CTA_DATA_BLOCK_HDR_STATIC_METADATA:
+	case DI_CTA_DATA_BLOCK_VIDEO_FORMAT_PREF:
+	case DI_CTA_DATA_BLOCK_YCBCR420_CAP_MAP:
+	case DI_CTA_DATA_BLOCK_HDMI_AUDIO:
+	case DI_CTA_DATA_BLOCK_ROOM_CONFIG:
+	case DI_CTA_DATA_BLOCK_HDMI_EDID_EXT_OVERRIDE:
+	case DI_CTA_DATA_BLOCK_HDMI_SINK_CAP:
+		return false;
+	default:
+		return true;
+	}
+}
+
+static const struct di_cta_data_block *
+di_edid_get_cta_data_block(const struct di_edid *edid,
+			   enum di_cta_data_block_tag tag)
+{
+	const struct di_edid_ext *const *ext;
+
+	/*
+	 * Here we do not handle blocks that are allowed to occur in
+	 * multiple instances.
+	 */
+	assert(!di_cta_data_block_allowed_multiple(tag));
+
+	for (ext = di_edid_get_extensions(edid); *ext; ext++) {
+		const struct di_edid_cta *cta;
+		const struct di_cta_data_block *const *block;
+
+		if (di_edid_ext_get_tag(*ext) != DI_EDID_EXT_CEA)
+			continue;
+
+		cta = di_edid_ext_get_cta(*ext);
+		for (block = di_edid_cta_get_data_blocks(cta); *block; block++) {
+			if (di_cta_data_block_get_tag(*block) == tag)
+				return *block;
+		}
+	}
+
+	return NULL;
+}
+
+static void
+derive_edid_hdr_static_metadata(const struct di_edid *edid,
+				struct di_hdr_static_metadata *hsm)
+{
+	const struct di_cta_data_block *block;
+	const struct di_cta_hdr_static_metadata_block *cta_hsm;
+
+	/* By default, everything unset and only traditional gamma supported. */
+	hsm->traditional_sdr = true;
+
+	block = di_edid_get_cta_data_block(edid, DI_CTA_DATA_BLOCK_HDR_STATIC_METADATA);
+	if (!block)
+		return;
+
+	cta_hsm = di_cta_data_block_get_hdr_static_metadata(block);
+	assert(cta_hsm);
+
+	hsm->desired_content_max_luminance = cta_hsm->desired_content_max_luminance;
+	hsm->desired_content_max_frame_avg_luminance = cta_hsm->desired_content_max_frame_avg_luminance;
+	hsm->desired_content_min_luminance = cta_hsm->desired_content_min_luminance;
+	hsm->type1 = cta_hsm->descriptors->type1;
+	hsm->traditional_sdr = cta_hsm->eotfs->traditional_sdr;
+	hsm->traditional_hdr = cta_hsm->eotfs->traditional_hdr;
+	hsm->pq = cta_hsm->eotfs->pq;
+	hsm->hlg = cta_hsm->eotfs->hlg;
+}
 
 static void
 derive_edid_color_primaries(const struct di_edid *edid,
@@ -93,6 +173,7 @@ di_info_parse_edid(const void *data, size_t size)
 	else
 		free(failure_msg_str);
 
+	derive_edid_hdr_static_metadata(info->edid, &info->derived.hdr_static_metadata);
 	derive_edid_color_primaries(info->edid, &info->derived.color_primaries);
 
 	return info;
@@ -250,6 +331,12 @@ di_info_get_serial(const struct di_info *info)
 
 	memory_stream_cleanup(&m);
 	return NULL;
+}
+
+const struct di_hdr_static_metadata *
+di_info_get_hdr_static_metadata(const struct di_info *info)
+{
+	return &info->derived.hdr_static_metadata;
 }
 
 const struct di_color_primaries *
