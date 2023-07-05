@@ -1,6 +1,10 @@
 make: Apple Computer Inc
 model: ProDisplayXDR
 serial: 0x250D0E02
+HDR static metadata:
+luminance 0.000246-1600.000000, maxFALL 507.620392
+metadata type1=yes
+EOTF tSDR=yes, tHDR=yes, PQ=yes, HLG=no
 default color primaries:
     red: 0.680, 0.320
   green: 0.265, 0.690

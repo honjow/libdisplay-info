@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <assert.h>
 
 #include <libdisplay-info/info.h>
@@ -9,6 +10,12 @@ static const char *
 str_or_null(const char *str)
 {
 	return str ? str : "{null}";
+}
+
+static const char *
+yes_no(bool cond)
+{
+	return cond ? "yes" : "no";
 }
 
 static void
@@ -20,6 +27,7 @@ print_chromaticity(const char *prefix, const struct di_chromaticity_cie1931 *c)
 static void
 print_info(const struct di_info *info)
 {
+	const struct di_hdr_static_metadata *hdr_static;
 	const struct di_color_primaries *primaries;
 	char *str;
 
@@ -34,6 +42,21 @@ print_info(const struct di_info *info)
 	str = di_info_get_serial(info);
 	printf("serial: %s\n", str_or_null(str));
 	free(str);
+
+	hdr_static = di_info_get_hdr_static_metadata(info);
+	assert(hdr_static);
+	printf("HDR static metadata:\n"
+	       "luminance %f-%f, maxFALL %f\n"
+	       "metadata type1=%s\n"
+	       "EOTF tSDR=%s, tHDR=%s, PQ=%s, HLG=%s\n",
+	       hdr_static->desired_content_min_luminance,
+	       hdr_static->desired_content_max_luminance,
+	       hdr_static->desired_content_max_frame_avg_luminance,
+	       yes_no(hdr_static->type1),
+	       yes_no(hdr_static->traditional_sdr),
+	       yes_no(hdr_static->traditional_hdr),
+	       yes_no(hdr_static->pq),
+	       yes_no(hdr_static->hlg));
 
 	primaries = di_info_get_default_color_primaries(info);
 	assert(primaries);

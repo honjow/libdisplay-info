@@ -1,6 +1,10 @@
 make: Hisense Electric Co., Ltd.
 model: 55R6+
 serial: 0x000001D8
+HDR static metadata:
+luminance 0.000000-0.000000, maxFALL 0.000000
+metadata type1=yes
+EOTF tSDR=yes, tHDR=no, PQ=yes, HLG=yes
 default color primaries:
     red: 0.643, 0.332
   green: 0.322, 0.623

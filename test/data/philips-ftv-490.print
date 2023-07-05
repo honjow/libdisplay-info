@@ -1,6 +1,10 @@
 make: Philips Consumer Electronics Company
 model: Philips FTV
 serial: 0x01010101
+HDR static metadata:
+luminance 0.000000-0.000000, maxFALL 0.000000
+metadata type1=yes
+EOTF tSDR=yes, tHDR=no, PQ=yes, HLG=yes
 default color primaries:
     red: 0.649, 0.334
   green: 0.324, 0.589
