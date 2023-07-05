@@ -11,6 +11,61 @@
 const char *
 pnp_id_table(const char *key);
 
+static void
+derive_edid_color_primaries(const struct di_edid *edid,
+			    struct di_color_primaries *cc)
+{
+	const struct di_edid_chromaticity_coords *cm;
+	const struct di_edid_misc_features *misc;
+
+	/* Trust the flag more than the fields. */
+	misc = di_edid_get_misc_features(edid);
+	if (misc->srgb_is_primary) {
+		/*
+		 * https://www.w3.org/Graphics/Color/sRGB.html
+		 * for lack of access to IEC 61966-2-1
+		 */
+		cc->primary[0].x = 0.640f; /* red */
+		cc->primary[0].y = 0.330f;
+		cc->primary[1].x = 0.300f; /* green */
+		cc->primary[1].y = 0.600f;
+		cc->primary[2].x = 0.150f; /* blue */
+		cc->primary[2].y = 0.060f;
+		cc->has_primaries = true;
+		cc->default_white.x = 0.3127f; /* D65 */
+		cc->default_white.y = 0.3290f;
+		cc->has_default_white_point = true;
+
+		return;
+	}
+
+	cm = di_edid_get_chromaticity_coords(edid);
+
+	/*
+	 * Broken EDID might have only partial values.
+	 * Require all values to report anything.
+	 */
+	if (cm->red_x > 0.0f &&
+	    cm->red_y > 0.0f &&
+	    cm->green_x > 0.0f &&
+	    cm->green_y > 0.0f &&
+	    cm->blue_x > 0.0f &&
+	    cm->blue_y > 0.0f) {
+		cc->primary[0].x = cm->red_x;
+		cc->primary[0].y = cm->red_y;
+		cc->primary[1].x = cm->green_x;
+		cc->primary[1].y = cm->green_y;
+		cc->primary[2].x = cm->blue_x;
+		cc->primary[2].y = cm->blue_y;
+		cc->has_primaries = true;
+	}
+	if (cm->white_x > 0.0f && cm->white_y > 0.0f) {
+		cc->default_white.x = cm->white_x;
+		cc->default_white.y = cm->white_y;
+		cc->has_default_white_point = true;
+	}
+}
+
 struct di_info *
 di_info_parse_edid(const void *data, size_t size)
 {
@@ -37,6 +92,8 @@ di_info_parse_edid(const void *data, size_t size)
 		info->failure_msg = failure_msg_str;
 	else
 		free(failure_msg_str);
+
+	derive_edid_color_primaries(info->edid, &info->derived.color_primaries);
 
 	return info;
 
@@ -193,4 +250,10 @@ di_info_get_serial(const struct di_info *info)
 
 	memory_stream_cleanup(&m);
 	return NULL;
+}
+
+const struct di_color_primaries *
+di_info_get_default_color_primaries(const struct di_info *info)
+{
+	return &info->derived.color_primaries;
 }

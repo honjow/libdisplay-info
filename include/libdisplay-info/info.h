@@ -2,6 +2,7 @@
 #define DI_INFO_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 /**
  * libdisplay-info's high-level API.
@@ -101,5 +102,53 @@ di_info_get_model(const struct di_info *info);
  */
 char *
 di_info_get_serial(const struct di_info *info);
+
+/** CIE 1931 2-degree observer chromaticity coordinates */
+struct di_chromaticity_cie1931 {
+	float x;
+	float y;
+};
+
+/** Display color primaries and default white point */
+struct di_color_primaries {
+	/* Are primary[] given */
+	bool has_primaries;
+
+	/* Is default_white given */
+	bool has_default_white_point;
+
+	/* Chromaticities of the primaries in RGB order
+	 *
+	 * Either all values are given, or they are all zeroes.
+	 */
+	struct di_chromaticity_cie1931 primary[3];
+
+	/* Default white point chromaticity
+	 *
+	 * If non-zero, this should be the display white point when it has
+	 * been reset to its factory defaults. Either both x and y are given,
+	 * or they are both zero.
+	 */
+	struct di_chromaticity_cie1931 default_white;
+};
+
+/**
+ * Get display color primaries and default white point
+ *
+ * Get the parameters of the default RGB colorimetry mode which is always
+ * supported. Primaries for monochrome displays might be all zeroes.
+ *
+ * These primaries might not be display's physical primaries, but only the
+ * primaries of the default RGB colorimetry signal when using IT Video Format
+ * (ANSI/CTA-861-H, Section 5).
+ *
+ * The returned pointer is owned by the struct di_info passed in. It remains
+ * valid only as long as the di_info exists, and must not be freed by the
+ * caller.
+ *
+ * This function does not return NULL.
+ */
+const struct di_color_primaries *
+di_info_get_default_color_primaries(const struct di_info *info);
 
 #endif
