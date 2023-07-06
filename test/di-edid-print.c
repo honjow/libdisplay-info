@@ -29,6 +29,7 @@ print_info(const struct di_info *info)
 {
 	const struct di_hdr_static_metadata *hdr_static;
 	const struct di_color_primaries *primaries;
+	const struct di_supported_signal_colorimetry *ssc;
 	char *str;
 
 	str = di_info_get_make(info);
@@ -65,6 +66,21 @@ print_info(const struct di_info *info)
 	print_chromaticity("  green", &primaries->primary[1]);
 	print_chromaticity("   blue", &primaries->primary[2]);
 	print_chromaticity("default white", &primaries->default_white);
+
+	ssc = di_info_get_supported_signal_colorimetry(info);
+	assert(ssc);
+	printf("signal colorimetry:");
+	if (ssc->bt2020_cycc)
+		printf(" BT2020_cYCC");
+	if (ssc->bt2020_ycc)
+		printf(" BT2020_YCC");
+	if (ssc->bt2020_rgb)
+		printf(" BT2020_RGB");
+	if (ssc->st2113_rgb)
+		printf(" P3D65+P3DCI");
+	if (ssc->ictcp)
+		printf(" ICtCp");
+	printf("\n");
 }
 
 int

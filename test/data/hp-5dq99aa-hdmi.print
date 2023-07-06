@@ -10,3 +10,4 @@ default color primaries:
   green: 0.289, 0.644
    blue: 0.149, 0.051
 default white: 0.313, 0.329
+signal colorimetry: BT2020_cYCC BT2020_YCC BT2020_RGB
