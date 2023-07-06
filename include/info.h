@@ -14,6 +14,7 @@
 struct di_derived_info {
 	struct di_hdr_static_metadata hdr_static_metadata;
 	struct di_color_primaries color_primaries;
+	struct di_supported_signal_colorimetry supported_signal_colorimetry;
 };
 
 struct di_info {

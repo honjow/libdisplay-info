@@ -194,4 +194,44 @@ struct di_color_primaries {
 const struct di_color_primaries *
 di_info_get_default_color_primaries(const struct di_info *info);
 
+/** Additional signal colorimetry encodings supported by the display */
+struct di_supported_signal_colorimetry {
+	/* Rec. ITU-R BT.2020 constant luminance YCbCr */
+	bool bt2020_cycc;
+	/* Rec. ITU-R BT.2020 non-constant luminance YCbCr */
+	bool bt2020_ycc;
+	/* Rec. ITU-R BT.2020 RGB */
+	bool bt2020_rgb;
+	/* SMPTE ST 2113 RGB: P3D65 and P3DCI */
+	bool st2113_rgb;
+	/* Rec. ITU-R BT.2100 ICtCp HDR (with PQ and/or HLG) */
+	bool ictcp;
+};
+
+/**
+ * Get signal colorimetry encodings supported by the display
+ *
+ * These signal colorimetry encodings are supported in addition to the
+ * display's default RGB colorimetry. When you wish to use one of the additional
+ * encodings, they need to be explicitly enabled in the video signal. How to
+ * do that is specific to the signalling used, e.g. HDMI.
+ *
+ * Signal colorimetry encoding provides the color space that the signal is
+ * encoded for. This includes primary and white point chromaticities, and the
+ * YCbCr-RGB conversion if necessary. Also the transfer function is implied
+ * unless explicitly set otherwise, e.g. with HDR static metadata.
+ * See ANSI/CTA-861-H for details.
+ *
+ * The signal color volume can be considerably larger than the physically
+ * displayable color volume.
+ *
+ * The returned pointer is owned by the struct di_info passed in. It remains
+ * valid only as long as the di_info exists, and must not be freed by the
+ * caller.
+ *
+ * This function does not return NULL.
+ */
+const struct di_supported_signal_colorimetry *
+di_info_get_supported_signal_colorimetry(const struct di_info *info);
+
 #endif

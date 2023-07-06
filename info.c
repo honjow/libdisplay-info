@@ -146,6 +146,29 @@ derive_edid_color_primaries(const struct di_edid *edid,
 	}
 }
 
+static void
+derive_edid_supported_signal_colorimetry(const struct di_edid *edid,
+					 struct di_supported_signal_colorimetry *ssc)
+{
+	const struct di_cta_data_block *block;
+	const struct di_cta_colorimetry_block *cm;
+
+	/* Defaults to all unsupported. */
+
+	block = di_edid_get_cta_data_block(edid, DI_CTA_DATA_BLOCK_COLORIMETRY);
+	if (!block)
+		return;
+
+	cm = di_cta_data_block_get_colorimetry(block);
+	assert(cm);
+
+	ssc->bt2020_cycc = cm->bt2020_cycc;
+	ssc->bt2020_ycc = cm->bt2020_ycc;
+	ssc->bt2020_rgb = cm->bt2020_rgb;
+	ssc->st2113_rgb = cm->st2113_rgb;
+	ssc->ictcp = cm->ictcp;
+}
+
 struct di_info *
 di_info_parse_edid(const void *data, size_t size)
 {
@@ -175,6 +198,7 @@ di_info_parse_edid(const void *data, size_t size)
 
 	derive_edid_hdr_static_metadata(info->edid, &info->derived.hdr_static_metadata);
 	derive_edid_color_primaries(info->edid, &info->derived.color_primaries);
+	derive_edid_supported_signal_colorimetry(info->edid, &info->derived.supported_signal_colorimetry);
 
 	return info;
 
@@ -343,4 +367,10 @@ const struct di_color_primaries *
 di_info_get_default_color_primaries(const struct di_info *info)
 {
 	return &info->derived.color_primaries;
+}
+
+const struct di_supported_signal_colorimetry *
+di_info_get_supported_signal_colorimetry(const struct di_info *info)
+{
+	return &info->derived.supported_signal_colorimetry;
 }
