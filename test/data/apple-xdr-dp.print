@@ -1,3 +1,8 @@
 make: Apple Computer Inc
 model: ProDisplayXDR
 serial: 0x250D0E02
+default color primaries:
+    red: 0.680, 0.320
+  green: 0.265, 0.690
+   blue: 0.150, 0.060
+default white: 0.312, 0.329

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include <libdisplay-info/info.h>
 
@@ -11,8 +12,15 @@ str_or_null(const char *str)
 }
 
 static void
+print_chromaticity(const char *prefix, const struct di_chromaticity_cie1931 *c)
+{
+	printf("%s: %.3f, %.3f\n", prefix, c->x, c->y);
+}
+
+static void
 print_info(const struct di_info *info)
 {
+	const struct di_color_primaries *primaries;
 	char *str;
 
 	str = di_info_get_make(info);
@@ -26,6 +34,14 @@ print_info(const struct di_info *info)
 	str = di_info_get_serial(info);
 	printf("serial: %s\n", str_or_null(str));
 	free(str);
+
+	primaries = di_info_get_default_color_primaries(info);
+	assert(primaries);
+	printf("default color primaries:\n");
+	print_chromaticity("    red", &primaries->primary[0]);
+	print_chromaticity("  green", &primaries->primary[1]);
+	print_chromaticity("   blue", &primaries->primary[2]);
+	print_chromaticity("default white", &primaries->default_white);
 }
 
 int

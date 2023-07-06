@@ -1,3 +1,8 @@
 make: Microstep
 model: MAG321CURV
 serial: DA2A019360041
+default color primaries:
+    red: 0.640, 0.330
+  green: 0.300, 0.600
+   blue: 0.150, 0.060
+default white: 0.313, 0.329

@@ -1,3 +1,8 @@
 make: Samsung Electric Company
 model: SAMSUNG
 serial: 0x01000E00
+default color primaries:
+    red: 0.670, 0.314
+  green: 0.271, 0.645
+   blue: 0.152, 0.054
+default white: 0.281, 0.284

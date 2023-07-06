@@ -1,3 +1,8 @@
 make: HP Inc.
 model: HP 27 QD
 serial: CN49120J6N
+default color primaries:
+    red: 0.665, 0.326
+  green: 0.289, 0.644
+   blue: 0.149, 0.051
+default white: 0.313, 0.329

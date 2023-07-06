@@ -1,3 +1,8 @@
 make: Technical Concepts Ltd
 model: TCL SMART TV
 serial: 0x00011011
+default color primaries:
+    red: 0.625, 0.340
+  green: 0.280, 0.595
+   blue: 0.155, 0.070
+default white: 0.283, 0.298

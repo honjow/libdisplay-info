@@ -1,3 +1,8 @@
 make: Philips Consumer Electronics Company
 model: Philips FTV
 serial: {null}
+default color primaries:
+    red: 0.637, 0.330
+  green: 0.272, 0.593
+   blue: 0.144, 0.066
+default white: 0.276, 0.278

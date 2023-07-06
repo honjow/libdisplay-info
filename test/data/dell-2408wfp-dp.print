@@ -1,3 +1,8 @@
 make: Dell Inc.
 model: DELL 2408WFP
 serial: G283H8BI21MS
+default color primaries:
+    red: 0.674, 0.319
+  green: 0.188, 0.706
+   blue: 0.148, 0.064
+default white: 0.313, 0.329

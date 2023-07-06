@@ -1,3 +1,8 @@
 make: LG Electronics
 model: ITE6604
 serial: 0x01010101
+default color primaries:
+    red: 0.640, 0.341
+  green: 0.287, 0.610
+   blue: 0.146, 0.069
+default white: 0.285, 0.293
