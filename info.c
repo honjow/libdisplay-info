@@ -2,11 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "edid.h"
 #include "info.h"
-#include "log.h"
 #include "memory-stream.h"
 
 /* Generated file pnp-id-table.c: */
