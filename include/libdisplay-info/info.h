@@ -234,4 +234,14 @@ struct di_supported_signal_colorimetry {
 const struct di_supported_signal_colorimetry *
 di_info_get_supported_signal_colorimetry(const struct di_info *info);
 
+/**
+ * Get display default transfer characteristic exponent (gamma)
+ *
+ * This should be the display gamma value when the display has been reset to
+ * its factory defaults, and it is driven with the default RGB colorimetry.
+ * The value is zero when unknown.
+ */
+float
+di_info_get_default_gamma(const struct di_info *info);
+
 #endif

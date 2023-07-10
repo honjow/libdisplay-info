@@ -374,3 +374,62 @@ di_info_get_supported_signal_colorimetry(const struct di_info *info)
 {
 	return &info->derived.supported_signal_colorimetry;
 }
+
+static const struct di_displayid *
+edid_get_displayid(const struct di_edid *edid)
+{
+	const struct di_edid_ext *const *ext;
+
+	for (ext = di_edid_get_extensions(edid); *ext; ext++) {
+		enum di_edid_ext_tag tag = di_edid_ext_get_tag(*ext);
+
+		if (tag == DI_EDID_EXT_DISPLAYID)
+			return di_edid_ext_get_displayid(*ext);
+	}
+
+	return NULL;
+}
+
+static const struct di_displayid_display_params *
+displayid_get_display_params(const struct di_displayid *did)
+{
+	const struct di_displayid_data_block *const *block =
+		di_displayid_get_data_blocks(did);
+
+	for (; *block; block++) {
+		enum di_displayid_data_block_tag tag = di_displayid_data_block_get_tag(*block);
+
+		if (tag == DI_DISPLAYID_DATA_BLOCK_DISPLAY_PARAMS)
+			return di_displayid_data_block_get_display_params(*block);
+	}
+
+	return NULL;
+}
+
+float
+di_info_get_default_gamma(const struct di_info *info)
+{
+	const struct di_edid *edid;
+	const struct di_displayid *did;
+	const struct di_edid_misc_features *misc;
+
+	edid = di_info_get_edid(info);
+	if (!edid)
+		return 0.0f;
+
+	did = edid_get_displayid(edid);
+	if (did) {
+		const struct di_displayid_display_params *did_params;
+
+		did_params = displayid_get_display_params(did);
+		if (did_params)
+			return did_params->gamma;
+	}
+
+	/* Trust the flag more than the gamma field value. */
+	misc = di_edid_get_misc_features(edid);
+	if (misc->srgb_is_primary)
+		return 2.2f;
+
+	return di_edid_get_basic_gamma(edid);
+}
