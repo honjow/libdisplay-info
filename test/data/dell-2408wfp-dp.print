@@ -10,4 +10,5 @@ default color primaries:
   green: 0.188, 0.706
    blue: 0.148, 0.064
 default white: 0.313, 0.329
+default gamma: 2.20
 signal colorimetry:

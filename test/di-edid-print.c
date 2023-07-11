@@ -67,6 +67,8 @@ print_info(const struct di_info *info)
 	print_chromaticity("   blue", &primaries->primary[2]);
 	print_chromaticity("default white", &primaries->default_white);
 
+	printf("default gamma: %.2f\n", di_info_get_default_gamma(info));
+
 	ssc = di_info_get_supported_signal_colorimetry(info);
 	assert(ssc);
 	printf("signal colorimetry:");
