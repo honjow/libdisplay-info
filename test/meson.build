@@ -20,6 +20,7 @@ test_cases = [
 	'hp-5dq99aa-hdmi',
 	'msi-mag321curv-dp',
 	'panasonic-mei96a2-dp',
+	'qemu',
 	'samsung-s27a950d-dp',
 	'sun-gh19ps-dvi',
 	'viewsonic-vp2768-dp',

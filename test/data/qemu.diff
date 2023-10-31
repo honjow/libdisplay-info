@@ -1,0 +1,40 @@
+--- ref
++++ di
+@@ -43,7 +43,7 @@
+       DMT 0x41:  1856x1392   59.995184 Hz   4:3     86.333 kHz    218.250000 MHz
+       DMT 0x49:  1920x1440   60.000000 Hz   4:3     90.000 kHz    234.000000 MHz
+     Display Range Limits:
+-      Monitor ranges (Bare Limits): 50-125 Hz V, 30-160 kHz H, max dotclock 2550 MHz
++      Monitor ranges (Bare Limits): 50-125 Hz V, 30-160 kHz H, max dotclock -1744 MHz
+     Display Product Name: 'QEMU Monitor'
+   Extension blocks: 1
+ Checksum: 0x3a
+@@ -60,26 +60,12 @@
+     VIC  89:  2560x1080   50.000000 Hz  64:27    56.250 kHz    185.625000 MHz
+     VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
+     VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
+-  Detailed Timing Descriptors:
+-    Dummy Descriptor:
+-    Dummy Descriptor:
+-    Dummy Descriptor:
+-    Dummy Descriptor:
+-    Dummy Descriptor:
+-    Dummy Descriptor:
+-Checksum: 0x2f  Unused space in Extension Block: 8 bytes
++Checksum: 0x2f
+ 
+ ----------------
+ 
+-Warnings:
+-
+-Block 1, CTA-861 Extension Block:
+-  IT Video Formats are overscanned by default, but normally this should be underscanned.
+-  Video Data Block: VIC 125 is the preferred timing, overriding the first detailed timings. Is this intended?
+-
+ Failures:
+ 
+ Block 1, CTA-861 Extension Block:
+-  Missing VCDB, needed for Set Selectable RGB Quantization to avoid interop issues.
+-
++  Padding: Contains non-zero bytes.
+ EDID conformity: FAIL

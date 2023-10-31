@@ -36,6 +36,7 @@ ayaneo-wxga	| display
 cvt		| handcrafted
 hp-5dq99aa-hdmi	| display
 goldstar-e2441	| display
+qemu		| generated
 
 [linuxhw/EDID]: https://github.com/linuxhw/EDID
 [edid-decode]: https://git.linuxtv.org/edid-decode.git
