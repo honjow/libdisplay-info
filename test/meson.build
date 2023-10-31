@@ -12,6 +12,7 @@ print_harness = find_program('./edid-print-check.sh', native: true)
 test_cases = [
 	'acer-p1276',
 	'apple-xdr-dp',
+	'ayaneo-wxga',
 	'custom-uncommon-cta-vesa',
 	'dell-2408wfp-dp',
 	'goldstar-e2441',

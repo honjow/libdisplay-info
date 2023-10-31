@@ -32,6 +32,7 @@ project:
 
 name | source
 ---- | ------
+ayaneo-wxga	| display
 cvt		| handcrafted
 hp-5dq99aa-hdmi	| display
 goldstar-e2441	| display
