@@ -101,7 +101,7 @@ build-clang:
   script:
     - CC=clang meson setup build/ --fatal-meson-warnings -Dwerror=true -Db_sanitize=address,undefined -Db_lundef=false
     - ninja -C build/
-    - ninja -C build/ test
+    - UBSAN_OPTIONS=halt_on_error=1 ninja -C build/ test
   artifacts:
     when: always
     paths:
