@@ -11,7 +11,7 @@ include:
 # $ git push -f -o ci.variable="FDO_FORCE_REBUILD=1"
 variables:
   FDO_UPSTREAM_REPO: 'emersion/libdisplay-info'
-  FDO_DISTRIBUTION_TAG: '2023-01-31.0'
+  FDO_DISTRIBUTION_TAG: '2023-11-05.0'
 
 workflow:
   rules:
@@ -39,7 +39,7 @@ prepare-container:
   extends: .fdo.container-build@alpine@x86_64
   stage: "Prepare container"
   variables:
-    FDO_BASE_IMAGE: alpine:3.17
+    FDO_BASE_IMAGE: alpine:latest
     FDO_DISTRIBUTION_PACKAGES: |
       build-base clang compiler-rt meson make git gcovr py3-pygments go hwdata
     FDO_DISTRIBUTION_EXEC: |
