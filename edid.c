@@ -556,7 +556,7 @@ parse_display_range_limits(struct di_edid *edid,
 		return false;
 	}
 
-	base->max_pixel_clock_hz = (int32_t) data[9] * 10 * 1000 * 1000;
+	base->max_pixel_clock_hz = (int64_t) data[9] * 10 * 1000 * 1000;
 	if (edid->revision == 4 && base->max_pixel_clock_hz == 0) {
 		add_failure(edid, "Display Range Limits: EDID 1.4 block does not set max dotclock.");
 	}

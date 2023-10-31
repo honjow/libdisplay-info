@@ -592,7 +592,7 @@ print_display_desc(const struct di_edid *edid,
 		       range_limits->min_horiz_rate_hz / 1000,
 		       range_limits->max_horiz_rate_hz / 1000);
 		if (range_limits->max_pixel_clock_hz != 0) {
-			printf(", max dotclock %d MHz",
+			printf(", max dotclock %"PRIi64" MHz",
 			       range_limits->max_pixel_clock_hz / (1000 * 1000));
 		}
 		printf("\n");
