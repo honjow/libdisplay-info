@@ -872,7 +872,7 @@ print_cta(const struct di_edid_cta *cta)
 			       video_cap->selectable_ycc_quantization_range ?
 			       "Selectable (via AVI YQ)" : "No Data");
 			printf("    RGB quantization: %s\n",
-			       video_cap->selectable_ycc_quantization_range ?
+			       video_cap->selectable_rgb_quantization_range ?
 			       "Selectable (via AVI Q)" : "No Data");
 			printf("    PT scan behavior: %s\n",
 			       video_cap_over_underscan_name(video_cap->pt_over_underscan,

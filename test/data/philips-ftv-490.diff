@@ -14,7 +14,7 @@
      MAT (MLP):
        Max channels: 8
        Supported sample rates (kHz): 48
-@@ -106,29 +103,9 @@
+@@ -106,26 +103,6 @@
        Hash calculation not required for object audio PCM or channel-based PCM
    Speaker Allocation Data Block:
      FL/FR - Front Left/Right
@@ -40,11 +40,7 @@
 -    Supports Auto Low-Latency Mode
    Video Capability Data Block:
      YCbCr quantization: No Data
--    RGB quantization: Selectable (via AVI Q)
-+    RGB quantization: No Data
-     PT scan behavior: No Data
-     IT scan behavior: Always Underscanned
-     CE scan behavior: Always Overscanned
+     RGB quantization: Selectable (via AVI Q)
 @@ -148,42 +125,12 @@
    HDR Dynamic Metadata Data Block:
      HDR Dynamic Metadata Type 4

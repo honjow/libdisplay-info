@@ -1,14 +1,6 @@
 --- ref
 +++ di
-@@ -103,27 +103,13 @@
-     FL/FR - Front Left/Right
-   Video Capability Data Block:
-     YCbCr quantization: No Data
--    RGB quantization: Selectable (via AVI Q)
-+    RGB quantization: No Data
-     PT scan behavior: No Data
-     IT scan behavior: Supports both over- and underscan
-     CE scan behavior: Supports both over- and underscan
+@@ -110,20 +110,6 @@
    Colorimetry Data Block:
      xvYCC601
      xvYCC709
