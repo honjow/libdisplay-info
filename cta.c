@@ -521,18 +521,10 @@ parse_audio_block(struct di_edid_cta *cta, struct di_cta_audio_block *audio,
 }
 
 static bool
-parse_speaker_alloc_block(struct di_edid_cta *cta,
-			  struct di_cta_speaker_alloc_block *speaker_alloc,
-			  const uint8_t *data, size_t size)
+parse_speaker_alloc(struct di_edid_cta *cta, struct di_cta_speaker_allocation *speaker_alloc,
+		    const uint8_t data[3], const char *prefix)
 {
 	bool rlc_rrc;
-
-	if (size < 3) {
-		add_failure(cta,
-			    "Speaker Allocation Data Block: Empty Data Block with length %zu.",
-			    size);
-		return false;
-	}
 
 	speaker_alloc->flw_frw = has_bit(data[0], 7);
 	rlc_rrc = has_bit(data[0], 6);
@@ -544,7 +536,7 @@ parse_speaker_alloc_block(struct di_edid_cta *cta,
 	speaker_alloc->fl_fr = has_bit(data[0], 0);
 	if (rlc_rrc) {
 		if (cta->revision >= 3)
-			add_failure(cta, "Speaker Allocation Data Block: Deprecated bit F16 must be 0.");
+			add_failure(cta, "%s: Deprecated bit F16 must be 0.", prefix);
 		else
 			speaker_alloc->bl_br = true;
 	}
@@ -559,12 +551,30 @@ parse_speaker_alloc_block(struct di_edid_cta *cta,
 	speaker_alloc->tpfl_tpfr = has_bit(data[1], 0);
 
 	if (get_bit_range(data[2], 7, 4) != 0)
-		add_failure(cta, "Speaker Allocation Data Block: Bits F37, F36, F34 must be 0.");
+		add_failure(cta, "%s: Bits F37, F36, F34 must be 0.", prefix);
 	if (cta->revision >= 3 && has_bit(data[2], 3))
-		add_failure(cta, "Speaker Allocation Data Block: Deprecated bit F33 must be 0.");
+		add_failure(cta, "%s: Deprecated bit F33 must be 0.", prefix);
 	speaker_alloc->btfl_btfr = has_bit(data[2], 2);
 	speaker_alloc->btfc = has_bit(data[2], 1);
 	speaker_alloc->tpbl_tpbr = has_bit(data[2], 0);
+
+	return true;
+}
+
+static bool
+parse_speaker_alloc_block(struct di_edid_cta *cta,
+			  struct di_cta_speaker_alloc_block *speaker_alloc,
+			  const uint8_t *data, size_t size)
+{
+	if (size < 3) {
+		add_failure(cta,
+			    "Speaker Allocation Data Block: Empty Data Block with length %zu.",
+			    size);
+		return false;
+	}
+
+	parse_speaker_alloc(cta, &speaker_alloc->speakers, data,
+			    "Speaker Allocation Data Block");
 
 	return true;
 }

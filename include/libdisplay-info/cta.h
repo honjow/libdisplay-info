@@ -354,12 +354,10 @@ const struct di_cta_sad *const *
 di_cta_data_block_get_sads(const struct di_cta_data_block *data_block);
 
 /**
- * Speaker allocation data block (SADB), defined in section 7.5.3.
- *
- * This block indicates which speakers are present. See figure 6 for the meaning
- * of the fields.
+ * Indicates which speakers are present. See figure 6 for the meaning of the
+ * fields.
  */
-struct di_cta_speaker_alloc_block {
+struct di_cta_speaker_allocation {
 	bool flw_frw; /* FLw/FRw - Front Left/Right Wide */
 	bool flc_frc; /* FLc/FRc - Front Left/Right of Center */
 	bool bc; /* BC - Back Center */
@@ -378,6 +376,14 @@ struct di_cta_speaker_alloc_block {
 	bool btfl_btfr; /* BtFL/BtFR - Bottom Front Left/Right */
 	bool btfc; /* BtFC - Bottom Front Center */
 	bool tpbl_tpbr; /* TpBL/TpBR - Top Back Left/Right */
+};
+
+/**
+ * Speaker allocation data block (SADB), defined in section 7.5.3.
+ */
+struct di_cta_speaker_alloc_block {
+	/* Present speakers */
+	struct di_cta_speaker_allocation speakers;
 };
 
 /**
