@@ -793,10 +793,12 @@ print_edid(const struct di_edid *edid)
 	}
 	if (vendor_product->model_year != 0) {
 		printf("    Model year: %d\n", vendor_product->model_year);
-	} else {
+	} else if (vendor_product->manufacture_week != 0) {
 		printf("    Made in: week %d of %d\n",
 		       vendor_product->manufacture_week,
 		       vendor_product->manufacture_year);
+	} else {
+		printf("    Made in: %d\n", vendor_product->manufacture_year);
 	}
 
 	printf("  Basic Display Parameters & Features:\n");

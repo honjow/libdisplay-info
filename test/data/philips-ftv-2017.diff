@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: PHL
-     Model: 0
--    Made in: 2017
-+    Made in: week 0 of 2017
-   Basic Display Parameters & Features:
-     Digital display
-     Image size is variable
 @@ -25,10 +25,10 @@
      DMT 0x2a:  1400x1050   59.978442 Hz   4:3     65.317 kHz    121.750000 MHz
      DMT 0x3a:  1680x1050   59.954250 Hz  16:10    65.290 kHz    146.250000 MHz
