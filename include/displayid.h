@@ -53,7 +53,7 @@ struct di_displayid_data_block {
 	enum di_displayid_data_block_tag tag;
 
 	/* Used for TYPE_I_TIMING, NULL-terminated */
-	struct di_displayid_type_i_vii_timing *type_i_timings[DISPLAYID_MAX_TYPE_I_TIMINGS + 1];
+	struct di_displayid_type_i_ii_vii_timing *type_i_timings[DISPLAYID_MAX_TYPE_I_TIMINGS + 1];
 	size_t type_i_timings_len;
 
 	/* Used for DISPLAY_PARAMS */
@@ -71,7 +71,7 @@ void
 _di_displayid_finish(struct di_displayid *displayid);
 
 bool
-_di_displayid_parse_type_1_7_timing(struct di_displayid_type_i_vii_timing *timing,
+_di_displayid_parse_type_1_7_timing(struct di_displayid_type_i_ii_vii_timing *timing,
 				    struct di_logger *logger,
 				    const char *prefix,
 				    const uint8_t *data,

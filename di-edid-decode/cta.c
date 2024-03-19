@@ -732,11 +732,11 @@ print_infoframes(const struct di_cta_infoframe_descriptor *const *infoframes)
 }
 
 static void
-print_did_type_vii_timing(const struct di_displayid_type_i_vii_timing *t, int vtdb_index)
+print_did_type_vii_timing(const struct di_displayid_type_i_ii_vii_timing *t, int vtdb_index)
 {
 	char buf[32];
 	snprintf(buf, 32, "VTDB %d", vtdb_index + 1);
-	print_displayid_type_i_vii_timing(t, 4, buf);
+	print_displayid_type_i_ii_vii_timing(t, 4, buf);
 }
 
 static const char *
@@ -872,7 +872,7 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_svr *const *svrs;
 	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
-	const struct di_displayid_type_i_vii_timing *type_vii_timing;
+	const struct di_displayid_type_i_ii_vii_timing *type_vii_timing;
 	int vtdb_index = 0;
 
 	printf("  Revision: %d\n", di_edid_cta_get_revision(cta));

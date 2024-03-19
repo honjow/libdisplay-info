@@ -33,7 +33,7 @@ void
 print_displayid(const struct di_displayid *displayid);
 
 void
-print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t,
+print_displayid_type_i_ii_vii_timing(const struct di_displayid_type_i_ii_vii_timing *t,
 				  int indent, const char *prefix);
 
 #endif
