@@ -42,42 +42,42 @@ print_displayid_display_params(const struct di_displayid_display_params *params)
 }
 
 static void
-get_displayid_type_i_timing_aspect_ratio(enum di_displayid_type_i_timing_aspect_ratio ratio,
-					 int *horiz, int *vert)
+get_displayid_type_i_vii_timing_aspect_ratio(enum di_displayid_type_i_vii_timing_aspect_ratio ratio,
+					     int *horiz, int *vert)
 {
 	switch (ratio) {
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_1_1:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_1_1:
 		*horiz = *vert = 1;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_5_4:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_5_4:
 		*horiz = 5;
 		*vert = 4;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_4_3:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_4_3:
 		*horiz = 4;
 		*vert = 3;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_15_9:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_15_9:
 		*horiz = 15;
 		*vert = 9;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_16_9:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_16_9:
 		*horiz = 16;
 		*vert = 9;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_16_10:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_16_10:
 		*horiz = 16;
 		*vert = 10;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_64_27:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_64_27:
 		*horiz = 64;
 		*vert = 27;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_256_135:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_256_135:
 		*horiz = 256;
 		*vert = 135;
 		return;
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_UNDEFINED:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_UNDEFINED:
 		*horiz = *vert = 0;
 		return;
 	}
@@ -85,41 +85,41 @@ get_displayid_type_i_timing_aspect_ratio(enum di_displayid_type_i_timing_aspect_
 }
 
 static const char *
-displayid_type_i_timing_stereo_3d_name(enum di_displayid_type_i_timing_stereo_3d stereo_3d)
+displayid_type_i_vii_timing_stereo_3d_name(enum di_displayid_type_i_vii_timing_stereo_3d stereo_3d)
 {
 	switch (stereo_3d) {
-	case DI_DISPLAYID_TYPE_I_TIMING_STEREO_3D_NEVER:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_STEREO_3D_NEVER:
 		return "no 3D stereo";
-	case DI_DISPLAYID_TYPE_I_TIMING_STEREO_3D_ALWAYS:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_STEREO_3D_ALWAYS:
 		return "3D stereo";
-	case DI_DISPLAYID_TYPE_I_TIMING_STEREO_3D_USER:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_STEREO_3D_USER:
 		return "3D stereo depends on user action";
 	}
 	abort(); /* Unreachable */
 }
 
 static const char *
-displayid_type_i_timing_sync_polarity_name(enum di_displayid_type_i_timing_sync_polarity pol)
+displayid_type_i_vii_timing_sync_polarity_name(enum di_displayid_type_i_vii_timing_sync_polarity pol)
 {
 	switch (pol) {
-	case DI_DISPLAYID_TYPE_I_TIMING_SYNC_NEGATIVE:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_SYNC_NEGATIVE:
 		return "N";
-	case DI_DISPLAYID_TYPE_I_TIMING_SYNC_POSITIVE:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_SYNC_POSITIVE:
 		return "P";
 	}
 	abort(); /* Unreachable */
 }
 
 static void
-print_displayid_type_i_timing(const struct di_displayid_type_i_timing *t)
+print_displayid_type_i_vii_timing(const struct di_displayid_type_i_vii_timing *t)
 {
 	int horiz_total, vert_total;
 	int horiz_back_porch, vert_back_porch;
 	int horiz_ratio, vert_ratio;
 	double pixel_clock_hz, refresh, horiz_freq_hz;
 
-	get_displayid_type_i_timing_aspect_ratio(t->aspect_ratio,
-						 &horiz_ratio, &vert_ratio);
+	get_displayid_type_i_vii_timing_aspect_ratio(t->aspect_ratio,
+						     &horiz_ratio, &vert_ratio);
 
 	horiz_total = t->horiz_active + t->horiz_blank;
 	vert_total = t->vert_active + t->vert_blank;
@@ -137,11 +137,11 @@ print_displayid_type_i_timing(const struct di_displayid_type_i_timing *t)
 	printf(" %8.3f kHz %13.6f MHz", horiz_freq_hz / 1000,
 	       t->pixel_clock_mhz);
 	printf(" (aspect ");
-	if (t->aspect_ratio == DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_UNDEFINED)
+	if (t->aspect_ratio == DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_UNDEFINED)
 		printf("undefined");
 	else
 		printf("%d:%d", horiz_ratio, vert_ratio);
-	printf(", %s", displayid_type_i_timing_stereo_3d_name(t->stereo_3d));
+	printf(", %s", displayid_type_i_vii_timing_stereo_3d_name(t->stereo_3d));
 	if (t->preferred)
 		printf(", preferred");
 	printf(")\n");
@@ -149,13 +149,13 @@ print_displayid_type_i_timing(const struct di_displayid_type_i_timing *t)
 	horiz_back_porch = t->horiz_blank - t->horiz_sync_width - t->horiz_offset;
 	printf("               Hfront %4d Hsync %3d Hback %4d Hpol %s",
 	       t->horiz_offset, t->horiz_sync_width, horiz_back_porch,
-	       displayid_type_i_timing_sync_polarity_name(t->horiz_sync_polarity));
+	       displayid_type_i_vii_timing_sync_polarity_name(t->horiz_sync_polarity));
 	printf("\n");
 
 	vert_back_porch = t->vert_blank - t->vert_sync_width - t->vert_offset;
 	printf("               Vfront %4d Vsync %3d Vback %4d Vpol %s",
 	       t->vert_offset, t->vert_sync_width, vert_back_porch,
-	       displayid_type_i_timing_sync_polarity_name(t->vert_sync_polarity));
+	       displayid_type_i_vii_timing_sync_polarity_name(t->vert_sync_polarity));
 	printf("\n");
 }
 
@@ -163,11 +163,11 @@ static void
 print_displayid_type_i_timing_block(const struct di_displayid_data_block *data_block)
 {
 	size_t i;
-	const struct di_displayid_type_i_timing *const *timings;
+	const struct di_displayid_type_i_vii_timing *const *timings;
 
 	timings = di_displayid_data_block_get_type_i_timings(data_block);
 	for (i = 0; timings[i] != NULL; i++)
-		print_displayid_type_i_timing(timings[i]);
+		print_displayid_type_i_vii_timing(timings[i]);
 }
 
 static const char *

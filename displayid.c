@@ -119,7 +119,7 @@ parse_type_i_timing(struct di_displayid *displayid,
 	int raw_pixel_clock;
 	uint8_t stereo_3d, aspect_ratio;
 
-	struct di_displayid_type_i_timing *t = calloc(1, sizeof(*t));
+	struct di_displayid_type_i_vii_timing *t = calloc(1, sizeof(*t));
 	if (t == NULL) {
 		return false;
 	}
@@ -132,9 +132,9 @@ parse_type_i_timing(struct di_displayid *displayid,
 
 	stereo_3d = get_bit_range(data[3], 6, 5);
 	switch (stereo_3d) {
-	case DI_DISPLAYID_TYPE_I_TIMING_STEREO_3D_NEVER:
-	case DI_DISPLAYID_TYPE_I_TIMING_STEREO_3D_ALWAYS:
-	case DI_DISPLAYID_TYPE_I_TIMING_STEREO_3D_USER:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_STEREO_3D_NEVER:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_STEREO_3D_ALWAYS:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_STEREO_3D_USER:
 		t->stereo_3d = stereo_3d;
 		break;
 	default:
@@ -146,19 +146,19 @@ parse_type_i_timing(struct di_displayid *displayid,
 
 	aspect_ratio = get_bit_range(data[3], 3, 0);
 	switch (aspect_ratio) {
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_1_1:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_5_4:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_4_3:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_15_9:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_16_9:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_16_10:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_64_27:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_256_135:
-	case DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_UNDEFINED:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_1_1:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_5_4:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_4_3:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_15_9:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_16_9:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_16_10:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_64_27:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_256_135:
+	case DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_UNDEFINED:
 		t->aspect_ratio = aspect_ratio;
 		break;
 	default:
-		t->aspect_ratio = DI_DISPLAYID_TYPE_I_TIMING_ASPECT_RATIO_UNDEFINED;
+		t->aspect_ratio = DI_DISPLAYID_TYPE_I_VII_TIMING_ASPECT_RATIO_UNDEFINED;
 		add_failure(displayid,
 			    "Video Timing Modes Type 1 - Detailed Timings Data Block: Unknown aspect 0x%02x.",
 			    aspect_ratio);
@@ -541,13 +541,13 @@ di_displayid_data_block_get_display_params(const struct di_displayid_data_block 
 	return &data_block->display_params.base;
 }
 
-const struct di_displayid_type_i_timing *const *
+const struct di_displayid_type_i_vii_timing *const *
 di_displayid_data_block_get_type_i_timings(const struct di_displayid_data_block *data_block)
 {
 	if (data_block->tag != DI_DISPLAYID_DATA_BLOCK_TYPE_I_TIMING) {
 		return NULL;
 	}
-	return (const struct di_displayid_type_i_timing *const *) data_block->type_i_timings;
+	return (const struct di_displayid_type_i_vii_timing *const *) data_block->type_i_timings;
 }
 
 const struct di_displayid_tiled_topo *
