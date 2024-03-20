@@ -3,7 +3,7 @@ Block 0, Base EDID:
   Vendor & Product Identification:
     Manufacturer: HPN
     Model: 13847
-    Serial Number: 16843009
+    Serial Number: 16843009 (0x01010101)
     Made in: week 12 of 2019
   Basic Display Parameters & Features:
     Digital display
@@ -110,6 +110,8 @@ Checksum: 0xa3  Unused space in Extension Block: 10 bytes
 
 Warnings:
 
+Block 0, Base EDID:
+  Vendor & Product Identification: The serial number is one of the known dummy values, it should probably be set to 0.
 Block 1, CTA-861 Extension Block:
   Video Capability Data Block: Set Selectable YCbCr Quantization to avoid interop issues.
   Colorimetry Data Block: Set the sRGB colorimetry bit to avoid interop issues.

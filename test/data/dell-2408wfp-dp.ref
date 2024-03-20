@@ -3,7 +3,7 @@ Block 0, Base EDID:
   Vendor & Product Identification:
     Manufacturer: DEL
     Model: 41003
-    Serial Number: 842091859
+    Serial Number: 842091859 (0x32314d53)
     Made in: week 47 of 2008
   Basic Display Parameters & Features:
     Digital display
@@ -39,7 +39,7 @@ Block 0, Base EDID:
     Display Product Serial Number: 'G283H8BI21MS'
     Display Product Name: 'DELL 2408WFP'
     Display Range Limits:
-      Monitor ranges (Bare Limits): 56-76 Hz V, 30-83 kHz H, max dotclock 170 MHz
+      Monitor ranges (Range Limits Only): 56-76 Hz V, 30-83 kHz H, max dotclock 170 MHz
 Checksum: 0x92
 
 ----------------

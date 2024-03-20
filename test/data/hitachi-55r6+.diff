@@ -1,5 +1,14 @@
 --- ref
 +++ di
+@@ -3,7 +3,7 @@
+   Vendor & Product Identification:
+     Manufacturer: HEC
+     Model: 0
+-    Serial Number: 472 (0x000001d8)
++    Serial Number: 472
+     Made in: week 20 of 2020
+   Basic Display Parameters & Features:
+     Digital display
 @@ -102,26 +102,6 @@
    Colorimetry Data Block:
      BT2020YCC
@@ -38,8 +47,8 @@
 -    Backlt Min Luma: 100 cd/m^2
 -    Interface: Standard + Low-Latency
 -    Supports 10b 12b 444: Not supported
--    Target Min PQ v2: 200 (0.05768953 cd/m^2)
--    Target Max PQ v2: 2445 (245 cd/m^2)
+-    Target Min PQ v2: 200 (0.05689653 cd/m^2)
+-    Target Max PQ v2: 2445 (237 cd/m^2)
 -    Unique Rx, Ry: 0.62500000, 0.33203125
 -    Unique Gx, Gy: 0.30468750, 0.61328125
 -    Unique Bx, By: 0.15234375, 0.05078125

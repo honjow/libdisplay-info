@@ -1,5 +1,14 @@
 --- ref
 +++ di
+@@ -3,7 +3,7 @@
+   Vendor & Product Identification:
+     Manufacturer: APP
+     Model: 44590
+-    Serial Number: 621612546 (0x250d0e02)
++    Serial Number: 621612546
+     Made in: week 1 of 2019
+   Basic Display Parameters & Features:
+     Digital display
 @@ -62,16 +62,13 @@
      DTD 6:  3840x2160   47.951737 Hz  16:9    134.696 kHz    528.010000 MHz (699 mm x 393 mm)
                   Hfront    8 Hsync  32 Hback   40 Hpol P

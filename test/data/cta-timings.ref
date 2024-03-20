@@ -158,4 +158,9 @@ Checksum: 0xef  Unused space in Extension Block: 105 bytes
 
 ----------------
 
-EDID conformity: PASS
+Failures:
+
+EDID:
+  CTA-861: The maximum HDMI TMDS clock is 600000 kHz, but one or more video timings go up to 693264 kHz.
+
+EDID conformity: FAIL

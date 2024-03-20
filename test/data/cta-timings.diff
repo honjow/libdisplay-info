@@ -64,7 +64,7 @@
    Detailed Timing Descriptors:
      DTD 2:  3840x2160   59.996625 Hz  16:9    133.312 kHz    533.250000 MHz (960 mm x 540 mm)
                   Hfront   48 Hsync  32 Hback   80 Hpol P
-@@ -152,10 +129,14 @@
+@@ -152,15 +129,14 @@
    Native detailed modes: 1
    Detailed Timing Descriptors:
      DTD 3:  1280x720    59.855126 Hz  16:9     44.772 kHz     74.500000 MHz (analog composite, sync-on-green, 960 mm x 540 mm)
@@ -77,9 +77,11 @@
  
  ----------------
  
--EDID conformity: PASS
-+Failures:
-+
+ Failures:
+ 
+-EDID:
+-  CTA-861: The maximum HDMI TMDS clock is 600000 kHz, but one or more video timings go up to 693264 kHz.
+-
 +Block 2, CTA-861 Extension Block:
 +  Video Format Preference Data Block: using reserved Short Video Reference value 166.
-+EDID conformity: FAIL
+ EDID conformity: FAIL

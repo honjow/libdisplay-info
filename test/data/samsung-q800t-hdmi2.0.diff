@@ -1,5 +1,14 @@
 --- ref
 +++ di
+@@ -3,7 +3,7 @@
+   Vendor & Product Identification:
+     Manufacturer: SAM
+     Model: 28734
+-    Serial Number: 16780800 (0x01000e00)
++    Serial Number: 16780800
+     Made in: week 1 of 2020
+   Basic Display Parameters & Features:
+     Digital display
 @@ -110,20 +110,6 @@
    Colorimetry Data Block:
      xvYCC601
@@ -21,12 +30,14 @@
    HDR Static Metadata Data Block:
      Electro optical transfer functions:
        Traditional gamma - SDR luminance range
-@@ -136,36 +122,19 @@
+@@ -136,38 +122,19 @@
      VIC  97:  3840x2160   60.000000 Hz  16:9    135.000 kHz    594.000000 MHz
      VIC 101:  4096x2160   50.000000 Hz 256:135  112.500 kHz    594.000000 MHz
      VIC 102:  4096x2160   60.000000 Hz 256:135  135.000 kHz    594.000000 MHz
 -  Vendor-Specific Video Data Block (HDR10+), OUI 90-84-8B:
 -    Application Version: 1
+-    Full Frame Peak Luminance Index: 0
+-    Peak Luminance Index: 0
    Detailed Timing Descriptors:
 -    DTD 3:  1920x1080i  50.000000 Hz  16:9     28.125 kHz     74.250000 MHz (1872 mm x 1053 mm)
 +    DTD 3:  1920x540  i  50.044484 Hz  32:9     28.125 kHz     74.250000 MHz (1872 mm x 1053 mm)

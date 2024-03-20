@@ -27,7 +27,7 @@ Block 0, Base EDID:
                  Hfront   88 Hsync  32 Hback  120 Hpol P
                  Vfront   28 Vsync   5 Vback  443 Vpol P
     Display Range Limits:
-      Monitor ranges (Bare Limits): 46-62 Hz V, 89-94 kHz H, max dotclock 260 MHz
+      Monitor ranges (Range Limits Only): 46-62 Hz V, 89-94 kHz H, max dotclock 260 MHz
     Alphanumeric Data String: 'VVX14T058J10'
 Checksum: 0x09
 
