@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: HPN
-     Model: 13847
--    Serial Number: 16843009 (0x01010101)
-+    Serial Number: 16843009
-     Made in: week 12 of 2019
-   Basic Display Parameters & Features:
-     Digital display
 @@ -60,23 +60,12 @@
      VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
      VIC  17:   720x576    50.000000 Hz   4:3     31.250 kHz     27.000000 MHz

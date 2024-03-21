@@ -365,7 +365,7 @@ display_range_limits_type_name(enum di_edid_display_range_limits_type type)
 {
 	switch (type) {
 	case DI_EDID_DISPLAY_RANGE_LIMITS_BARE:
-		return "Bare Limits";
+		return "Range Limits Only";
 	case DI_EDID_DISPLAY_RANGE_LIMITS_DEFAULT_GTF:
 		return "GTF";
 	case DI_EDID_DISPLAY_RANGE_LIMITS_SECONDARY_GTF:
@@ -789,7 +789,8 @@ print_edid(const struct di_edid *edid)
 	printf("    Manufacturer: %.3s\n", vendor_product->manufacturer);
 	printf("    Model: %" PRIu16 "\n", vendor_product->product);
 	if (vendor_product->serial != 0) {
-		printf("    Serial Number: %" PRIu32 "\n", vendor_product->serial);
+		printf("    Serial Number: %" PRIu32 " (0x%08x)\n",
+		       vendor_product->serial, vendor_product->serial);
 	}
 	if (vendor_product->model_year != 0) {
 		printf("    Model year: %d\n", vendor_product->model_year);
@@ -915,7 +916,7 @@ print_edid(const struct di_edid *edid)
 		}
 	}
 	if (misc_features->continuous_freq) {
-		printf("    Display is continuous frequency\n");
+		printf("    Display supports continuous frequencies\n");
 	}
 	if (misc_features->default_gtf) {
 		printf("    Supports GTF timings within operating range\n");

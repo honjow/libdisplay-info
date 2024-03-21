@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: PHL
-     Model: 490
--    Serial Number: 16843009 (0x01010101)
-+    Serial Number: 16843009
-     Made in: week 46 of 2018
-   Basic Display Parameters & Features:
-     Digital display
 @@ -92,13 +92,10 @@
        Supported sample rates (kHz): 48 44.1 32
        Supports Joint Object Coding

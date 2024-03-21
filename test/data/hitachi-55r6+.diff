@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: HEC
-     Model: 0
--    Serial Number: 472 (0x000001d8)
-+    Serial Number: 472
-     Made in: week 20 of 2020
-   Basic Display Parameters & Features:
-     Digital display
 @@ -102,26 +102,6 @@
    Colorimetry Data Block:
      BT2020YCC

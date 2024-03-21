@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: SAM
-     Model: 28734
--    Serial Number: 16780800 (0x01000e00)
-+    Serial Number: 16780800
-     Made in: week 1 of 2020
-   Basic Display Parameters & Features:
-     Digital display
 @@ -110,20 +110,6 @@
    Colorimetry Data Block:
      xvYCC601

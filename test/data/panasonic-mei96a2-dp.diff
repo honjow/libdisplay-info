@@ -1,13 +1,6 @@
 --- ref
 +++ di
-@@ -27,15 +27,10 @@
-                  Hfront   88 Hsync  32 Hback  120 Hpol P
-                  Vfront   28 Vsync   5 Vback  443 Vpol P
-     Display Range Limits:
--      Monitor ranges (Range Limits Only): 46-62 Hz V, 89-94 kHz H, max dotclock 260 MHz
-+      Monitor ranges (Bare Limits): 46-62 Hz V, 89-94 kHz H, max dotclock 260 MHz
-     Alphanumeric Data String: 'VVX14T058J10'
- Checksum: 0x09
+@@ -33,9 +33,4 @@
  
  ----------------
  

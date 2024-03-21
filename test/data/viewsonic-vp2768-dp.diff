@@ -1,23 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: VSC
-     Model: 8244
--    Serial Number: 16843009 (0x01010101)
-+    Serial Number: 16843009
-     Made in: week 15 of 2017
-   Basic Display Parameters & Features:
-     Digital display
-@@ -15,7 +15,7 @@
-     Supported color formats: RGB 4:4:4, YCrCb 4:4:4, YCrCb 4:2:2
-     Default (sRGB) color space is primary color space
-     First detailed timing includes the native pixel format and preferred refresh rate
--    Display supports continuous frequencies
-+    Display is continuous frequency
-   Color Characteristics:
-     Red  : 0.6611, 0.3300
-     Green: 0.2978, 0.6152
 @@ -104,10 +104,9 @@
      DTD 2:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (597 mm x 336 mm)
                   Hfront   88 Hsync  44 Hback  148 Hpol P

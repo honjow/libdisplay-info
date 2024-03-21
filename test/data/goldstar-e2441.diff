@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: GSM
-     Model: 22560
--    Serial Number: 40809 (0x00009f69)
-+    Serial Number: 40809
-     Made in: week 5 of 2012
-   Basic Display Parameters & Features:
-     Digital display
 @@ -72,43 +72,21 @@
        Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:

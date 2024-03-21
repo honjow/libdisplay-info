@@ -1,23 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: MSI
-     Model: 15778
--    Serial Number: 16843009 (0x01010101)
-+    Serial Number: 16843009
-     Made in: week 36 of 2019
-   Basic Display Parameters & Features:
-     Digital display
-@@ -15,7 +15,7 @@
-     Supported color formats: RGB 4:4:4, YCrCb 4:4:4, YCrCb 4:2:2
-     Default (sRGB) color space is primary color space
-     First detailed timing includes the native pixel format and preferred refresh rate
--    Display supports continuous frequencies
-+    Display is continuous frequency
-   Color Characteristics:
-     Red  : 0.6474, 0.3388
-     Green: 0.3144, 0.6171
 @@ -97,30 +97,12 @@
        Supported sample sizes (bits): 24 20 16
    Speaker Allocation Data Block:

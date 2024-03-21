@@ -609,11 +609,13 @@ parse_display_range_limits(struct di_edid *edid,
 	if (edid->revision >= 4 && !edid->misc_features.continuous_freq) {
 		switch (base->type) {
 		case DI_EDID_DISPLAY_RANGE_LIMITS_DEFAULT_GTF:
+			add_failure(edid, "Display Range Limits: GTF is supported, but the display does not support continuous frequencies.");
+			return false;
 		case DI_EDID_DISPLAY_RANGE_LIMITS_SECONDARY_GTF:
-			add_failure(edid, "Display Range Limits: GTF can't be combined with non-continuous frequencies.");
+			add_failure(edid, "Display Range Limits: Secondary GTF is supported, but the display does not support continuous frequencies.");
 			return false;
 		case DI_EDID_DISPLAY_RANGE_LIMITS_CVT:
-			add_failure(edid, "Display Range Limits: CVT can't be combined with non-continuous frequencies.");
+			add_failure(edid, "Display Range Limits: CVT is supported, but the display does not support continuous frequencies.");
 			return false;
 		default:
 			break;

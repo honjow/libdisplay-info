@@ -1,14 +1,5 @@
 --- ref
 +++ di
-@@ -3,7 +3,7 @@
-   Vendor & Product Identification:
-     Manufacturer: SUN
-     Model: 1420
--    Serial Number: 26628685 (0x0196524d)
-+    Serial Number: 26628685
-     Made in: week 32 of 2004
-   Basic Display Parameters & Features:
-     Digital display
 @@ -50,15 +50,4 @@
  
  ----------------
