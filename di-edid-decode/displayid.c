@@ -43,42 +43,42 @@ print_displayid_display_params(const struct di_displayid_display_params *params)
 }
 
 static void
-get_displayid_type_i_ii_vii_timing_aspect_ratio(enum di_displayid_type_i_ii_vii_timing_aspect_ratio ratio,
-						int *horiz, int *vert)
+get_displayid_timing_aspect_ratio(enum di_displayid_timing_aspect_ratio ratio,
+				  int *horiz, int *vert)
 {
 	switch (ratio) {
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_1_1:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_1_1:
 		*horiz = *vert = 1;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_5_4:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_5_4:
 		*horiz = 5;
 		*vert = 4;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_4_3:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_4_3:
 		*horiz = 4;
 		*vert = 3;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_15_9:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_15_9:
 		*horiz = 15;
 		*vert = 9;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_16_9:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_16_9:
 		*horiz = 16;
 		*vert = 9;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_16_10:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_16_10:
 		*horiz = 16;
 		*vert = 10;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_64_27:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_64_27:
 		*horiz = 64;
 		*vert = 27;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_256_135:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_256_135:
 		*horiz = 256;
 		*vert = 135;
 		return;
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_UNDEFINED:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED:
 		*horiz = *vert = 0;
 		return;
 	}
@@ -120,8 +120,8 @@ print_displayid_type_i_ii_vii_timing(const struct di_displayid_type_i_ii_vii_tim
 	int horiz_ratio, vert_ratio;
 	double pixel_clock_hz, refresh, horiz_freq_hz;
 
-	get_displayid_type_i_ii_vii_timing_aspect_ratio(t->aspect_ratio,
-						     &horiz_ratio, &vert_ratio);
+	get_displayid_timing_aspect_ratio(t->aspect_ratio,
+					  &horiz_ratio, &vert_ratio);
 
 	horiz_total = t->horiz_active + t->horiz_blank;
 	vert_total = t->vert_active + t->vert_blank;
@@ -139,7 +139,7 @@ print_displayid_type_i_ii_vii_timing(const struct di_displayid_type_i_ii_vii_tim
 	printf(" %8.3f kHz %13.6f MHz", horiz_freq_hz / 1000,
 	       t->pixel_clock_mhz);
 	printf(" (aspect ");
-	if (t->aspect_ratio == DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_UNDEFINED)
+	if (t->aspect_ratio == DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED)
 		printf("undefined");
 	else
 		printf("%d:%d", horiz_ratio, vert_ratio);

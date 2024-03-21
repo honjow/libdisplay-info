@@ -173,16 +173,16 @@ enum di_displayid_type_i_ii_vii_timing_stereo_3d {
 	DI_DISPLAYID_TYPE_I_II_VII_TIMING_STEREO_3D_USER = 0x02,
 };
 
-enum di_displayid_type_i_ii_vii_timing_aspect_ratio {
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_1_1 = 0x00,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_5_4 = 0x01,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_4_3 = 0x02,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_15_9 = 0x03,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_16_9 = 0x04,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_16_10 = 0x05,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_64_27 = 0x06,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_256_135 = 0x07,
-	DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_UNDEFINED = 0x08,
+enum di_displayid_timing_aspect_ratio {
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_1_1 = 0x00,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_5_4 = 0x01,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_4_3 = 0x02,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_15_9 = 0x03,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_16_9 = 0x04,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_16_10 = 0x05,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_64_27 = 0x06,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_256_135 = 0x07,
+	DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED = 0x08,
 };
 
 enum di_displayid_type_i_ii_vii_timing_sync_polarity {
@@ -200,7 +200,7 @@ struct di_displayid_type_i_ii_vii_timing {
 	bool preferred;
 	enum di_displayid_type_i_ii_vii_timing_stereo_3d stereo_3d;
 	bool interlaced;
-	enum di_displayid_type_i_ii_vii_timing_aspect_ratio aspect_ratio;
+	enum di_displayid_timing_aspect_ratio aspect_ratio;
 	int32_t horiz_active, vert_active;
 	int32_t horiz_blank, vert_blank;
 	int32_t horiz_offset, vert_offset;

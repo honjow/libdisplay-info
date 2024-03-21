@@ -159,19 +159,19 @@ _di_displayid_parse_type_1_7_timing(struct di_displayid_type_i_ii_vii_timing *t,
 
 	aspect_ratio = get_bit_range(data[3], 3, 0);
 	switch (aspect_ratio) {
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_1_1:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_5_4:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_4_3:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_15_9:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_16_9:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_16_10:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_64_27:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_256_135:
-	case DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_UNDEFINED:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_1_1:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_5_4:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_4_3:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_15_9:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_16_9:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_16_10:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_64_27:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_256_135:
+	case DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED:
 		t->aspect_ratio = aspect_ratio;
 		break;
 	default:
-		t->aspect_ratio = DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_UNDEFINED;
+		t->aspect_ratio = DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED;
 		logger_add_failure(logger, "%s: Unknown aspect 0x%02x.",
 				   prefix, aspect_ratio);
 		break;
@@ -254,7 +254,7 @@ parse_type_ii_timing(struct di_displayid *displayid,
 		return false;
 	}
 
-	t->aspect_ratio = DI_DISPLAYID_TYPE_I_II_VII_TIMING_ASPECT_RATIO_UNDEFINED;
+	t->aspect_ratio = DI_DISPLAYID_TIMING_ASPECT_RATIO_UNDEFINED;
 
 	raw_pixel_clock = data[0] | (data[1] << 8) | (data[2] << 16);
 	t->pixel_clock_mhz = (double)(1 + raw_pixel_clock) * 0.01;
