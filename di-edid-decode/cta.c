@@ -739,6 +739,82 @@ print_did_type_vii_timing(const struct di_displayid_type_i_ii_vii_timing *t, int
 	print_displayid_type_i_ii_vii_timing(t, 4, buf);
 }
 
+static void
+print_speaker_alloc(const struct di_cta_speaker_allocation *speaker_alloc, const char *prefix)
+{
+	if (speaker_alloc->fl_fr)
+		printf("%sFL/FR - Front Left/Right\n", prefix);
+	if (speaker_alloc->lfe1)
+		printf("%sLFE1 - Low Frequency Effects 1\n", prefix);
+	if (speaker_alloc->fc)
+		printf("%sFC - Front Center\n", prefix);
+	if (speaker_alloc->bl_br)
+		printf("%sBL/BR - Back Left/Right\n", prefix);
+	if (speaker_alloc->bc)
+		printf("%sBC - Back Center\n", prefix);
+	if (speaker_alloc->flc_frc)
+		printf("%sFLc/FRc - Front Left/Right of Center\n", prefix);
+	if (speaker_alloc->flw_frw)
+		printf("%sFLw/FRw - Front Left/Right Wide\n", prefix);
+	if (speaker_alloc->tpfl_tpfr)
+		printf("%sTpFL/TpFR - Top Front Left/Right\n", prefix);
+	if (speaker_alloc->tpc)
+		printf("%sTpC - Top Center\n", prefix);
+	if (speaker_alloc->tpfc)
+		printf("%sTpFC - Top Front Center\n", prefix);
+	if (speaker_alloc->ls_rs)
+		printf("%sLS/RS - Left/Right Surround\n", prefix);
+	if (speaker_alloc->tpbc)
+		printf("%sTpBC - Top Back Center\n", prefix);
+	if (speaker_alloc->lfe2)
+		printf("%sLFE2 - Low Frequency Effects 2\n", prefix);
+	if (speaker_alloc->sil_sir)
+		printf("%sSiL/SiR - Side Left/Right\n", prefix);
+	if (speaker_alloc->tpsil_tpsir)
+		printf("%sTpSiL/TpSiR - Top Side Left/Right\n", prefix);
+	if (speaker_alloc->tpbl_tpbr)
+		printf("%sTpBL/TpBR - Top Back Left/Right\n", prefix);
+	if (speaker_alloc->btfc)
+		printf("%sBtFC - Bottom Front Center\n", prefix);
+	if (speaker_alloc->btfl_btfr)
+		printf("%sBtFL/BtFR - Bottom Front Left/Right\n", prefix);
+}
+
+static void
+print_hdmi_audio(const struct di_cta_hdmi_audio_block *hdmi_audio)
+{
+	const struct di_cta_hdmi_audio_3d *audio_3d = hdmi_audio->audio_3d;
+	const struct di_cta_hdmi_audio_multi_stream *ms = hdmi_audio->multi_stream;
+
+	if (ms) {
+		printf("    Max Stream Count: %u\n", ms->max_streams);
+		if (ms->supports_non_mixed)
+			printf("    Supports MS NonMixed\n");
+	}
+
+	if (!audio_3d)
+		return;
+
+	print_cta_sads(audio_3d->sads);
+
+	switch (audio_3d->channels) {
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_UNKNOWN:
+		printf("    Unknown Speaker Allocation\n");
+		break;
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_10_2:
+		printf("    Speaker Allocation for 10.2 channels:\n");
+		break;
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_22_2:
+		printf("    Speaker Allocation for 22.2 channels:\n");
+		break;
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_30_2:
+		printf("    Speaker Allocation for 30.2 channels:\n");
+		break;
+	}
+
+	print_speaker_alloc (&audio_3d->speakers, "      ");
+}
+
 static const char *
 cta_data_block_tag_name(enum di_cta_data_block_tag tag)
 {
@@ -810,47 +886,6 @@ video_cap_over_underscan_name(enum di_cta_video_cap_over_underscan over_undersca
 	abort();
 }
 
-static void
-print_speaker_alloc(const struct di_cta_speaker_allocation *speaker_alloc)
-{
-	if (speaker_alloc->flw_frw)
-		printf("    FLw/FRw - Front Left/Right Wide\n");
-	if (speaker_alloc->flc_frc)
-		printf("    FLc/FRc - Front Left/Right of Center\n");
-	if (speaker_alloc->bc)
-		printf("    BC - Back Center\n");
-	if (speaker_alloc->bl_br)
-		printf("    BL/BR - Back Left/Right\n");
-	if (speaker_alloc->fc)
-		printf("    FC - Front Center\n");
-	if (speaker_alloc->lfe1)
-		printf("    LFE1 - Low Frequency Effects 1\n");
-	if (speaker_alloc->fl_fr)
-		printf("    FL/FR - Front Left/Right\n");
-	if (speaker_alloc->tpsil_tpsir)
-		printf("    TpSiL/TpSiR - Top Side Left/Right\n");
-	if (speaker_alloc->sil_sir)
-		printf("    SiL/SiR - Side Left/Right\n");
-	if (speaker_alloc->tpbc)
-		printf("    TpBC - Top Back Center\n");
-	if (speaker_alloc->lfe2)
-		printf("    LFE2 - Low Frequency Effects 2\n");
-	if (speaker_alloc->ls_rs)
-		printf("    LS/RS - Left/Right Surround\n");
-	if (speaker_alloc->tpfc)
-		printf("    TpFC - Top Front Center\n");
-	if (speaker_alloc->tpc)
-		printf("    TpC - Top Center\n");
-	if (speaker_alloc->tpfl_tpfr)
-		printf("    TpFL/TpFR - Top Front Left/Right\n");
-	if (speaker_alloc->btfl_btfr)
-		printf("    BtFL/BtFR - Bottom Front Left/Right\n");
-	if (speaker_alloc->btfc)
-		printf("    BtFC - Bottom Front Center\n");
-	if (speaker_alloc->tpbl_tpbr)
-		printf("    TpBL/TpBR - Top Back Left/Right\n");
-}
-
 void
 print_cta(const struct di_edid_cta *cta)
 {
@@ -870,9 +905,10 @@ print_cta(const struct di_edid_cta *cta)
 	const struct di_cta_ycbcr420_cap_map *ycbcr420_cap_map;
 	const struct di_cta_infoframe_block *infoframe;
 	const struct di_cta_svr *const *svrs;
-	size_t i;
 	const struct di_edid_detailed_timing_def *const *detailed_timing_defs;
 	const struct di_displayid_type_i_ii_vii_timing *type_vii_timing;
+	const struct di_cta_hdmi_audio_block *hdmi_audio;
+	size_t i;
 	int vtdb_index = 0;
 
 	printf("  Revision: %d\n", di_edid_cta_get_revision(cta));
@@ -910,7 +946,7 @@ print_cta(const struct di_edid_cta *cta)
 			break;
 		case DI_CTA_DATA_BLOCK_SPEAKER_ALLOC:
 			speaker_alloc = di_cta_data_block_get_speaker_alloc(data_block);
-			print_speaker_alloc(&speaker_alloc->speakers);
+			print_speaker_alloc(&speaker_alloc->speakers, "    ");
 			break;
 		case DI_CTA_DATA_BLOCK_VIDEO_CAP:
 			video_cap = di_cta_data_block_get_video_cap(data_block);
@@ -990,6 +1026,10 @@ print_cta(const struct di_edid_cta *cta)
 			type_vii_timing = di_cta_data_block_get_did_type_vii_timing(data_block);
 			print_did_type_vii_timing(type_vii_timing, vtdb_index);
 			vtdb_index++;
+			break;
+		case DI_CTA_DATA_BLOCK_HDMI_AUDIO:
+			hdmi_audio = di_cta_data_block_get_hdmi_audio(data_block);
+			print_hdmi_audio(hdmi_audio);
 			break;
 		default:
 			break; /* Ignore */

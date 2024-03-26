@@ -16,6 +16,7 @@ viewsonic-vp2768-dp	| ./Digital/ViewSonic/VSC2034/6B81BEA28A1E	| cff7fe4d44
 philips-ftv-490		| ./Digital/Philips/PHL01EA/03A4224323A6	| cff7fe4d44
 hitachi-55r6+		| ./Digital/Hitachi/HEC0000/58C711CBA787	| cff7fe4d44
 philips-ftv-2017	| ./Digital/Philips/PHL0000/CDF43E0C4634	| cff7fe4d44
+tcl-smart-tv-5655	| ./Digital/TCL/TCL5655/1723FF2DC6D1		| cff7fe4d44
 
 The following blobs originate from the [edid-decode] repository and are under
 the same license as the rest of the libdisplay-info project:

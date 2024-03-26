@@ -23,6 +23,7 @@ test_cases = [
 	'qemu',
 	'samsung-s27a950d-dp',
 	'sun-gh19ps-dvi',
+	'tcl-smart-tv-5655',
 	'viewsonic-vp2768-dp',
 	'cvt',
 	'philips-ftv-490',

@@ -883,6 +883,53 @@ di_cta_ycbcr420_cap_map_supported(const struct di_cta_ycbcr420_cap_map *cap_map,
 const struct di_cta_ycbcr420_cap_map *
 di_cta_data_block_get_ycbcr420_cap_map(const struct di_cta_data_block *block);
 
+enum di_cta_hdmi_audio_3d_channels {
+	DI_CTA_HDMI_AUDIO_3D_CHANNELS_UNKNOWN = 0,
+	DI_CTA_HDMI_AUDIO_3D_CHANNELS_10_2 = 1,
+	DI_CTA_HDMI_AUDIO_3D_CHANNELS_22_2 = 2,
+	DI_CTA_HDMI_AUDIO_3D_CHANNELS_30_2 = 3,
+};
+
+/**
+ * HDMI 3D Audio
+ */
+struct di_cta_hdmi_audio_3d {
+	/* Supported formats. The array is NULL-terminated. */
+	const struct di_cta_sad *const *sads;
+	/* Channels */
+	enum di_cta_hdmi_audio_3d_channels channels;
+	/* Speakers */
+	struct di_cta_speaker_allocation speakers;
+};
+
+/**
+ * HDMI Multi-Stream Audio
+ */
+struct di_cta_hdmi_audio_multi_stream {
+	/* Supports 2 up to max_streams different streams */
+	int max_streams;
+	/* Supports non-mixed main/supplementary audio streams */
+	bool supports_non_mixed;
+};
+
+/**
+ * HDMI Audio
+ */
+struct di_cta_hdmi_audio_block {
+	/* Multi-Stream Audio, NULL if unsupported */
+	const struct di_cta_hdmi_audio_multi_stream *multi_stream;
+	/* 3D Audio, NULL if unsupported */
+	const struct di_cta_hdmi_audio_3d *audio_3d;
+};
+
+/**
+ * Get the HDMI Audio information from a CTA data block.
+ *
+ * Returns NULL if the data block tag is not DI_CTA_DATA_BLOCK_HDMI_AUDIO.
+ */
+const struct di_cta_hdmi_audio_block *
+di_cta_data_block_get_hdmi_audio(const struct di_cta_data_block *block);
+
 /**
  * InfoFrame types, defined in table 7.
  *

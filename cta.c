@@ -23,6 +23,10 @@
  * Number of bytes in a CTA short audio descriptor.
  */
 #define CTA_SAD_SIZE 3
+/**
+ * Number of bytes in a HDMI 3D audio descriptor.
+ */
+#define CTA_HDMI_AUDIO_3D_DESCRIPTOR_SIZE 4
 
 const struct di_cta_video_format *
 di_cta_video_format_from_vic(uint8_t vic)
@@ -131,16 +135,12 @@ parse_ycbcr420_block(struct di_edid_cta *cta,
 }
 
 static bool
-parse_sad_format(struct di_edid_cta *cta, const uint8_t data[static CTA_SAD_SIZE],
-		 enum di_cta_audio_format *format)
+parse_sad_format(struct di_edid_cta *cta, uint8_t code, uint8_t code_ext,
+		 enum di_cta_audio_format *format, const char *prefix)
 {
-	uint8_t code, code_ext;
-
-	code = get_bit_range(data[0], 6, 3);
 	switch (code) {
 	case 0x0:
-		add_failure_until(cta, 3,
-				  "Audio Data Block: Audio Format Code 0x00 is reserved.");
+		add_failure_until(cta, 3, "%s: Audio Format Code 0x00 is reserved.", prefix);
 		return false;
 	case 0x1:
 		*format = DI_CTA_AUDIO_FORMAT_LPCM;
@@ -185,7 +185,6 @@ parse_sad_format(struct di_edid_cta *cta, const uint8_t data[static CTA_SAD_SIZE
 		*format = DI_CTA_AUDIO_FORMAT_WMA_PRO;
 		break;
 	case 0xF:
-		code_ext = get_bit_range(data[2], 7, 3);
 		switch (code_ext) {
 		case 0x04:
 			*format = DI_CTA_AUDIO_FORMAT_MPEG4_HE_AAC;
@@ -215,16 +214,13 @@ parse_sad_format(struct di_edid_cta *cta, const uint8_t data[static CTA_SAD_SIZE
 			*format = DI_CTA_AUDIO_FORMAT_LPCM_3D;
 			break;
 		default:
-			add_failure_until(cta, 3,
-					  "Audio Data Block: Unknown Audio Ext Format 0x%02x.",
-					  code_ext);
+			add_failure_until(cta, 3, "%s: Unknown Audio Ext Format 0x%02x.",
+					  prefix, code_ext);
 			return false;
 		}
 		break;
 	default:
-		add_failure_until(cta, 3,
-				  "Audio Data Block: Unknown Audio Format 0x%02x.",
-				  code);
+		add_failure_until(cta, 3, "%s: Unknown Audio Format 0x%02x.", prefix, code);
 		return false;
 	}
 
@@ -247,8 +243,12 @@ parse_sad(struct di_edid_cta *cta, struct di_cta_audio_block *audio,
 	struct di_cta_sad_enhanced_ac3 *enhanced_ac3;
 	struct di_cta_sad_mat *mat;
 	struct di_cta_sad_wma_pro *wma_pro;
+	uint8_t code, code_ext;
 
-	if (!parse_sad_format(cta, data, &format))
+	code = get_bit_range(data[0], 6, 3);
+	code_ext = get_bit_range(data[2], 7, 3);
+
+	if (!parse_sad_format(cta, code, code_ext, &format, "Audio Data Block"))
 		return true;
 
 	priv = calloc(1, sizeof(*priv));
@@ -1162,6 +1162,143 @@ parse_ycbcr420_cap_map(struct di_edid_cta *cta,
 	memcpy(ycbcr420_cap_map->svd_bitmap, data, size);
 }
 
+static bool
+parse_hdmi_audio_3d_descriptor(struct di_edid_cta *cta,
+			       struct di_cta_sad_priv *sad,
+			       const uint8_t *data, size_t size)
+{
+	/* Contains the same data as the Short Audio Descriptor, packed differently */
+	struct di_cta_sad *base = &sad->base;
+	struct di_cta_sad_sample_rates *sample_rate = &sad->supported_sample_rates;
+	struct di_cta_sad_lpcm *lpcm = &sad->lpcm;
+	uint8_t code;
+
+	assert(size >= CTA_HDMI_AUDIO_3D_DESCRIPTOR_SIZE);
+
+	code = get_bit_range(data[0], 3, 0);
+	if (!parse_sad_format(cta, code, 0, &base->format, "HDMI Audio Data Block"))
+		return false;
+
+	if (base->format != DI_CTA_AUDIO_FORMAT_LPCM &&
+	    base->format != DI_CTA_AUDIO_FORMAT_ONE_BIT_AUDIO) {
+		add_failure(cta,
+			    "HDMI Audio Data Block: Unsupported 3D Audio Format 0x%04x.",
+			    code);
+		return false;
+	}
+
+	base->max_channels = get_bit_range(data[1], 4, 0) + 1;
+	sample_rate->has_192_khz = has_bit(data[2], 6);
+	sample_rate->has_176_4_khz = has_bit(data[2], 5);
+	sample_rate->has_96_khz = has_bit(data[2], 4);
+	sample_rate->has_88_2_khz = has_bit(data[2], 3);
+	sample_rate->has_48_khz = has_bit(data[2], 2);
+	sample_rate->has_44_1_khz = has_bit(data[2], 1);
+	sample_rate->has_32_khz = has_bit(data[2], 0);
+	base->supported_sample_rates = sample_rate;
+
+	if (base->format == DI_CTA_AUDIO_FORMAT_LPCM) {
+		lpcm->has_sample_size_24_bits = has_bit(data[3], 2);
+		lpcm->has_sample_size_20_bits = has_bit(data[3], 1);
+		lpcm->has_sample_size_16_bits = has_bit(data[3], 0);
+		base->lpcm = lpcm;
+	}
+
+	if (base->format == DI_CTA_AUDIO_FORMAT_ONE_BIT_AUDIO) {
+		/* TODO data[3] 7:0 contains unknown Audio Format Code dependent value */
+	}
+
+	return true;
+}
+
+static bool
+parse_hdmi_audio_block(struct di_edid_cta *cta,
+		       struct di_cta_hdmi_audio_block_priv *priv,
+		       const uint8_t *data, size_t size)
+{
+	struct di_cta_hdmi_audio_block *hdmi_audio = &priv->base;
+	struct di_cta_hdmi_audio_multi_stream *ms = &priv->ms;
+	struct di_cta_hdmi_audio_3d *a3d = &priv->a3d;
+	uint8_t multi_stream;
+	size_t num_3d_audio_descs;
+	size_t num_descs;
+	struct di_cta_sad_priv *sad_priv;
+	uint8_t channels;
+
+	if (size < 1) {
+		add_failure(cta, "HDMI Audio Data Block: Empty Data Block with length 0.");
+		return false;
+	}
+
+	multi_stream = get_bit_range(data[0], 1, 0);
+	if (multi_stream > 0) {
+		hdmi_audio->multi_stream = ms;
+		ms->max_streams = multi_stream + 1;
+		ms->supports_non_mixed = has_bit(data[0], 2);
+	}
+
+	if (size < 2)
+		return true;
+
+	num_3d_audio_descs = get_bit_range(data[1], 2, 0);
+	if (num_3d_audio_descs == 0)
+		return true;
+
+	/* If there are 3d Audio Descriptors, there is one last Speaker Allocation Descriptor */
+	num_descs = num_3d_audio_descs + 1;
+
+	/* Skip to the first descriptor */
+	size -= 2;
+	data += 2;
+
+	/* Make sure there is enough space for the descriptors */
+	if (num_descs > size / CTA_HDMI_AUDIO_3D_DESCRIPTOR_SIZE) {
+		add_failure(cta, "HDMI Audio Data Block: More descriptors indicated than block size allows.");
+		return true;
+	}
+
+	hdmi_audio->audio_3d = a3d;
+	a3d->sads = (const struct di_cta_sad * const*)priv->sads;
+
+	/* First the 3D Audio Descriptors, the last one is the 3D Speaker Allocation Descriptor */
+	while (num_descs > 1) {
+		sad_priv = calloc(1, sizeof(*sad_priv));
+		if (!sad_priv)
+			return false;
+
+		if (!parse_hdmi_audio_3d_descriptor(cta, sad_priv, data, size)) {
+			free(sad_priv);
+			goto skip;
+		}
+
+		assert(priv->sads_len < EDID_CTA_MAX_HDMI_AUDIO_BLOCK_ENTRIES);
+		priv->sads[priv->sads_len++] = sad_priv;
+
+skip:
+		num_descs--;
+		size -= CTA_HDMI_AUDIO_3D_DESCRIPTOR_SIZE;
+		data += CTA_HDMI_AUDIO_3D_DESCRIPTOR_SIZE;
+	}
+
+	channels = get_bit_range(data[3], 7, 4);
+
+	switch (channels) {
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_UNKNOWN:
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_10_2:
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_22_2:
+	case DI_CTA_HDMI_AUDIO_3D_CHANNELS_30_2:
+		a3d->channels = channels;
+		break;
+	default:
+		a3d->channels = DI_CTA_HDMI_AUDIO_3D_CHANNELS_UNKNOWN;
+		break;
+	}
+
+	parse_speaker_alloc(cta, &a3d->speakers, data, "Room Configuration Data Block");
+
+	return true;
+}
+
 static struct di_cta_infoframe_descriptor *
 parse_infoframe(struct di_edid_cta *cta, uint8_t type,
 		const uint8_t *data, size_t size)
@@ -1458,6 +1595,7 @@ destroy_data_block(struct di_cta_data_block *data_block)
 	struct di_cta_infoframe_block_priv *infoframe;
 	struct di_cta_speaker_location_block *speaker_location;
 	struct di_cta_video_format_pref_block *vfpdb;
+	struct di_cta_hdmi_audio_block_priv *hdmi_audio;
 
 	switch (data_block->tag) {
 	case DI_CTA_DATA_BLOCK_VIDEO:
@@ -1489,6 +1627,11 @@ destroy_data_block(struct di_cta_data_block *data_block)
 		vfpdb = &data_block->video_format_pref;
 		for (i = 0; i < vfpdb->svrs_len; i++)
 			free(vfpdb->svrs[i]);
+		break;
+	case DI_CTA_DATA_BLOCK_HDMI_AUDIO:
+		hdmi_audio = &data_block->hdmi_audio;
+		for (i = 0; i < hdmi_audio->sads_len; i++)
+			free(hdmi_audio->sads[i]);
 		break;
 	default:
 		break; /* Nothing to do */
@@ -1609,6 +1752,10 @@ parse_data_block(struct di_edid_cta *cta, uint8_t raw_tag, const uint8_t *data, 
 			break;
 		case 18:
 			tag = DI_CTA_DATA_BLOCK_HDMI_AUDIO;
+			if (!parse_hdmi_audio_block(cta,
+						    &data_block->hdmi_audio,
+						    data, size))
+				goto skip;
 			break;
 		case 19:
 			tag = DI_CTA_DATA_BLOCK_ROOM_CONFIG;
@@ -1923,6 +2070,15 @@ di_cta_data_block_get_ycbcr420_cap_map(const struct di_cta_data_block *block)
 		return NULL;
 	}
 	return &block->ycbcr420_cap_map;
+}
+
+const struct di_cta_hdmi_audio_block *
+di_cta_data_block_get_hdmi_audio(const struct di_cta_data_block *block)
+{
+	if (block->tag != DI_CTA_DATA_BLOCK_HDMI_AUDIO) {
+		return NULL;
+	}
+	return &block->hdmi_audio.base;
 }
 
 const struct di_cta_infoframe_block *
