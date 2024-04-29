@@ -1176,7 +1176,7 @@ parse_ext(struct di_edid *edid, const uint8_t data[static EDID_BLOCK_SIZE])
 		if (!_di_displayid_parse(&ext->displayid, &data[1],
 					 EDID_BLOCK_SIZE - 2, &logger)) {
 			free(ext);
-			return false;
+			return errno == ENOTSUP || errno == EINVAL;
 		}
 		break;
 	default:
