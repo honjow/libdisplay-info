@@ -1198,13 +1198,11 @@ _di_edid_parse(const void *data, size_t size, FILE *failure_msg_file)
 	struct di_edid *edid;
 	struct di_logger logger;
 	int version, revision;
-	size_t exts_len, i;
+	size_t exts_len, parsed_ext_len, i;
 	const uint8_t *standard_timing_data, *byte_desc_data, *ext_data;
 	struct di_edid_standard_timing *standard_timing;
 
-	if (size < EDID_BLOCK_SIZE ||
-	    size > EDID_MAX_BLOCK_COUNT * EDID_BLOCK_SIZE ||
-	    size % EDID_BLOCK_SIZE != 0) {
+	if (size < EDID_BLOCK_SIZE) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -1227,12 +1225,6 @@ _di_edid_parse(const void *data, size_t size, FILE *failure_msg_file)
 		return NULL;
 	}
 
-	exts_len = size / EDID_BLOCK_SIZE - 1;
-	if (exts_len != parse_ext_count(data)) {
-		errno = EINVAL;
-		return NULL;
-	}
-
 	edid = calloc(1, sizeof(*edid));
 	if (!edid) {
 		return NULL;
@@ -1246,6 +1238,22 @@ _di_edid_parse(const void *data, size_t size, FILE *failure_msg_file)
 
 	edid->version = version;
 	edid->revision = revision;
+
+	if (size % EDID_BLOCK_SIZE != 0)
+		add_failure(edid, "The data is not a multiple of the block size.");
+	if (size > EDID_MAX_BLOCK_COUNT * EDID_BLOCK_SIZE)
+		add_failure(edid, "The data is exceeding the maximum block count.");
+
+	exts_len = (size / EDID_BLOCK_SIZE) - 1;
+	parsed_ext_len = parse_ext_count(data);
+
+	if (exts_len != parsed_ext_len)
+		add_failure(edid, "The data size does not match the encoded block count.");
+
+	if (parsed_ext_len < exts_len)
+		exts_len = parsed_ext_len;
+
+	assert(exts_len < EDID_MAX_BLOCK_COUNT);
 
 	parse_vendor_product(edid, data);
 	parse_basic_params_features(edid, data);
