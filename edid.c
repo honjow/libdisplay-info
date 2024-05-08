@@ -1153,7 +1153,7 @@ parse_ext(struct di_edid *edid, const uint8_t data[static EDID_BLOCK_SIZE])
 
 		if (!_di_edid_cta_parse(&ext->cta, data, EDID_BLOCK_SIZE, &logger)) {
 			free(ext);
-			return false;
+			return errno == EINVAL;
 		}
 		break;
 	case DI_EDID_EXT_VTB:
