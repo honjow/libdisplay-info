@@ -64,6 +64,7 @@ foreach tc : test_cases
 	gen_targets += files('data/' + tc + '.edid')
 endforeach
 
+subproject('edid-decode', required: false)
 ref_edid_decode = find_program('edid-decode', native: true, required: false)
 if ref_edid_decode.found()
 	test_env += 'REF_EDID_DECODE=' + ref_edid_decode.full_path()

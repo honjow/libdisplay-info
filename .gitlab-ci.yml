@@ -11,7 +11,7 @@ include:
 # $ git push -f -o ci.variable="FDO_FORCE_REBUILD=1"
 variables:
   FDO_UPSTREAM_REPO: 'emersion/libdisplay-info'
-  FDO_DISTRIBUTION_TAG: '2024-06-06.0'
+  FDO_DISTRIBUTION_TAG: '2024-06-07.0'
 
 workflow:
   rules:
@@ -39,13 +39,16 @@ prepare-container:
   extends: .fdo.container-build@alpine@x86_64
   stage: "Prepare container"
   variables:
+    EDID_DECODE_COMMIT: c6b859d7f0251e2433fb81bd3f67bd2011c2036c
     FDO_BASE_IMAGE: alpine:latest
     FDO_DISTRIBUTION_PACKAGES: |
       build-base clang compiler-rt meson make git gcovr py3-pygments go hwdata
     FDO_DISTRIBUTION_EXEC: |
+      grep $EDID_DECODE_COMMIT ./subprojects/edid-decode.wrap >/dev/null || \
+        (echo "Keep edid-decode.wrap and CI in sync!" && exit 1)
       git clone git://linuxtv.org/edid-decode.git
       cd edid-decode
-      git checkout a645579430980c89af961b68193461329bd3eb4d
+      git checkout $EDID_DECODE_COMMIT
       meson setup build/
       ninja -C build/
       ninja -C build/ install
