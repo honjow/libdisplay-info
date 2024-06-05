@@ -1220,6 +1220,7 @@ parse_hdmi_audio_block(struct di_edid_cta *cta,
 	struct di_cta_hdmi_audio_multi_stream *ms = &priv->ms;
 	struct di_cta_hdmi_audio_3d *a3d = &priv->a3d;
 	uint8_t multi_stream;
+	bool ms_non_mixed;
 	size_t num_3d_audio_descs;
 	size_t num_descs;
 	struct di_cta_sad_priv *sad_priv;
@@ -1231,10 +1232,15 @@ parse_hdmi_audio_block(struct di_edid_cta *cta,
 	}
 
 	multi_stream = get_bit_range(data[0], 1, 0);
+	ms_non_mixed = has_bit(data[0], 2);
+
 	if (multi_stream > 0) {
 		hdmi_audio->multi_stream = ms;
 		ms->max_streams = multi_stream + 1;
-		ms->supports_non_mixed = has_bit(data[0], 2);
+		ms->supports_non_mixed = ms_non_mixed;
+	} else if (ms_non_mixed) {
+		add_failure(cta, "HDMI Audio Data Block: MS NonMixed support indicated but "
+				 "Max Stream Count == 0.");
 	}
 
 	if (size < 2)
